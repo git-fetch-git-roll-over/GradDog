@@ -1,14 +1,13 @@
 '''
 TODO:
+reset variable value
 multiple variables
-trace table (using temporary variables v1, v2, ...)
-'''
+trace table (using temporary variables v1, v2, ...), add a row to the trace table every time a Function object is constructed
 
+'''
 import numpy as np
 
 class Function:
-
-	
 
 	def __init__(self, name, val, der):
 		self.name = name
@@ -105,9 +104,8 @@ def log(x):
 	return Function(name = f'log({x})', val = np.log(x.val), der = x.der/x.val)
 		
 def display_func(f, x):
-	print(f, 'evaluated at x = ', x.val)
-	print(f.val)
-	print('Derivative:', f.der)
+	print(f'f(x = {x.val} = {f.val}')
+	print(f'f\'(x = {x.val} = {f.der}')
 
 def test_der(f, f_der):
 	# tests whether f_der is actually the derivative of f
@@ -116,16 +114,20 @@ def test_der(f, f_der):
 	# allows for f_der to be a function or a scalar
 	# distinguishes between exact equality, good approximation, and bad approximation
 
+
+	# store in f_der_val whether f_der is a Function or a scalar
 	try:
 		f_der_val = f_der.val
 	except AttributeError:
 		f_der_val = f_der
+
+
 	diff = abs(f.der - f_der_val)
 	try:
 		assert diff == 0
-		print('Passed deriv test : diff = ', diff)
+		print(' :) Passed deriv test')
 	except AssertionError:
-		precision = 1e-12
+		precision = 1e-15
 		if diff < precision:
 			print('close enough : diff = ', diff)
 		else:
@@ -147,6 +149,7 @@ test_der(f, f_der)
 ############# Testing ################
 
 def random_polynomial_test(x):
+	# not necessary but i wrote it anyway out of curiosity
 	# creates a giant random polynomial called p
 	# then compares p.der with a manually-computed polynomial derivative p_der
 
