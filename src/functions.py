@@ -123,16 +123,16 @@ class Function:
 		else:
 			return val
 
-class Sine(Function):
-    def __init__(self, name, val):
-        super().__init__(name, val)
-        # Can we modify this to return a different name
-        self.der = Cosine(name, val)
+#class Sine(Function):
+#    def __init__(self, name, val):
+#        super().__init__(name, val)
+#        # Can we modify this to return a different name
+#        self.der = Cosine(name, val)
 
-class Cosine(Function):
-    def __init__(self, name, val):
-        super().__init__(name, val)
-        self.der = -1 * Sine(name, val)
+#class Cosine(Function):
+#    def __init__(self, name, val):
+#        super().__init__(name, val)
+#        self.der = -1 * Sine(name, val)
 
 
 class Variable(Function):
