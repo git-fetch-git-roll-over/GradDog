@@ -115,3 +115,33 @@ class Variable:
 			return 1
 		return Variable(f'{self.name}^{scaler}', self.val**scaler, scaler*self.val**(scaler-1)*self.der)
 
+    
+    
+### Here I'm implementing a basic 'Function' function
+### This function takes in 2 arguments: 'func' and an instance of "Varaible" class
+
+def Function(func, var:Variable, base=np.e):
+
+    if func == 'sin':
+        return Variable(f'sin{var.name}', np.sin(var.val), np.cos(var.val)*var.der)
+    
+    elif func == 'cos':
+        return Variable(f'cos{var.name}', np.cos(var.val), -np.sin(var.val)*var.der)
+
+    elif func == 'tan':
+        return Variable(f'tan{var.name}', np.tan(var.val), var.der/(np.cos(var.val)**2))
+
+    elif func == 'exp':
+        if base==np.e:
+            return Variable(f'e^{var.name}', np.exp(var.val), np.exp(var.val)*var.der)
+        else: 
+            return Variable(f'{str(base)}^{var.name}', np.power(base, var.val), np.power(base, var.val)*np.log(base)*var.der)
+
+    elif func == 'log':
+        if base==np.e:
+            return Variable(f'log{var.name}', np.exp(var.val), np.exp(var.val)*var.der)
+        else: 
+            return Variable(f'log_{str(base)}{var.name}', np.log(var.val)/np.log(base), var.der/(var.val*np.log(base)))
+
+    
+    
