@@ -1,10 +1,10 @@
-### This is based on Max's Function class
-### I renamed to Variable becuase it is more appropriate
-### I just double checked and made sure everything is working as it is supposed to
+### This is based on Max's "Function" class
+### I renamed it to "Variable" becuase we are making variables here
+### I just double checked and made sure everything is working
 ### This is the Variable class that takes in the name of the variable, value, and it's default deri is 1
 ### For M2, we are only required to take in a sigle input
-### The oupt is a scaler function
-### Out Jacobian is also a scaler
+### The output is computed from a scaler function
+### The Jacobian is also a scaler
 
 import numpy as np
 
@@ -59,7 +59,9 @@ class Variable:
 			return Variable(new_name, new_val, new_der)
 
 	def __rsub__(self, other):
-		return self.__sub__(other)
+		# max added - , because 
+		# other - self = - (self - other)
+		return -self.__sub__(other)
 
 
 	## Multiplication
@@ -98,11 +100,11 @@ class Variable:
 			return Variable(new_name, new_val, new_der)
 
 	def __rtruediv__(self, other):
-			new_name = str(other) + '/' + self.name
-			new_val = other / self.val
-			new_der = (-other * self.der) / (self.val)**2
+		new_name = str(other) + '/' + self.name
+		new_val = other / self.val
+		new_der = (-other * self.der) / (self.val)**2
 
-			return Variable(new_name, new_val, new_der)        
+		return Variable(new_name, new_val, new_der)        
 
 	## Negation
 	def __neg__(self):
@@ -114,6 +116,7 @@ class Variable:
 		if scaler == 0:
 			return 1
 		return Variable(f'{self.name}^{scaler}', self.val**scaler, scaler*self.val**(scaler-1)*self.der)
+
 
     
     
