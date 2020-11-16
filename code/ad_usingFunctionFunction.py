@@ -110,18 +110,33 @@ class Variable:
 	def __neg__(self):
 		return Variable(f'-{self.name}', -self.val, -self.der)
 
+	## Power: Accounts for variables
+	def __pow__(self, other):
+		try: # when other is a variable
+			log_self = Variable(f'log{self.name}', np.log(self.val), self.der/self.val)
+			new_name = self.name +  '^' + other.name
+			new_val = self.val ** other.val
+			new_der = (log_self.der*other.val + other.der*log_self.val)*new_val
+			return Variable(new_name, new_val, new_der)
 
-	## Power: here we assume we are only taking scaler number
-	def __pow__(self, scaler):
-		if scaler == 0:
-			return 1
-		return Variable(f'{self.name}^{scaler}', self.val**scaler, scaler*self.val**(scaler-1)*self.der)
+		except AttributeError: 
+			if other == 0:
+				return 1
+			else:
+				return Variable(f'{self.name}^{other}', self.val**other, other*self.val**(other-1)*self.der)
+	
+	def __rpow__(self, other):
+		print(self)
+		new_name = f'{other}^{self.name}' 
+		new_val = other ** self.val
+		new_der = new_val * np.log(other)
+		return Variable(new_name, new_val, new_der)
 
 
     
     
 ### Here I'm implementing a basic 'Function' function
-### This function takes in 2 arguments: 'func' and an instance of "Varaible" class
+### This function takes in 2 arguments: 'func' and an instance of "Variable" class
 
 def Function(func, var:Variable, base=np.e):
 
