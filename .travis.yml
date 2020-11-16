@@ -9,6 +9,16 @@ before_install:
   - pip install -U pytest
   - pip install codecov
   
-script: pytest # run tests
+script:   
+  [pytest]
+  testpaths =
+      tests
+      skift
+  norecursedirs=dist build .tox scripts
+  addopts =
+      --doctest-modules
+      --cov=skift
+      -r a
+      -v
 after_success:
   - codecov # submit coverage
