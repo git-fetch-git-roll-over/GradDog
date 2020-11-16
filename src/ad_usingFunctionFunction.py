@@ -146,5 +146,20 @@ def Function(func, var:Variable, base=np.e):
         else: 
             return Variable(f'log_{str(base)}{var.name}', np.log(var.val)/np.log(base), var.der/(var.val*np.log(base)))
 
+
+def sin(var:Variable):
+    return Function('sin', var)
+
+def cos(var:Variable):
+    return Function('cos', var)
+
+def tan(var:Variable):
+    return Function('tan', var)
+
+def exp(var:Variable):
+    return Function('exp', var)
+
+def log(var:Variable):
+    return Function('log', var)
     
     
