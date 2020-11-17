@@ -34,7 +34,7 @@ The partial derivative $\partial f/\partial y$ only needs to be calculated using
 
 We can represent the function's individual operations in a graphical format:
 
-By parsing the structure of the function :math:`\\f(x, y)` into its atomic building blocks, we can construct atrace table from which we can read the results of the chain rule at every step of the computation.
+By parsing the structure of the function :math:`\\f(x, y)` into its atomic building blocks, we can construct a trace table from which we can read the results of the chain rule at every step of the computation.
 
 .. image:: ../../images/func_graph.jpeg
   :width: 600
@@ -121,7 +121,7 @@ Descriptions
 
 We used ``numpy`` arrays as our core data structure, because this will make it easy to perform operations on either single values or single or multidimensional arrays. Our only external dependency should be ``numpy``. 
 
-The main class of this package is the ``Variable`` class and it creates instances of single input varaibles. The class contains arrtibutes such as *name*, *value* and default *derivative*. 
+The main class of this package is the ``Variable`` class and it creates instances of single input variables. The class contains attributes such as *name*, *value* and default *derivative*. 
  
 This module also contais a ``Function`` method that can takes in name of the elementary functions (e.g. :math:`sin, cos, tan, exp` and :math:`log`), instance of the ``Variable`` class and a base with default value of :math:`e` if elementary function is :math:`exp` or :math:`log`.
 
@@ -129,13 +129,13 @@ This module also contais a ``Function`` method that can takes in name of the ele
 Future Direction
 ----------------
 
-We are planning to extend our basic automatic differentation package to handle cases where involves multi dimensional inputs and outputs. We are also interested in implementating an extra feature either with dual numbers or optimatization. 
+We are planning to extend our basic automatic differentation package to handle cases where involves multi-dimensional inputs and outputs. We are also interested in implementating an extra feature either with dual numbers or optimization. 
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-    licencse
+    license
     help
 
 
