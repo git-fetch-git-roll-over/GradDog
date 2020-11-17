@@ -43,4 +43,12 @@ def test_variable_pow():
     assert x5.val == 4
     assert x5.name == str(2) + "^" + x1.name
 
-
+def test_polynom():
+    x1 = Variable('x', 5)
+    f = 3*x1**2 + 2*x1 + 5
+    assert f.der == 32
+    
+def test_sin():
+    x1 = Variable('x', 3)
+    g = sin(x1)
+    assert g.der == cos(x1)
