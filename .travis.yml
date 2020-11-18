@@ -12,6 +12,5 @@ install:
 # command to run tests
 script:
   - pytest --cov-report term --cov=code
-
 after_success:
   - codecov
