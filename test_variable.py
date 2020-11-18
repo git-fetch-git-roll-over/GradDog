@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from variable import Variable
+from code.variable import Variable
 
 def test_variable_add():
     x1 = Variable('x', 2)
