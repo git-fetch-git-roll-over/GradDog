@@ -1,5 +1,6 @@
 import pytest
-from ad_usingFunctionFunction import Variable, Function 
+import numpy as np
+from ad_usingFunctionFunction import Variable, Function, sin, log, tan, cos, exp 
 
 def test_variable_add():
     x1 = Variable('x', 2)
@@ -43,4 +44,30 @@ def test_variable_pow():
     assert x5.val == 4
     assert x5.name == str(2) + "^" + x1.name
 
-
+def test_polynom():
+    x1 = Variable('x', 5)
+    f = 3*x1**2 + 2*x1 + 5
+    assert f.der == 32
+    
+def test_sin():
+    x1 = Variable('x', 3)
+    g = sin(x1)
+    assert g.der == cos(x1).val
+    
+def test_string_input():
+    with pytest.raises(TypeError):
+        x_str = Variable('s', 'CS107')
+        
+def test_log_base2():
+    x = Variable('x', 32)
+    base = 2
+    f = log(x, base=base)
+    assert f.val == 5
+    assert f.der == 1/(x.val * np.log(base))
+    
+def test_exp_base2():
+    x = Variable('x', 5)
+    base = 2
+    f = exp(x, base=base)
+    assert f.val == 32
+    assert f.der == (base**x.val)*np.log(base)
