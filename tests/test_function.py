@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
-from code.variable import Variable
-from code.function import Function
+from forward_mode.variable import Variable
+from forward_mode.function import Function
 
 def test_sin():
     x1 = Variable('x', 3)

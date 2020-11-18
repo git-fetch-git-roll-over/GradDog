@@ -1,5 +1,5 @@
 import numpy as np
-from variable import Variable
+from forward_mode.variable import Variable
 
 class Function:
     '''
