@@ -1,5 +1,4 @@
-numbers
-numpy==1.19.4
-pytest==6.1.2
-codecov==2.1.10
-pytest-cov==2.10.1
+numpy
+pytest
+codecov
+pytest-cov
