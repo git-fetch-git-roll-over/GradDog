@@ -11,6 +11,6 @@ install:
   - pip install -r requirements.txt
 # command to run tests
 script:
-  - pytest --cov-report term --cov=code
+  - pytest 
 after_success:
   - codecov
