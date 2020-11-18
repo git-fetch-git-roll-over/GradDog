@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from ad_usingFunctionFunction import Variable, Function, sin, log, tan, cos, exp 
+from forward_mode.variable import Variable
 
 
 def test_variable_add():
@@ -49,6 +49,7 @@ def test_variable_pow():
 def test_polynom():
     x1 = Variable('x', 5)
     f = 3*x1**2 + 2*x1 + 5
+
     assert f.der == 32
     
 def test_sin():
