@@ -176,6 +176,8 @@ def exp(var:Variable, base=np.e):
     return Function('exp', var, base=base)
 
 def log(var:Variable, base=np.e):
+
     return Function('log', var, base=base)
     
     
+
