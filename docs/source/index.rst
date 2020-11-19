@@ -34,7 +34,7 @@ The partial derivative $\partial f/\partial y$ only needs to be calculated using
 
 We can represent the function's individual operations in a graphical format:
 
-By parsing the structure of the function :math:`\\f(x, y)` into its atomic building blocks, we can construct atrace table from which we can read the results of the chain rule at every step of the computation.
+By parsing the structure of the function :math:`\\f(x, y)` into its atomic building blocks, we can construct a trace table from which we can read the results of the chain rule at every step of the computation.
 
 .. image:: ../../images/func_graph.jpeg
   :width: 600
@@ -75,15 +75,28 @@ First, from the module variable.py import class ``Variable`` and from function.p
 
 Then create an instance of Variable class and construct your elementary functions :math:`sin(x), cos(x)`::
     
-    x = Variable(name='x', val=4)
-    f1 = sin(x)
-    f2 = cos(x)
+   x = Variable('x', 4)
+   f1 = Function.sin(x)
+   f2 = Function.cos(x)
 
 Last create a variable f to add of your f1 and f2 and print out f::
 
     f = f1 + f2 
     print(f)
     >>> sinx+cosx: sinx+cosx value: -1.410; derivative: 0.103
+
+Both the values and the derivative values are wrapped up in attributes belonging to these objects. For example::
+
+    f1.val
+    >>> -0.7568024953079282
+    f2.val
+    >>> -0.6536436208636119
+    f1.der
+    >>> -0.6536436208636119
+    f2.der
+    >>> 0.7568024953079282
+    f.der
+    >>> 0.10315887444431626
 
 
 Software organization
@@ -94,9 +107,8 @@ Directory Structure
 
 With our main directory ``cs107-FinalProject``, We plan to organize our package as follows:
 
-* dependencies in ``requriements.txt``
-* continuous integration ``.travis.yml`` 
-* code coverage ``.codecov.yml``
+* dependencies in ``requirements.txt``
+* continuous integration information in ``.travis.yml`` and coverage information in ``codecov.yml``
 * documentation in ``\docs``
 * test suite in ``\tests``
 * code in ``\forward_mode``
@@ -105,17 +117,17 @@ With our main directory ``cs107-FinalProject``, We plan to organize our package 
 Basic Modules
 -------------
 
-We plan to include two modules called variable.py and function.py and they create instances of single input variable and computes the value and derivative via the forward mode of automatic differentiation.  
+We plan to include two modules: ``variable``, which defines the variable object and the differentiation rules that govern its behavior, and ``function`` which defines the elementary functions (e.g. sine, cosine, logarithms). 
 
-How to Tests
+How to Test
 ------------
 
-Both ``TravisCI`` and ``CodeCov`` are used and  our test suite will live inside our repositary in a ``\tests`` directory.
+Both ``TravisCI`` and ``CodeCov`` are used and our test suite will live inside our repo in a ``\tests`` directory. Our project currently has 100% coverage.
 
 Future Installation 
 -------------------
 
-As of now, we primarily distribute our code by having clients clone our github repositary, but we hope to also make it pip-installable. For the future, we plan to package our project using `wheels <https://www.python.org/dev/peps/pep-0427/>`_. This should make it easily pip installable.
+As of now, we primarily distribute our code by having clients clone our github repository, but we hope to also make it pip-installable. For the future, we plan to package our project using `wheels <https://www.python.org/dev/peps/pep-0427/>`_. This should make it easily pip installable.
 
 
 Implementation Details
@@ -124,7 +136,7 @@ Implementation Details
 Descriptions
 ------------
 
-We used ``numpy`` arrays as our core data structure, because this will make it easy to perform operations on either single values or single or multidimensional arrays. Our only external dependency should be ``numpy``. 
+Our implementation isn't currently built on any singular data structure, but as we expand to account for multiple inputs we plan to use numpy arrays. This will make it easy to perform operations on either single values or single or multidimensional arrays. 
 
 The main class of this package is the are ``Variable`` and ``Function`` classes and ``Variable`` creates instances of single input varaibles. This class contains arrtibutes such as *name*, *value* and default *derivative*. On the other hand, ``Function`` classes creates basic elementary function methods (e.g. :math:`sin, cos, tan, exp` and :math:`log`)
 
@@ -132,13 +144,13 @@ The main class of this package is the are ``Variable`` and ``Function`` classes 
 Future Direction
 ----------------
 
-We are planning to extend our basic automatic differentation package to handle cases where involves multi dimensional inputs and outputs. We are also interested in implementating an extra feature either with dual numbers or optimatization. 
+We are planning to extend our basic automatic differentation package to handle cases where involves multi-dimensional inputs and outputs. We are also interested in implementing an extra feature either with dual numbers or optimization. 
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-    licencse
+    license
     help
 
 
