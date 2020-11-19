@@ -12,7 +12,7 @@ class Function:
         Parameters:
             var (Variable instance)
 
-        Return Varaible that constitues sin() elementary function
+        Return Variable that constitues sin() elementary function
         '''
         return Variable(f'sin{var.name}', np.sin(var.val), np.cos(var.val)*var.der)
 
@@ -23,7 +23,7 @@ class Function:
         Parameters:
             var (Variable instance)
 
-        Return Varaible that constitues cos() elementary function
+        Return Variable that constitues cos() elementary function
         '''
         return Variable(f'cos{var.name}', np.cos(var.val), -np.sin(var.val)*var.der)
 
@@ -34,7 +34,7 @@ class Function:
         Parameters:
             var (Variable instance)
 
-        Return Varaible that constitues tan() elementary function
+        Return Variable that constitues tan() elementary function
         '''
         return Variable(f'tan{var.name}', np.tan(var.val), var.der/(np.cos(var.val)**2))
 
@@ -46,7 +46,7 @@ class Function:
             var (Variable instance)
             base (int, or float)
 
-        Return Varaible that constitues exp() elementary function with input base (default=1)
+        Return Variable that constitues exp() elementary function with input base (default=e)
         '''
         if base==np.e:
             return Variable(f'e^{var.name}', np.exp(var.val), np.exp(var.val)*var.der)
@@ -62,7 +62,7 @@ class Function:
             var (Variable instance)
             base (int, or float)
 
-        Return Varaible that constitues log() elementary function with input base (default=1)
+        Return Variable that constitues log() elementary function with input base (default=e)
         '''
         if base==np.e:
             return Variable(f'log({var.name})', np.log(var.val), var.der/var.val)
@@ -70,5 +70,4 @@ class Function:
             return Variable(f'log{str(base)}({var.name})', np.log(var.val)/np.log(base), var.der/(var.val*np.log(base)))
 
 
-    
     
