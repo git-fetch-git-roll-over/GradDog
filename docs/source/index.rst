@@ -76,8 +76,8 @@ First, from the module variable.py import class ``Variable`` and from function.p
 Then create an instance of Variable class and construct your elementary functions :math:`sin(x), cos(x)`::
     
    x = Variable('x', 4)
-   f1 = Function.sin(x)
-   f2 = Function.cos(x)
+   f1 = sin(x)
+   f2 = cos(x)
 
 Last create a variable f to add of your f1 and f2 and print out f::
 
