@@ -6,6 +6,7 @@ python:
 before_install:
   - python --version
   - pip install -U pip
+
 # command to install dependencies
 install:
   - pip install -r requirements.txt
@@ -14,4 +15,5 @@ script:
   - pytest --cov-report term --cov=forward_mode tests/
 
 after_success:
-  - codecov
+ - codecov
+

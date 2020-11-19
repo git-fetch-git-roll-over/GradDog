@@ -48,3 +48,7 @@ def test_polynom():
     x1 = Variable('x', 5)
     f = 3*x1**2 + 2*x1 + 5
     assert f.der == 32
+
+def test_string_input():
+    with pytest.raises(TypeError):
+        x_str = Variable('s', 'hello World')
