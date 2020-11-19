@@ -51,15 +51,15 @@ How to use package
 How to install
 --------------
 
-Go to the directory that you want to run this package, and then open your command line prompt. 
+Go to the directory that you want to run this package, and then open a command line prompt. 
 
-* ``https://github.com/git-fetch-git-roll-over/AutoDiff.git`` to download the package
+* Visit ``https://github.com/git-fetch-git-roll-over/AutoDiff.git`` and follow the cloning instructions to clone a copy of the repository. This will create an ``AutoDiff`` directory.  (Key command: ``git clone https://github.com/git-fetch-git-roll-over/AutoDiff.git``)
 * ``cd AutoDiff`` to go inside the directory
-* ``virtualenv autodiff`` to create a virtual environment
-* ``source autodiff/bin/activate`` to activate the environemnt
+* ``virtualenv autodiff`` to create a virtual environment (It is optional but recommended to use a virtual environment.)
+* ``source autodiff/bin/activate`` to activate the environment
 * ``pip install -r requirements.txt`` to install the necessary dependencies
-* ``cd forward_mode`` to go inside the modules
-* create your own driver script and please follows the basic demo for an illustration
+* ``cd forward_mode`` to go inside the directory containing the modules
+* create your own driver script, following the basic demos below
 
 Basic Demo
 ----------
