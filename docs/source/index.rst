@@ -81,7 +81,7 @@ Last create a variable f to add of your f1 and f2 and print out f::
     print(f)
     >>> sinx+cosx: value of -1.4104461161715403; derivative of 0.10315887444431626
 
-Both the values and the derivative values are wrapped up in attributes belonging to these objects. For example:
+Both the values and the derivative values are wrapped up in attributes belonging to these objects. For example::
 
     val(f1)
     >>> 0.1411200080598672
