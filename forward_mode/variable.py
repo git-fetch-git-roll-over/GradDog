@@ -52,9 +52,10 @@ class Variable:
 		'''
 		This resets the _val of an Variable instance
 		'''
-		assert isinstance(new_val, numbers.Number), TypeError(
-			'Value should be numerical')
-		self._val = new_val
+		if isinstance(new_val, numbers.Number):
+			self._val = new_val
+		else:
+			raise TypeError('Value should be numerical')
 
 	@property
 	def der(self):
@@ -133,7 +134,7 @@ class Variable:
 
 		Returns Variable: contains new name, new value and new derivative
 		'''
-		return -self.__add__(other)
+		return -self + other
 
 
 	def __mul__(self, other):
@@ -257,4 +258,5 @@ class Variable:
 		
 		return Variable(new_name, new_val, new_der)
    
-    
+
+
