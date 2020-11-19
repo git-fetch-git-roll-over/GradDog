@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Auto-Diff'
+project = 'AutoDiff'
 copyright = '2020, Harvard-CS107'
 author = 'Ivan Shu, Max Cembalest, Peyton Benac and Seeam Shahid Noor'
 

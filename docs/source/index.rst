@@ -1,4 +1,4 @@
-AutoDiff: Calculus Software Library Documentation
+AutoDiff: Software Library Documentation
 ==================================================
 
 ..
@@ -51,12 +51,15 @@ How to use package
 How to install
 --------------
 
-Create a directory called ``Auto-Diff``, and then open your command line prompt in that directory. 
+Go to the directory that you want to run this package, and then open your command line prompt. 
 
-* ``https://github.com/git-fetch-git-roll-over/cs107-FinalProject.git`` to download the package
+* ``https://github.com/git-fetch-git-roll-over/AutoDiff.git`` to download the package
+* ``cd AutoDiff`` to go inside the directory
 * ``virtualenv autodiff`` to create a virtual environment
 * ``source autodiff/bin/activate`` to activate the environemnt
 * ``pip install -r requirements.txt`` to install the necessary dependencies
+* ``cd forward_mode`` to go inside the modules
+* create your own driver script and please follows the basic demo for an illustration
 
 Basic Demo
 ----------
@@ -65,21 +68,22 @@ Say there is a simple function and we want to get the derivative at :math:`x=4`:
 
 :math:`f(x) = sin(x) + cos(x)`
 
-First, from the module ``AutoDiff`` import class ``Variable`` and function ``Function``::
+First, from the module variable.py import class ``Variable`` and from function.py import class ``Function``::
 
-    from AutoDiff import Variable, Function
+    from variable import Variable
+    from function.Function import sin, cos 
 
 Then create an instance of Variable class and construct your elementary functions :math:`sin(x), cos(x)`::
     
     x = Variable(name='x', val=4)
-    f1 = Function(func='sin', var=x)
-    f2 = Function(func='cos', var=x)
+    f1 = sin(x)
+    f2 = cos(x)
 
 Last create a variable f to add of your f1 and f2 and print out f::
 
     f = f1 + f2 
     print(f)
-    >>> sinx+cosx: value of -1.4104461161715403; derivative of 0.10315887444431626
+    >>> sinx+cosx: sinx+cosx value: -1.410; derivative: 0.103
 
 
 Software organization
@@ -92,23 +96,24 @@ With our main directory ``cs107-FinalProject``, We plan to organize our package 
 
 * dependencies in ``requriements.txt``
 * continuous integration ``.travis.yml`` 
+* code coverage ``.codecov.yml``
 * documentation in ``\docs``
 * test suite in ``\tests``
-* code in ``\codes``
+* code in ``\forward_mode``
 * images in ``\images``
 
 Basic Modules
 -------------
 
-We plan to include one module called ``autodiff`` and it creates instances of single input variable and computes the value and derivative via the forward mode of automatic differentiation.  
+We plan to include two modules called variable.py and function.py and they create instances of single input variable and computes the value and derivative via the forward mode of automatic differentiation.  
 
 How to Tests
 ------------
 
-Both ``TravisCI`` and ``CodeCov`` are used and  our test suite will live inside our repo in a ``\tests`` directory.
+Both ``TravisCI`` and ``CodeCov`` are used and  our test suite will live inside our repositary in a ``\tests`` directory.
 
-How to Install
---------------
+Future Installation 
+-------------------
 
 As of now, we primarily distribute our code by having clients clone our github repositary, but we hope to also make it pip-installable. For the future, we plan to package our project using `wheels <https://www.python.org/dev/peps/pep-0427/>`_. This should make it easily pip installable.
 
@@ -121,9 +126,7 @@ Descriptions
 
 We used ``numpy`` arrays as our core data structure, because this will make it easy to perform operations on either single values or single or multidimensional arrays. Our only external dependency should be ``numpy``. 
 
-The main class of this package is the ``Variable`` class and it creates instances of single input varaibles. The class contains arrtibutes such as *name*, *value* and default *derivative*. 
- 
-This module also contais a ``Function`` method that can takes in name of the elementary functions (e.g. :math:`sin, cos, tan, exp` and :math:`log`), instance of the ``Variable`` class and a base with default value of :math:`e` if elementary function is :math:`exp` or :math:`log`.
+The main class of this package is the are ``Variable`` and ``Function`` classes and ``Variable`` creates instances of single input varaibles. This class contains arrtibutes such as *name*, *value* and default *derivative*. On the other hand, ``Function`` classes creates basic elementary function methods (e.g. :math:`sin, cos, tan, exp` and :math:`log`)
 
 
 Future Direction
