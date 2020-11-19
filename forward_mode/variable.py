@@ -15,16 +15,16 @@ class Variable:
 		The constructor for Variable class.
 
 		Parameters:
-			_name (str): name of the variable.
-			_val (float): value of the variable.
-			_der (float): derivative of the variable (default: 1.0).
+			name (str): name of the variable. 
+			val (float): value of the variable. 
+			der (float): derivative of the variable (default: 1.0).
 		'''
 		if isinstance(val, numbers.Number) and isinstance(der, numbers.Number):
 			self._name = name
 			self._val = val
 			self._der = der
 		else:
-			raise TypeError('Value or derivative must be numerical.')
+			raise TypeError('Value and derivative must be numerical.')
 
 	@property
 	def name(self):
@@ -70,8 +70,8 @@ class Variable:
 
 	def __add__(self, other):
 		'''
-		This allows to do addition with Variable instances or scaler number. 
-		AttributeError is caught when input other is not a instance of 
+		This allows to do addition with Variable instances or scalar numbers. 
+		AttributeError is caught when input `other` is not a instance of 
 		Variable class. 
 
 		Parameters:
@@ -163,7 +163,7 @@ class Variable:
 
 	def __rmul__(self, other):
 		'''
-		This is called when int of float / an instance of Varibale class.
+		This is called when int of float / an instance of Variable class.
 
 		Returns Variable: contains new name, new value and new derivative
 		'''
@@ -172,8 +172,8 @@ class Variable:
 
 	def __truediv__(self, other):
 		'''
-		This allows to do Division with Variable instances or scaler number. 
-		AttributeError is caught when input other is not a instance of 
+		This allows to do Division with Variable instances or scalar number. 
+		AttributeError is caught when input `other` is not a instance of 
 		Variable class. 
 
 		Parameters:
@@ -221,8 +221,8 @@ class Variable:
 
 	def __pow__(self, other):
 		'''
-		This allows to do Variable ^ Variable or scaler number. 
-		AttributeError is caught when input other is not a instance of 
+		This allows to do Variable ^ Variable or scalar number. 
+		AttributeError is caught when input `other` is not a instance of 
 		Variable class. 
 
 		Parameters:
@@ -256,22 +256,5 @@ class Variable:
 		new_der = new_val * np.log(other)
 		
 		return Variable(new_name, new_val, new_der)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
+   
     
