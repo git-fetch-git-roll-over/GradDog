@@ -71,15 +71,28 @@ First, from the module ``AutoDiff`` import class ``Variable`` and function ``Fun
 
 Then create an instance of Variable class and construct your elementary functions :math:`sin(x), cos(x)`::
     
-    x = Variable(name='x', val=4)
-    f1 = Function(func='sin', var=x)
-    f2 = Function(func='cos', var=x)
+   x1 = Variable('x', 3)
+   f1 = Function.sin(x1)
+   f2 = Function.cos(x1)
 
 Last create a variable f to add of your f1 and f2 and print out f::
 
-    f = f1 + f2 
+    f = f + f2 
     print(f)
     >>> sinx+cosx: value of -1.4104461161715403; derivative of 0.10315887444431626
+
+Both the values and the derivative values are wrapped up in attributes belonging to these objects. For example:
+
+    val(f1)
+    >>> 0.1411200080598672
+    val(f2)
+    >>> -0.9899924966004454
+    der(f1) 
+    >>> -0.9899924966004454
+    der(f2)
+    >>> -0.1411200080598672
+    der(f)
+    >>> 0.10315887444431626
 
 
 Software organization
@@ -90,27 +103,28 @@ Directory Structure
 
 With our main directory ``cs107-FinalProject``, We plan to organize our package as follows:
 
-* dependencies in ``requriements.txt``
-* continuous integration ``.travis.yml`` 
+* dependencies in ``requirements.txt``
+* continuous integration information in ``.travis.yml`` and coverage information in ``codecov.yml``
 * documentation in ``\docs``
 * test suite in ``\tests``
-* code in ``\codes``
+* code in ``\forward_mode``
 * images in ``\images``
 
 Basic Modules
 -------------
 
-We plan to include one module called ``autodiff`` and it creates instances of single input variable and computes the value and derivative via the forward mode of automatic differentiation.  
+We plan to include two modules: ``variable``, which defines the variable object and the differentiation rules that govern its behavior, and ``function`` which defines the elementary functions (e.g. sine, cosine, logarithms). 
 
-How to Tests
+How to Test
 ------------
 
-Both ``TravisCI`` and ``CodeCov`` are used and  our test suite will live inside our repo in a ``\tests`` directory.
+Both ``TravisCI`` and ``CodeCov`` are used and our test suite will live inside our repo in a ``\tests`` directory. Our project currently has 79% coverage.
+
 
 How to Install
 --------------
 
-As of now, we primarily distribute our code by having clients clone our github repositary, but we hope to also make it pip-installable. For the future, we plan to package our project using `wheels <https://www.python.org/dev/peps/pep-0427/>`_. This should make it easily pip installable.
+As of now, we primarily distribute our code by having clients clone our github repository, but we hope to also make it pip-installable. For the future, we plan to package our project using `wheels <https://www.python.org/dev/peps/pep-0427/>`_. This should make it easily pip installable.
 
 
 Implementation Details
@@ -119,17 +133,17 @@ Implementation Details
 Descriptions
 ------------
 
-We used ``numpy`` arrays as our core data structure, because this will make it easy to perform operations on either single values or single or multidimensional arrays. Our only external dependency should be ``numpy``. 
+Our implementation isn't currently built on any singular data structure, but as we expand to account for multiple inputs we plan to use numpy arrays. This will make it easy to perform operations on either single values or single or multidimensional arrays. 
 
 The main class of this package is the ``Variable`` class and it creates instances of single input variables. The class contains attributes such as *name*, *value* and default *derivative*. 
  
-This module also contais a ``Function`` method that can takes in name of the elementary functions (e.g. :math:`sin, cos, tan, exp` and :math:`log`), instance of the ``Variable`` class and a base with default value of :math:`e` if elementary function is :math:`exp` or :math:`log`.
+This module also contais a ``Function`` method that can create instances of the elementary functions (e.g. :math:`sin, cos, tan, exp` and :math:`log`), evaluated at an instance of the ``Variable`` class with both a derivative and value. If the elementary function is :math:`exp` or :math:`log`, the default base value is   :math:`e`.
 
 
 Future Direction
 ----------------
 
-We are planning to extend our basic automatic differentation package to handle cases where involves multi-dimensional inputs and outputs. We are also interested in implementating an extra feature either with dual numbers or optimization. 
+We are planning to extend our basic automatic differentation package to handle cases where involves multi-dimensional inputs and outputs. We are also interested in implementing an extra feature either with dual numbers or optimization. 
 
 .. toctree::
    :maxdepth: 2
