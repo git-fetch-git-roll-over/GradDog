@@ -7,10 +7,10 @@ class Variable:
 
 	Attributes:
 		_name (str): name of the variable.
-		_val (float): value of the variable.
+		_val (float): value of the variable (default: 0.0)
 		_der (float): derivative of the variable (default: 1.0).
 	'''
-	def __init__(self, name, val, der=1.0):
+	def __init__(self, name, val=0.0, der=1.0):
 		'''
 		The constructor for Variable class.
 
@@ -149,14 +149,14 @@ class Variable:
 		Returns Variable: contains new name, new value and new derivative.
 		'''
 		try: 
-			new_name = self._name + '*' + other._name
+			new_name = '(' + self._name + ')*(' + other._name + ')'
 			new_val = self._val * other._val
 			new_der = self._der * other._val + other._der * self._val
 
 			return Variable(new_name, new_val, new_der)
 
 		except AttributeError: 
-			new_name = self._name + '*' + str(other)
+			new_name = '(' + self._name + ')*(' + str(other) + ')'
 			new_val = self._val * other
 			new_der = self._der * other
 
@@ -183,7 +183,7 @@ class Variable:
 		Returns Variable: contains new name, new value and new derivative.
 		'''
 		try: 
-			new_name = self._name +  '/' + other._name
+			new_name = '(' + self._name +  ')/(' + other._name + ')'
 			new_val = self._val / other._val
 			new_der = (self._der*other._val - self._val*other._der)/(other._val**2)
 
@@ -192,7 +192,7 @@ class Variable:
 		except AttributeError: 
 
 			new_val = self._val / other
-			new_name = self._name + '/' + str(other)
+			new_name = '(' + self._name + ')/(' + str(other) + ')'
 			new_der = self._der / other
 
 			return Variable(new_name, new_val, new_der)
@@ -204,7 +204,7 @@ class Variable:
 		
 		Returns Variable: contains new name, new value and new derivative
 		'''
-		new_name = str(other) + '/' + self._name
+		new_name = '(' + str(other) + ')/(' + self._name + ')'
 		new_val = other / self._val
 		new_der = (-other * self._der) / (self._val)**2
 
@@ -217,7 +217,7 @@ class Variable:
 		
 		Returns Variable: contains instance name, (-1) * instance value and (-1) * instance derivative.
 		'''
-		return Variable(f'-{self._name}', -self._val, -self._der)
+		return Variable(f'-({self._name})', -self._val, -self._der)
 
 
 	def __pow__(self, other):
@@ -232,7 +232,7 @@ class Variable:
 		Returns Variable: contains new name, new value and new derivative.
 		'''
 		try: 
-			log_self = Variable(f'log{self._name}', np.log(self._val), self._der/self._val)
+			log_self = Variable(f'log({self._name})', np.log(self._val), self._der/self._val)
 			new_name = self._name +  '^' + other._name
 			new_val = self._val ** other._val
 			new_der = (log_self._der*other._val + other._der*log_self._val)*new_val
@@ -244,7 +244,7 @@ class Variable:
 			if other == 0:
 				return 1
 			else:
-				return Variable(f'{self._name}^{other}', self._val**other, other*self._val**(other-1)*self._der)
+				return Variable(f'{self._name}^({other})', self._val**other, other*self._val**(other-1)*self._der)
 	
 	def __rpow__(self, other):
 		'''
@@ -252,7 +252,7 @@ class Variable:
 		
 		Returns Variable: contains new name, new value and new derivative
 		'''
-		new_name = f'{other}^{self._name}' 
+		new_name = f'{other}^({self._name})' 
 		new_val = other ** self._val
 		new_der = new_val * np.log(other)
 		
