@@ -136,5 +136,35 @@ def tanh(t : Trace):
     new_der = {x : t._der[x]*4/((np.exp(t.val) + np.exp(-t.val))**2) for x in t._der}
     return Trace(new_name, new_val, new_der)
 
+def sqrt(t : Trace):
+    '''
+    This allows to create sqrt().
+
+    Parameters:
+        t (Trace instance)
+
+    Return Trace that constitues sqrt() elementary function
+    '''
+    new_name = f'sqrt({t._name})'
+    new_val = t.val**0.5
+
+    #derivative of sqrt(x) is x'/(2sqrt(x))
+    new_der = {x : t._der[x]/(2*x**0.5) for x in t._der}
+    return Trace(new_name, new_val, new_der)
+
+def sigmoid(t : Trace):
+    '''
+    This allows to create sigmoid().
+
+    Parameters:
+        t (Trace instance)
+
+    Return Trace that constitues sigmoig() elementary function
+    '''
+    new_name = f'logit({t._name})'
+    new_val = 1/(1 + np.exp(-t.val))
+    new_der = {x : t._der[x]*np.exp(-t.val)/((1 + np.exp(-t.val))**2) for x in t._der}
+    return Trace(new_name, new_val, new_der)
+
 
     

@@ -32,6 +32,3 @@ assert f.jacobian[0] == f_x.val
 assert f.jacobian[1] == f_y.val
 assert f.jacobian[2] == f_z.val
 
-x.val = 0
-
-print(f)
