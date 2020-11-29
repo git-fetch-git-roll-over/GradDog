@@ -40,6 +40,18 @@ class Trace:
 		'''
 		return self._val
 
+	@val.setter
+	def val(self, new_val):
+		'''
+		This resets the _val of a Trace instance
+		'''
+		if isinstance(new_val, numbers.Number):
+			self._val = new_val
+			#self._recalculate()
+
+		else:
+			raise TypeError('Value should be numerical')
+
 	@property
 	def der(self):
 		'''
@@ -48,15 +60,27 @@ class Trace:
 		l = np.array([self._der[x] for x in sorted(self._der)])
 
 		# just give the number if it's a single-var function
-		if len(l) == 1:
+		if len(self._der.keys()) == 1:
 			return l[0]
 		return self._der
+
+	@val.setter
+	def der(self, new_der):
+		'''
+		This resets the _val of a Trace instance
+		'''
+		if isinstance(new_val, numbers.Number):
+			self._val = new_val
+			#self._recalculate()
+
+		else:
+			raise TypeError('Value should be numerical')
 
 	def __repr__(self): 
 		
 		s = f"~~~~~~~~~~~~~  {self._name}  ~~~~~~~~~~~~~~\n"
 		s += f"formula: {self._formula}\n\nvalue: {self._val:.3f}\n\nderivative: {self.der}\n"
-		s += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+		s += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n"
 		return s
 
 	def __add__(self, other):

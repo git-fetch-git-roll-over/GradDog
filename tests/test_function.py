@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from forward_mode.trace import Variable
+from forward_mode.trace import Variable, Trace
 from forward_mode.functions import sin, cos, tan, exp, log
 #from forward_mode.variable import Variable
 #from forward_mode.functions import 

@@ -28,6 +28,10 @@ class MultiFunc:
 				try:
 					j[m,n] = der[x]
 				except KeyError:
+					# a key error means that x is not a variable defined within
+					# the scope of the current function self.funcs[m]
+					# therefore, the derivative of that function
+					# with respect to x is zero
 					j[m,n] = 0
 		self.jacobian = j
 					
