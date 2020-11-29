@@ -1,9 +1,8 @@
 import pytest
 import numpy as np
-from forward_mode.trace import Variable, Trace
+from forward_mode.trace import Variable
 from forward_mode.functions import sin, cos, tan, exp, log
-#from forward_mode.variable import Variable
-#from forward_mode.functions import 
+
 
 def test_sin():
     x1 = Variable('x', 3)
@@ -62,3 +61,5 @@ def test_composition():
     f = c * t + e
     assert isinstance(f, Variable)
     assert f.der == -1*np.sin(value)*np.tan(value) + 1/np.cos(value) + np.exp(value)
+
+test_sin()

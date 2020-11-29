@@ -25,6 +25,8 @@ f_y = 3*x/(y**2) + 4*y
 f_z = (x**z)*log(x)
 print(f)
 
+#print(f.der)
+
 assert f._der['x'] == f_x.val
 assert f._der['y'] == f_y.val
 assert f._der['z'] == f_z.val
