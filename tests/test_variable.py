@@ -70,7 +70,8 @@ def test_variable_neg():
     x2 = -x1
     assert "-" + x1.name ==  x2.name 
     assert -x1.val == x2.val
-    assert -x1.der == x2.der
+    #assert -x1.der == x2.der
+    assert -x1.der['x'] == x2.der['x']
 
 def test_variable_pow():
     x1 = Variable('x', 2)
@@ -79,7 +80,8 @@ def test_variable_pow():
     x4 = x1 ** x1
     x5 = 2 ** x1
     assert x2.val == 4
-    assert x2.der == 4
+    #assert x2.der == 4
+    assert x2.der['x'] == 4
     assert x3 == 1 
     assert x2.name == x1.name + "^" + str(2)
     assert x4.name == x1.name + "^" + x1.name 
@@ -90,7 +92,8 @@ def test_variable_pow():
 def test_polynom():
     x1 = Variable('x', 5)
     f = 3*x1**2 + 2*x1 + 5
-    assert f.der == 32
+    #assert f.der == 32
+    assert f.der['x'] == 32
 
 def test_string_input():
     with pytest.raises(TypeError):
