@@ -13,15 +13,13 @@ def test_tan():
     x1 = Variable('x', 2*np.pi)
     t = tan(x1)
     assert t.val == pytest.approx(0, abs=1e-6)
-    #assert t.der == 1/np.cos(x1.val)**2
-    assert t.der['x'] == 1/np.cos(x1.val)**2
+    assert t.der == 1/np.cos(x1.val)**2
 
 def test_cos():
     x1 = Variable('x', 2*np.pi)
     c = cos(x1)
     assert c.val == 1
-    #assert c.der == pytest.approx(0, abs=1e-6)
-    assert c.der['x'] == pytest.approx(0, abs=1e-6)
+    assert c.der == pytest.approx(0, abs=1e-6)
     
 def test_string_input():
     with pytest.raises(TypeError):
@@ -32,30 +30,26 @@ def test_log_base2():
     base = 2
     f = log(x, base=base)
     assert f.val == 5
-    #assert f.der == 1/(x.val * np.log(base))
-    assert f.der['x'] == 1/(x.val * np.log(base))
+    assert f.der == 1/(x.val * np.log(base))
     
 def test_exp_base2():
     x = Variable('x', 5)
     base = 2
     f = exp(x, base=base)
     assert f.val == 32
-    #assert f.der == (base**x.val)*np.log(base)
-    assert f.der['x'] == (base**x.val)*np.log(base)
+    assert f.der == (base**x.val)*np.log(base)
 
 def test_log():
     x = Variable('x', 4)
     f = log(x)
     assert f.val == np.log(4)
-    #assert f.der == 1/4
-    assert f.der['x'] == 1/4
+    assert f.der == 1/4
 
 def test_exp():
     x = Variable('x', 67)
     f = exp(x)
     assert f.val == np.exp(67)
-    #assert f.der == f.val
-    assert f.der['x'] == f.val
+    assert f.der == f.val
 
 def test_composition():
     value = np.pi/6
@@ -65,5 +59,4 @@ def test_composition():
     e = exp(x)
     f = c * t + e
     assert isinstance(f, Variable)
-    #assert f.der == -1*np.sin(value)*np.tan(value) + 1/np.cos(value) + np.exp(value)
-    assert f.der['x'] == -1*np.sin(value)*np.tan(value) + 1/np.cos(value) + np.exp(value)
+    assert f.der == -1*np.sin(value)*np.tan(value) + 1/np.cos(value) + np.exp(value)
