@@ -1,8 +1,8 @@
 import pytest
 import numpy as np
-from forward_mode.trace import Variable
-from forward_mode.functions import sin, cos, tan, exp, log
-from forward_mode.multifunc import MultiFunc
+from graddog.Variable import Variable
+from graddog.functions import sin, cos, tan, exp, log
+from graddog.multifunc import VectorFunction as vec
 
 # Partial Derivatives example
 def test_threevar():
@@ -25,7 +25,7 @@ def test_threevar():
     y = Variable('y', np.pi/3)
     z = Variable('z', np.pi/4)
 
-    f = MultiFunc([exp(-(sin(x) - cos(y))**2), - log(x) ** 2 + tan(z)])
+    f = vec([exp(-(sin(x) - cos(y))**2), - log(x) ** 2 + tan(z)])
     manual_jacobian = [[-4.76877943e-17, -6.74461263e-1,  0.0], [-5.74972958e-01,  0.0,  2.0]]
     for i in range(f.jacobian.shape[0]):
         for j in range(f.jacobian.shape[1]):
@@ -66,6 +66,6 @@ def test_fivevar():
     assert g_d == g._der['d']
     assert g_e == g._der['e']
     
-    h = MultiFunc([f, g])
+    h = vec([f, g])
     manual_h_jacobian = [[ 0.66666667,  0.28366219, 88.72283911,  0.        ,  4.        ],[ 2.        ,  3.        ,  0.        , -0.99999021,  0.        ]]
     assert h.jacobian == manual_h_jacobian
