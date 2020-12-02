@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from forward_mode.trace import Variable, Trace
+from graddog.variable import Variable
 
 def test_name_reset():
     x1 = Variable('x', 2)

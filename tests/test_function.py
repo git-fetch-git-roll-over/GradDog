@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
-from forward_mode.trace import Variable
-from forward_mode.functions import sin, cos, tan, exp, log
+from graddog.variable import Variable
+from graddog.functions import sin, cos, tan, exp, log
 
 
 def test_sin():
