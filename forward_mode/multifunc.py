@@ -1,6 +1,6 @@
 import numpy as np
-from trace import Variable
-from functions import sin, cos, tan, exp, log
+from forward_mode.trace import Variable
+from forward_mode.functions import sin, cos, tan, exp, log
 from functools import reduce
 
 class MultiFunc:

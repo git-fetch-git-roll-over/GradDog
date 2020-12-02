@@ -16,7 +16,10 @@ class Trace:
 		'''
 		self._formula = formula
 		self._name = 'output'
-		self._val = val
+		if isinstance(val, numbers.Number):
+			self._val = val
+		else:
+			raise TypeError('Value should be numerical')
 		self._der = der
 
 	@property
@@ -63,7 +66,6 @@ class Trace:
 		if len(l) == 1:
 			return l[0]
 		return self._der
-
 
 
 	def __repr__(self): 
