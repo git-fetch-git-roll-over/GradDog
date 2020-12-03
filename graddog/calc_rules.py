@@ -1,6 +1,5 @@
 # :)
 import numpy as np
-from graddog.compgraph import CompGraph
 
 # TODO: convert lambda expressions to closure functions where appropriate
 
