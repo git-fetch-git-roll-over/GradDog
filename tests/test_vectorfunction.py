@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from graddog.Variable import Variable
+from graddog.variable import Variable
 from graddog.functions import sin, cos, tan, exp, log
 from graddog.multifunc import VectorFunction as vec
 

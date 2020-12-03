@@ -2,3 +2,4 @@ numpy
 pytest
 codecov
 pytest-cov
+pandas
