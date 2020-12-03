@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 from graddog.variable import Variable
+from graddog.trace import Trace
 from graddog.functions import sin, cos, tan, exp, log
 
 

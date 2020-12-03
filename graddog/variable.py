@@ -7,7 +7,9 @@ class Variable(Trace):
 
 	def __init__(self, name, val):
 		# by default, the derivative of a variable with respect to itself is 1.0
+
 		super().__init__(name, val, {name : 1.0}, is_var = True)
+		self._name = name
 
 	@property
 	def val(self):

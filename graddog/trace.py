@@ -253,7 +253,7 @@ class Trace:
 			if other == 0:
 				new_formula = '1'
 			else:
-				new_formula = f'({self._trace_name}^{other})'
+				new_formula = f'{self._trace_name}^{other}'
 			new_val = self._val**other
 		new_der = calc_rules.deriv(self, '^', other)
 		return Trace(new_formula, new_val, new_der) 
@@ -264,7 +264,7 @@ class Trace:
 		
 		Returns Trace: contains new formula, new value and new derivative
 		'''
-		new_formula = f'{other}^({self._trace_name})' 
+		new_formula = f'{other}^{self._trace_name}' 
 		new_val = other ** self._val
 		new_der = calc_rules.deriv(self, '^R', other)
 		return Trace(new_formula, new_val, new_der) 
