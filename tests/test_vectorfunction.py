@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from graddog.variable import Variable
 from graddog.functions import sin, cos, tan, exp, log
-from graddog.multifunc import VectorFunction as vec
+from graddog.functions import VectorFunction as vec
 
 # Partial Derivatives example
 def test_threevar():
