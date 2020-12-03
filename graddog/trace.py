@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import graddog.calc_rules as calc_rules
 from graddog.compgraph import CompGraph
+import numbers
 
 # TODO: dunder methods for comparison operators like __lt__ <
 
@@ -39,7 +40,10 @@ class Trace:
 		'''
 		self._formula = formula
 		self._name = 'output'
-		self._val = val
+		if isinstance(val, numbers.Number):
+			self._val = val
+		else:
+			raise TypeError('Value should be numerical')
 		self._der = der
 
 		CG = CompGraph.instance
