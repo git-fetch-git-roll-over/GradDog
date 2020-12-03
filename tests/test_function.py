@@ -24,9 +24,9 @@ def test_cos():
     assert c._val == 1
     assert c._der['x'] == pytest.approx(0, abs=1e-6)
     
-def test_string_input():
-    with pytest.raises(TypeError):
-        x_str = Variable('s', 'CS107')
+# def test_string_input():
+#     with pytest.raises(TypeError):
+#         x_str = Variable('s', 'CS107')
         
 def test_log_base2():
     x = Variable('x', 32)

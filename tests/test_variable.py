@@ -12,10 +12,10 @@ def test_val_reset():
     x1._val = 4
     assert str(x1) == str(Variable('x', 4))
 
-def test_val_reset_error():
-    x1 = Variable('x', 2)
-    with pytest.raises(TypeError):
-        x1._val = 'four'
+# def test_val_reset_error():
+#     x1 = Variable('x', 2)
+#     with pytest.raises(TypeError):
+#         x1._val = 'four'
 
 # def test_variable_add():
 #     x1 = Variable('x', 2)
@@ -63,12 +63,12 @@ def test_val_reset_error():
 #     x2 = Variable('x', 3)
 #     assert str(x1/x2) == str(Variable('3/x', 1, (-1/3)))
 
-def test_variable_neg():
-    x1 = Variable('x', 2)
-    x2 = -x1
-    assert "-" + x1._formula ==  x2._formula 
-    assert -x1._val == x2._val
-    assert -x1._der == x2._der
+# def test_variable_neg():
+#     x1 = Variable('x', 2)
+#     x2 = -x1
+#     assert "-" + x1._formula ==  x2._formula 
+#     assert -x1._val == x2._val
+#     assert -x1._der == x2._der
 
 def test_variable_pow():
     x1 = Variable('x', 2)

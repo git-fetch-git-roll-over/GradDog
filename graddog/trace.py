@@ -82,11 +82,11 @@ class Trace:
 			return 0
 
 	def __repr__(self): 
-		
-		s = f"~~~~~~~~~~~~~  {self._name}  ~~~~~~~~~~~~~~\n"
-		s += f"formula: {self._formula}\n\nvalue: {self._val:.3f}\n\nderivative: {self.der}\n"
-		s += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n"
-		return s
+		# s = f"~~~~~~~~~~~~~  {self._name}  ~~~~~~~~~~~~~~\n"
+		# s += f"formula: {self._formula}\n\nvalue: {self._val:.3f}\n\nderivative: {self.der}\n"
+		# s += "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n"
+		# return s
+		return self._name
 
 	@property
 	def trace_table(self):
