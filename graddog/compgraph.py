@@ -2,6 +2,14 @@ import numpy as np
 import pandas as pd
 import graddog.calc_rules as calc_rules
 
+# TODO: come up with a better name for this class
+
+# TODO: add docstrings and examples
+
+# TODO: choose better location for reverse_mode
+
+# TODO:
+
 class CompGraph:
 
 	# implements the singleton design pattern 
@@ -30,7 +38,7 @@ class CompGraph:
 
 			if formula in self.var_names:
 				self.reset()
-				return self.add_var(formula, val)
+				return self.add_var(var)
 			else:
 				'''
 				TODO: instead of resetting the table when a variable is replaced,
@@ -122,6 +130,7 @@ class CompGraph:
 			res = {}
 			i = self.size - 1
 			trace = self.table.loc[i]['trace_name']
+			n_traces = int(trace[1:])
 			res = {trace : 1.0}
 			while i > 0:
 				i -= 1

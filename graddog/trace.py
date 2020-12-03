@@ -4,6 +4,13 @@ import pandas as pd
 import graddog.calc_rules as calc_rules
 from graddog.compgraph import CompGraph
 
+# TODO: dunder methods for comparison operators like __lt__ <
+
+# TODO: add missing docstrings
+
+# TODO (optional): replace hard-coded strings with Ops strings
+# e.g. use calc_rules.Ops.
+
 class Trace:
 	'''
 	This is a class for creating single Trace element.

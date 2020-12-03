@@ -2,6 +2,12 @@
 import numpy as np
 from graddog.compgraph import CompGraph
 
+# TODO: convert lambda expressions to closure functions where appropriate
+
+# TODO: how can this be organized better?
+
+# TODO: How do we distinguish that this file is meant for internal use and not for the user?
+
 class Ops:
 
 	sin = 'sin'
@@ -18,30 +24,30 @@ class Ops:
 	const_exp_R = '^R'
 	const_mul = '*'
 	const_div = '/'
-	const_divR = '/R'
+	const_div_R = '/R'
 	const_add = '+'
 	const_sub = '-'
-	const_subR = '-R'
+	const_sub_R = '-R'
 
 	deriv_rules = {
-	'sin' : lambda t, param : np.cos(t.val),
-	'cos' : lambda t, param : -np.sin(t.val),
-	'tan' : lambda t, param : 1/(np.cos(t.val)**2),
-	'exp' : lambda t, param : np.power(param, t.val)*np.log(param),
-	'log' : lambda t, param : 1/(t.val*np.log(param)),
-	'sqrt' : lambda t, param : 1/(2*t.val**0.5),
-	'sigm' : lambda t, param : np.exp(-t.val)/((1 + np.exp(-t.val))**2),
-	'sinh' : lambda t, param : (np.exp(t.val) + np.exp(-t.val))/2,
-	'cosh' : lambda t, param : (np.exp(t.val) - np.exp(-t.val))/2,
-	'tanh' : lambda t, param : 4/((np.exp(t.val) + np.exp(-t.val))**2),
-	'^' : lambda t, param : param*t._val**(param-1),
-	'^R' : lambda t, param : param ** t._val * np.log(param),
-	'*' : lambda t, param : param,
-	'/' : lambda t, param : 1/param,
-	'/R' : lambda t, param : -param / ((t._val)**2),
-	'+' : lambda t, param : 1.0,
-	'-' : lambda t, param : 1.0,
-	'-R' : lambda t, param : -1.0
+	sin : lambda t, param : np.cos(t.val),
+	cos : lambda t, param : -np.sin(t.val),
+	tan : lambda t, param : 1/(np.cos(t.val)**2),
+	exp : lambda t, param : np.power(param, t.val)*np.log(param),
+	log : lambda t, param : 1/(t.val*np.log(param)),
+	sqrt : lambda t, param : 1/(2*t.val**0.5),
+	sigm : lambda t, param : np.exp(-t.val)/((1 + np.exp(-t.val))**2),
+	sinh : lambda t, param : (np.exp(t.val) + np.exp(-t.val))/2,
+	cosh : lambda t, param : (np.exp(t.val) - np.exp(-t.val))/2,
+	tanh : lambda t, param : 4/((np.exp(t.val) + np.exp(-t.val))**2),
+	const_exp: lambda t, param : param*t._val**(param-1),
+	const_exp_R : lambda t, param : param ** t._val * np.log(param),
+	const_mul: lambda t, param : param,
+	const_div: lambda t, param : 1/param,
+	const_div_R : lambda t, param : -param / ((t._val)**2),
+	const_add: lambda t, param : 1.0,
+	const_sub: lambda t, param : 1.0,
+	const_sub_R : lambda t, param : -1.0
 	}
 
 def deriv_1(t, op, partial = False, param = None):

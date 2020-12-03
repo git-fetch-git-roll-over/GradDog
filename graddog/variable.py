@@ -65,4 +65,4 @@ def get_xyz(seed):
 
 def get_vars(names, seed):
 	assert len(names) == len(seed)
-	return (Variable(names[i], seed[i]) for i in range(len(names)))
+	return list(Variable(names[i], seed[i]) for i in range(len(names)))

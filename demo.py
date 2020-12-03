@@ -1,5 +1,7 @@
 # :)
 
-from graddog.demo import demo1, demo2, demo3, demo4, demo5
+from graddog.demo import run_demos
+import graddog
 
-demo5()
+#run_demos()
+graddog.demo.demo5()
