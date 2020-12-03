@@ -254,7 +254,6 @@ class Trace:
 		try: 
 			new_formula = self._trace_name +  '^' + other._trace_name
 			new_val = self._val ** other._val
-			new_der = calc_rules.deriv(self, '^', other)
 		except AttributeError: 
 			if other == 0:
 				new_formula = '1'

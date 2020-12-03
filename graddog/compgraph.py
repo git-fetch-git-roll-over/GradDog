@@ -82,6 +82,9 @@ class CompGraph:
 			self.size += 1
 			return 'v' + str(self.size)
 
+		# def reverse_mode(self):
+			
+
 		@property
 		def comp_graph(self):
 			return {'in' : self.ins, 'out' : self.outs}
