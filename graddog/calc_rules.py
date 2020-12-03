@@ -90,7 +90,7 @@ def deriv(t, op, other = None, partial_only = False):
 
 	result = None
 
-	if not other:
+	if not other and other != 0:
 		result = deriv_1(t, op, partial_only)
 	else:
 		try:
