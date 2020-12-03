@@ -6,10 +6,25 @@ from graddog.compgraph import CompGraph
 
 # TODO: dunder methods for comparison operators like __lt__ <
 
+# TODO: figure out how to recursively print a trace object's FULL formula 
+# because a Trace element no longer stores its full own formula
+# e.g.
+
+# f = sin(x) - cos(3y)
+
+# v1 = x
+# v2 = y
+# v3 = sin(v1)
+# v4 = 3*v2
+# v5 = cos(v4)
+# v6 = v3 - v5 <------ f
+
+
+
 # TODO: add missing docstrings
 
 # TODO (optional): replace hard-coded strings with Ops strings
-# e.g. use calc_rules.Ops.
+
 
 class Trace:
 	'''
@@ -82,7 +97,7 @@ class Trace:
 			return list(self._der.values())[0]
 		return self._der
 
-	def der_of(self, key):
+	def der_wrt(self, key):
 		try:
 			return self._der[key]
 		except KeyError:

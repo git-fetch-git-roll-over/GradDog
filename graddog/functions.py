@@ -4,6 +4,8 @@ from graddog.trace import Trace
 from graddog.compgraph import CompGraph
 from functools import reduce
 
+# TODO: should VectorFunction be in its own file?
+
 class VectorFunction:
     def __init__(self, funcs):
         self.funcs = funcs
@@ -18,7 +20,7 @@ class VectorFunction:
     def calculate_jacobian(self):
         M = len(self.total_variables)
         N = len(self.funcs)
-        self.jacobian = np.array([[self.funcs[n].der_of(self.total_variables[m]) for m in range(M)] for n in range(N)])
+        self.jacobian = np.array([[self.funcs[n].der_wrt(self.total_variables[m]) for m in range(M)] for n in range(N)])
 
     @property
     def name(self):

@@ -8,7 +8,9 @@ import graddog.calc_rules as calc_rules
 
 # TODO: choose better location for reverse_mode
 
-# TODO:
+# TODO: fix redundancy between add_var and add_trace
+
+# TODO: figure out how to pass in parent nodes as a param to add_trace instead of the godawful read_formula method
 
 class CompGraph:
 
@@ -40,10 +42,6 @@ class CompGraph:
 				self.reset()
 				return self.add_var(var)
 			else:
-				'''
-				TODO: instead of resetting the table when a variable is replaced,
-				just delete the old info from the table that's no longer relevant
-				'''
 				self.var_names.append(formula)
 				
 				if self.size > 0:
