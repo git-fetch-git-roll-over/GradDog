@@ -8,7 +8,6 @@ from graddog.functions import sin, cos, tan, exp, log
 def test_sin():
     x1 = Variable('x', 3)
     g = sin(x1)
-    
     assert g._der['x'] == pytest.approx(np.cos(3))
 
 

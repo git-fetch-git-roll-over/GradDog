@@ -49,9 +49,10 @@ def demo4():
 	f = trace(f, [1,2,3])
 	f.name = 'A sample function from Rm --> Rn'
 	print(f.der)
+	CompGraph.show_trace_table()
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 #demo1()
 #demo2()
 #demo3()
-demo4()
+#demo4()

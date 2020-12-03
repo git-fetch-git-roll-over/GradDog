@@ -24,26 +24,32 @@ class CompGraph:
 
 		def add_var(self, formula, val):
 
-			assert formula not in self.var_names
-
-			self.var_names.append(formula)
-			
-			if self.size > 0:
-				# create new column for derivatives with respect to this new var
-				self.table['der_'+formula] = np.zeros(shape = (self.size,))
+			if formula in self.var_names:
+				self.reset()
+				self.add_var(formula, val)
 			else:
-				self.table['der_'+formula] = [1.0]
+				'''
+				TODO: instead of resetting the table when a variable is replaced,
+				just delete the old info from the table that's no longer relevant
+				'''
+				self.var_names.append(formula)
+				
+				if self.size > 0:
+					# create new column for derivatives with respect to this new var
+					self.table['der_'+formula] = np.zeros(shape = (self.size,))
+				else:
+					self.table['der_'+formula] = [1.0]
 
-			new_trace_name = self.new_trace_name()
+				new_trace_name = self.new_trace_name()
 
-			self.outs[new_trace_name] = []
-			self.ins[new_trace_name] = []
+				self.outs[new_trace_name] = []
+				self.ins[new_trace_name] = []
 
-			# create new row for this new var
-			self.table.loc[self.size - 1] = [new_trace_name, 'INPUT', formula, val] + [0.0 for _ in range(self.num_vars)] + [1.0]
+				# create new row for this new var
+				self.table.loc[self.size - 1] = [new_trace_name, 'INPUT', formula, val] + [0.0 for _ in range(self.num_vars)] + [1.0]
 
-			self.num_vars += 1
-			return new_trace_name
+				self.num_vars += 1
+				return new_trace_name
 
 		def add_trace(self, formula, val, der):
 			# if you are calculating a term already in the table, just look it up (e.g. f = x*y + exp(x*y))
@@ -110,4 +116,3 @@ class CompGraph:
 
 
 
-			
