@@ -1,8 +1,8 @@
 import numpy as np
-from variable import get_x, get_xy, get_xyz, trace, get_vars
-from functions import sin, cos, tan, exp, log
-from functions import VectorFunction as vec
-from compgraph import CompGraph
+from graddog.variable import get_x, get_xy, get_xyz, trace, get_vars
+from graddog.functions import sin, cos, tan, exp, log
+from graddog.functions import VectorFunction as vec
+from graddog.compgraph import CompGraph
 
 def demo0():
 	pass

@@ -1,6 +1,6 @@
 import numbers
-from trace import Trace
-from functions import VectorFunction
+from graddog.trace import Trace
+from graddog.functions import VectorFunction
 import numpy as np
 
 # TODO: change assert statements to ValueError exception handlers

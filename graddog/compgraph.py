@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import calc_rules as calc_rules
+import graddog.calc_rules as calc_rules
 
 # TODO: come up with a better name for this class
 
