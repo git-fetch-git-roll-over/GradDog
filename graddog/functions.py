@@ -1,7 +1,7 @@
 import numpy as np
-import graddog.calc_rules as calc_rules
-from graddog.trace import Trace
-from graddog.compgraph import CompGraph
+import calc_rules as calc_rules
+from trace import Trace
+from compgraph import CompGraph
 from functools import reduce
 
 # TODO: should VectorFunction be in its own file?

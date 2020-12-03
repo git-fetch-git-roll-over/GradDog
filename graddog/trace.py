@@ -1,8 +1,8 @@
 # :)
 import numpy as np
 import pandas as pd
-import graddog.calc_rules as calc_rules
-from graddog.compgraph import CompGraph
+import calc_rules as calc_rules
+from compgraph import CompGraph
 
 # TODO: dunder methods for comparison operators like __lt__ <
 

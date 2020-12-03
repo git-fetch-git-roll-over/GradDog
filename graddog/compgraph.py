@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import graddog.calc_rules as calc_rules
+import calc_rules as calc_rules
 
 # TODO: come up with a better name for this class
 
@@ -32,7 +32,7 @@ class CompGraph:
 			self.outs = {}
 			self.ins = {}
 			self.traces = {}
-			self.partials = {}
+			self.partials = {} # use for reverse mode
 			self.table = pd.DataFrame(columns = ['trace_name', 'label', 'formula', 'val'])
 
 		def add_var(self, var):

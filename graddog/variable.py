@@ -1,7 +1,12 @@
 import numbers
-from graddog.trace import Trace
-from graddog.functions import VectorFunction
+from trace import Trace
+from functions import VectorFunction
 import numpy as np
+
+# TODO: change assert statements to ValueError exception handlers
+
+# TODO: better name for trace function
+# reminder: the trace function exists to create a trace object based on a function
 
 class Variable(Trace):
 
@@ -62,6 +67,10 @@ def get_xy(seed):
 def get_xyz(seed):
 	assert len(seed) == 3
 	return get_vars(['x', 'y', 'z'], seed)
+
+def get_abc(seed):
+	assert len(seed) == 3
+	return get_vars(['a', 'b', 'c'], seed)
 
 def get_vars(names, seed):
 	assert len(names) == len(seed)
