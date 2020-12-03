@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import graddog.calc_rules as calc_rules
 
 class CompGraph:
 
@@ -7,9 +8,9 @@ class CompGraph:
 	# so that only one instance of a CompGraph object ever exists
 
 	class __CompGraph:
-		def __init__(self, formula, val):
+		def __init__(self, trace):
 			self.reset()
-			self.add_var(formula, val)
+			self.add_var(trace)
 
 		def __str__(self):
 			return repr(self)
@@ -20,9 +21,12 @@ class CompGraph:
 			self.var_names = []
 			self.outs = {}
 			self.ins = {}
+			self.traces = {}
+			self.partials = {}
 			self.table = pd.DataFrame(columns = ['trace_name', 'label', 'formula', 'val'])
 
-		def add_var(self, formula, val):
+		def add_var(self, var):
+			formula, val = var._formula, var.val
 
 			if formula in self.var_names:
 				self.reset()
@@ -42,6 +46,8 @@ class CompGraph:
 
 				new_trace_name = self.new_trace_name()
 
+				self.traces[new_trace_name] = var
+
 				self.outs[new_trace_name] = []
 				self.ins[new_trace_name] = []
 
@@ -51,7 +57,28 @@ class CompGraph:
 				self.num_vars += 1
 				return new_trace_name
 
-		def add_trace(self, formula, val, der):
+		def read_formula(self, formula):
+			if formula[0]=='-':
+				trace1 = self.traces[formula[1:]]
+				op = '-R'
+				trace2 = 0
+			elif '(' in formula:
+				i1 = formula.index('(')
+				op = formula[:i1]
+				trace1 = self.traces[formula[i1+1:-1]]
+				trace2 = None
+				if op in ['exp', 'log'] : trace2 = np.e
+			else:
+				trace1 = self.traces[formula[:2]]
+				try:
+					op, trace2 = formula[2:-2], self.traces[formula[-2:]]
+				except KeyError:
+					op, trace2 = formula[2:-1], float(formula[-1:])
+			return trace1, op, trace2
+
+		def add_trace(self, trace):
+			formula, val, der = trace._formula, trace.val, trace._der
+
 			# if you are calculating a term already in the table, just look it up (e.g. f = x*y + exp(x*y))
 			already = self.table.loc[self.table['formula'] == formula]
 			if not already.empty:
@@ -68,6 +95,15 @@ class CompGraph:
 					self.outs[x].append(new_trace_name)
 
 			self.outs[new_trace_name] = []
+
+			self.traces[new_trace_name] = trace
+
+			t, op, other = self.read_formula(formula)
+
+			partial_der = calc_rules.deriv(t, op, other, partial = True)
+
+			self.partials[new_trace_name] = partial_der
+
 			derivs = []
 			for x in self.var_names:
 				if x in der:
@@ -82,8 +118,24 @@ class CompGraph:
 			self.size += 1
 			return 'v' + str(self.size)
 
-		# def reverse_mode(self):
-			
+		def reverse_mode_der(self):
+			res = {}
+			i = self.size - 1
+			trace = self.table.loc[i]['trace_name']
+			res = {trace : 1.0}
+			while i > 0:
+				i -= 1
+				trace = self.table.loc[i]['trace_name']
+				r = 0
+				for out_ in self.outs[trace]:
+					d1 = res[out_] 
+					d2 = self.partials[out_][trace]
+					r += d1 * d2
+				res[trace] = r
+			return {x : res[self.get_trace_name(x)] for x in self.var_names}
+
+		def get_trace_name(self, var_name):
+			return self.table.loc[self.table['formula'] == var_name]['trace_name'].iloc[0]
 
 		@property
 		def comp_graph(self):
@@ -94,9 +146,9 @@ class CompGraph:
 
 	instance = None
 
-	def __init__(self, formula, val):
+	def __init__(self, trace):
 		if not CompGraph.instance:
-			CompGraph.instance = CompGraph.__CompGraph(formula, val)
+			CompGraph.instance = CompGraph.__CompGraph(trace)
 
 	def __getattr__(self, name):
 		return getattr(self.instance, name)
@@ -113,9 +165,17 @@ class CompGraph:
 		if CompGraph.instance:
 			print(CompGraph.instance.comp_graph)
 
+	def show_partials():
+		if CompGraph.instance:
+			print(CompGraph.instance.partials)
+
 	def reset():
 		if CompGraph.instance:
 			CompGraph.instance.reset()
+
+	def reverse_mode():
+		if CompGraph.instance:
+			print(CompGraph.instance.reverse_mode_der())
 
 
 

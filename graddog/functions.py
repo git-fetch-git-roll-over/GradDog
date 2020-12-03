@@ -101,7 +101,7 @@ def exp(t : Trace, base=np.e):
     else:
         new_formula = f'{np.round(base,3)} ^ ({t._trace_name})'
     new_val = np.power(base, t.val)
-    new_der = calc_rules.deriv(t, 'exp', base)
+    new_der = calc_rules.deriv(t, 'exp', other=base)
     return Trace(new_formula, new_val, new_der)
 
 def log(t : Trace, base=np.e):

@@ -1,5 +1,6 @@
 # :)
 import numpy as np
+from graddog.compgraph import CompGraph
 
 class Ops:
 
@@ -38,32 +39,26 @@ class Ops:
 	'*' : lambda t, param : param,
 	'/' : lambda t, param : 1/param,
 	'/R' : lambda t, param : -param / ((t._val)**2),
-	'+' : lambda t, param : 1,
-	'-' : lambda t, param : 1,
-	'-R' : lambda t, param : -1
+	'+' : lambda t, param : 1.0,
+	'-' : lambda t, param : 1.0,
+	'-R' : lambda t, param : -1.0
 	}
 
-	bi_deriv_rules = {
-	'+' : [lambda t1, t2, x: t1._der[x] + t2._der[x], lambda t1, t2, x: t1._der[x], lambda t1, t2, x: t2._der[x]],
-	'-' : [lambda t1, t2, x: t1._der[x] - t2._der[x], lambda t1, t2, x: t1._der[x], lambda t1, t2, x: -t2._der[x]],
-	'*' : [lambda t1, t2, x: t1._der[x]*t2._val + t2._der[x]*t1._val, lambda t1, t2, x: t1._der[x]*t2._val, lambda t1, t2, x: t2._der[x]*t1._val],
-	'/' : [lambda t1, t2, x : (t1._der[x]*t2._val - t1._val*t2._der[x])/(t2._val**2), lambda t1, t2, x : t1._der[x] / t2._val, lambda t1, t2, x : (-t1._val * t2._der[x]) / (t2._val)**2],
-	'^' : [lambda t1, t2, x: (t1.val ** t2.val) * (t2._der[x]*np.log(t1._val) + t2._val*t1._der[x]/t1._val), lambda t1, t2, x: t2._val * t1._der[x] * (t1._val ** (t2._val - 1)), lambda t1, t2, x: (t1.val ** t2.val) * t2._der[x]*np.log(t1._val)]
-	}
-
-def deriv_1(t, op, partial_only = False, param = None):
+def deriv_1(t, op, partial = False, param = None):
 	'''
-	Deriv of single-input operators, or double-digit operators with one scalar input
+	Deriv of single-input operators, or double-input operators with one scalar input
 	'''
 
 	# d_op_dx = d_op_dt * dt_dx
 	d_op_dt = Ops.deriv_rules[op](t, param)
 
-	if partial_only: return d_op_dt
+	result = {x : t._der[x] * d_op_dt for x in t._der}
 
-	return {x : t._der[x] * d_op_dt for x in t._der}
+	if partial: return result, {t._trace_name : d_op_dt}
 
-def deriv_2(t1, op, t2, partial_only = False):
+	return result, None
+
+def deriv_2(t1, op, t2, partial = False):
 
 	'''
 	Deriv of double-input operators
@@ -73,31 +68,50 @@ def deriv_2(t1, op, t2, partial_only = False):
 	b) when x in t1 and not in t2
 	c) when x in t2 and not in t1
 	'''
+
+	bi_deriv_rules = {
+	'+' : [lambda t1, t2, x: t1._der[x] + t2._der[x], lambda t1, t2, x: t1._der[x], lambda t1, t2, x: t2._der[x]],
+	'-' : [lambda t1, t2, x: t1._der[x] - t2._der[x], lambda t1, t2, x: t1._der[x], lambda t1, t2, x: -t2._der[x]],
+	'*' : [lambda t1, t2, x: t1._der[x]*t2._val + t2._der[x]*t1._val, lambda t1, t2, x: t1._der[x]*t2._val, lambda t1, t2, x: t2._der[x]*t1._val],
+	'/' : [lambda t1, t2, x : (t1._der[x]*t2._val - t1._val*t2._der[x])/(t2._val**2), lambda t1, t2, x : t1._der[x] / t2._val, lambda t1, t2, x : (-t1._val * t2._der[x]) / (t2._val)**2],
+	'^' : [lambda t1, t2, x: (t1.val ** t2.val) * (t2._der[x]*np.log(t1._val) + t2._val*t1._der[x]/t1._val), lambda t1, t2, x: t2._val * t1._der[x] * (t1._val ** (t2._val - 1)), lambda t1, t2, x: (t1.val ** t2.val) * t2._der[x]*np.log(t1._val)]
+	}
+
 	new_der = {}
 
 	for x in t1._der:
 		if x in t2._der:
-			new_der[x] = Ops.bi_deriv_rules[op][0](t1, t2, x) #function to combine derivs when x is in the domain of both functions
+			new_der[x] = bi_deriv_rules[op][0](t1, t2, x) #function to combine derivs when x is in the domain of both functions
 		else:
-			new_der[x] = Ops.bi_deriv_rules[op][1](t1, t2, x) #function to combine derivs when x is in the domain of t1 only
+			new_der[x] = bi_deriv_rules[op][1](t1, t2, x) #function to combine derivs when x is in the domain of t1 only
 	for x in t2._der:
 		if x not in t1._der:
-			new_der[x] = Ops.bi_deriv_rules[op][2](t1, t2, x) #function to combine derivs when x is in the domain of t2 only
+			new_der[x] = bi_deriv_rules[op][2](t1, t2, x) #function to combine derivs when x is in the domain of t2 only
 
-	return new_der
+	if partial: 
+		if op == '+' : return new_der, {t1._trace_name : 1.0, t2._trace_name : 1.0}
+		elif op == '-' : return new_der, {t1._trace_name : 1.0, t2._trace_name : -1.0}
+		elif op == '*' : return new_der, {t1._trace_name : t2.val, t2._trace_name : t1.val}
+		elif op == '/' : return new_der, {t1._trace_name : 1/t2.val, t2._trace_name : -t1.val/(t2.val**2)}
 
-def deriv(t, op, other = None, partial_only = False):
+		elif op == '^' : return {t1._trace_name : 1.0, t2._trace_name : 1.0} # skip implementing this for now
+		
+	else:
+		return new_der, None
+
+def deriv(t, op, other = None, partial = False):
 
 	result = None
 
-	if not other and other != 0:
-		result = deriv_1(t, op, partial_only)
+	if other is None:
+		result, partial = deriv_1(t, op, partial)
 	else:
 		try:
-			result = deriv_2(t, op, other, partial_only)
+			result, partial = deriv_2(t, op, other, partial)
 		except AttributeError:
-			result = deriv_1(t, op, partial_only, other)
-
+			result, partial = deriv_1(t, op, partial, other)
+	if partial:
+		return partial
 	return result
 
 

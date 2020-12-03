@@ -23,11 +23,11 @@ class Trace:
 		CG = CompGraph.instance
 		try:
 			if is_var:
-				self._trace_name = CG.add_var(formula, val)
+				self._trace_name = CG.add_var(self)
 			else:
-				self._trace_name = CG.add_trace(formula, val, der)
+				self._trace_name = CG.add_trace(self)
 		except AttributeError:
-			CompGraph(formula, val)
+			CompGraph(self)
 			self._trace_name = 'v1'
 			
 	@property

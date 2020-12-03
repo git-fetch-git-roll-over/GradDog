@@ -1,5 +1,5 @@
 import numpy as np
-from graddog.variable import get_xy, get_xyz, trace
+from graddog.variable import get_xy, get_xyz, trace, get_vars
 from graddog.functions import sin, cos, tan, exp, log
 from graddog.functions import VectorFunction as vec
 from graddog.compgraph import CompGraph
@@ -16,11 +16,13 @@ def demo1():
 def demo2():
 	print('demo 2')
 	CompGraph.reset()
-	x, y, z = get_xyz(seed = [np.pi/2,np.pi/3,np.pi/4])
-	f = vec([
-		exp(-(sin(x) - cos(y))**2), 
-		sin(- log(x) ** 2 + tan(z))
-	])
+	x, y = get_xy(seed = [np.pi/2, np.pi/3])
+	f = exp(-(sin(x) - cos(y))**2)
+	# x, y, z = get_xyz(seed = [np.pi/2,np.pi/3,np.pi/4])
+	# f = vec([
+	# 	exp(-(sin(x) - cos(y))**2), 
+	# 	sin(- log(x) ** 2 + tan(z))
+	# ])
 	f.name = 'Cost'
 	print(f.der)
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -34,7 +36,6 @@ def demo3():
 
 	# convert a function of an iterable into a Trace object
 	f = trace(f, [1,2,3])
-
 	print(f.der)
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
@@ -49,10 +50,18 @@ def demo4():
 	f = trace(f, [1,2,3])
 	f.name = 'A sample function from Rm --> Rn'
 	print(f.der)
-	CompGraph.show_trace_table()
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-#demo1()
-#demo2()
-#demo3()
-#demo4()
+def demo5():
+	print('demo 5')
+	CompGraph.reset()
+	#x, y, z = get_xyz(seed = [np.pi/2,np.pi/3,np.pi/4])
+	w1, w2, w3, w4, w5 = get_vars(['w1', 'w2', 'w3', 'w4', 'w5'], seed = [2,1,1,1,1])
+	f = w1*w2*w3*w4*w5
+	# convert a function of an iterable into a Trace object
+	#f = trace(f, [1,2,3])
+	CompGraph.show_trace_table()
+	CompGraph.reverse_mode()
+	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+
