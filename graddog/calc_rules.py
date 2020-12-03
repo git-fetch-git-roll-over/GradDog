@@ -1,36 +1,39 @@
 # :)
 import numpy as np
 
-def deriv_1(t, op, param = None):
+def deriv_1(t, op, partial_only = False, param = None):
 	'''
 	Deriv of single-input operators, or double-digit operators with one scalar input
 	'''
-	op_dict = {
-	'sin' : lambda t : {x : np.cos(t.val)*t._der[x] for x in t._der},
-	'cos' : lambda t : {x : -np.sin(t.val)*t._der[x] for x in t._der},
-	'tan' : lambda t : {x : t._der[x]/(np.cos(t.val)**2) for x in t._der},
-	'exp' : lambda t : {x : np.exp(t.val)*t._der[x] for x in t._der},
-	'log' : lambda t : {x : t._der[x]/t.val for x in t._der},
-	'sqrt' : lambda t : {x : t._der[x]/(2*t.val**0.5) for x in t._der},
-	'sigm' : lambda t : {x : t._der[x]*np.exp(-t.val)/((1 + np.exp(-t.val))**2) for x in t._der},
-	'sinh' : lambda t : {x : t._der[x]*(np.exp(t.val) + np.exp(-t.val))/2 for x in t._der},
-	'cosh' : lambda t : {x : t._der[x]*(np.exp(t.val) - np.exp(-t.val))/2 for x in t._der},
-	'tanh' : lambda t : {x : t._der[x]*4/((np.exp(t.val) + np.exp(-t.val))**2) for x in t._der},
-	'^' : lambda t : {x : param*t._val**(param-1)*t._der[x] for x in t._der},
-	'^R' : lambda t : {x : param ** t._val * np.log(param) * t._der[x] for x in t._der},
-	'*' : lambda t : {x : t._der[x] * param for x in t._der},
-	'/' : lambda t : {x : t._der[x] / param for x in t._der},
-	'/R' : lambda t : {x : (-param * t._der[x]) / ((t._val)**2) for x in t._der},
-	'+' : lambda t : t._der,
-	'-' : lambda t : t._der,
-	'-R' : lambda t : {x : -t._der[x] for x in t._der}
+	deriv_rules = {
+	'sin' : lambda t : np.cos(t.val),
+	'cos' : lambda t : -np.sin(t.val),
+	'tan' : lambda t : 1/(np.cos(t.val)**2),
+	'exp' : lambda t : np.power(param, t.val)*np.log(param),
+	'log' : lambda t : 1/(t.val*np.log(param)),
+	'sqrt' : lambda t : 1/(2*t.val**0.5),
+	'sigm' : lambda t : np.exp(-t.val)/((1 + np.exp(-t.val))**2),
+	'sinh' : lambda t : (np.exp(t.val) + np.exp(-t.val))/2,
+	'cosh' : lambda t : (np.exp(t.val) - np.exp(-t.val))/2,
+	'tanh' : lambda t : 4/((np.exp(t.val) + np.exp(-t.val))**2),
+	'^' : lambda t : param*t._val**(param-1),
+	'^R' : lambda t : param ** t._val * np.log(param),
+	'*' : lambda t : param,
+	'/' : lambda t : 1/param,
+	'/R' : lambda t : -param / ((t._val)**2),
+	'+' : lambda t : 1,
+	'-' : lambda t : 1,
+	'-R' : lambda t : -1
 	}
-	if param:
-		if op == 'exp': return lambda t : {x : np.power(param, t.val)*np.log(param)*t._der[x] for x in t._der}
-		elif op == 'log': return lambda t : {x : t._der[x]/(t.val*np.log(param)) for x in t._der}
-	return op_dict[op](t)
 
-def deriv_2(t1, op, t2):
+	# d_op_dx = d_op_dt * dt_dx
+	d_op_dt = deriv_rules[op](t)
+
+	if partial_only: return d_op_dt
+
+	return {x : t._der[x] * d_op_dt for x in t._der}
+
+def deriv_2(t1, op, t2, partial_only = False):
 
 	'''
 	Deriv of double-input operators
@@ -40,7 +43,7 @@ def deriv_2(t1, op, t2):
 	b) when x in t1 and not in t2
 	c) when x in t2 and not in t1
 	'''
-	op_dict = {
+	deriv_rules = {
 	'+' : [lambda t1, t2, x: t1._der[x] + t2._der[x], lambda t1, t2, x: t1._der[x], lambda t1, t2, x: t2._der[x]],
 	'-' : [lambda t1, t2, x: t1._der[x] - t2._der[x], lambda t1, t2, x: t1._der[x], lambda t1, t2, x: -t2._der[x]],
 	'*' : [lambda t1, t2, x: t1._der[x]*t2._val + t2._der[x]*t1._val, lambda t1, t2, x: t1._der[x]*t2._val, lambda t1, t2, x: t2._der[x]*t1._val],
@@ -52,23 +55,27 @@ def deriv_2(t1, op, t2):
 
 	for x in t1._der:
 		if x in t2._der:
-			new_der[x] = op_dict[op][0](t1, t2, x) #function to combine derivs when x is in the domain of both functions
+			new_der[x] = deriv_rules[op][0](t1, t2, x) #function to combine derivs when x is in the domain of both functions
 		else:
-			new_der[x] = op_dict[op][1](t1, t2, x) #function to combine derivs when x is in the domain of t1 only
+			new_der[x] = deriv_rules[op][1](t1, t2, x) #function to combine derivs when x is in the domain of t1 only
 	for x in t2._der:
 		if x not in t1._der:
-			new_der[x] = op_dict[op][2](t1, t2, x) #function to combine derivs when x is in the domain of t2 only
+			new_der[x] = deriv_rules[op][2](t1, t2, x) #function to combine derivs when x is in the domain of t2 only
 
 	return new_der
 
-def deriv(t, op, other = None):
+def deriv(t, op, other = None, partial_only = False):
+
+	result = None
 
 	if not other:
-		return deriv_1(t, op)
+		result = deriv_1(t, op, partial_only)
 	else:
 		try:
-			return deriv_2(t, op, other)
+			result = deriv_2(t, op, other, partial_only)
 		except AttributeError:
-			return deriv_1(t, op, param = other)
+			result = deriv_1(t, op, partial_only, param = other)
+
+	return result
 
 

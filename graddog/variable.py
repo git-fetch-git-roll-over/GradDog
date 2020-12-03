@@ -1,5 +1,7 @@
 import numbers
 from trace import Trace
+from functions import VectorFunction
+import numpy as np
 
 class Variable(Trace):
 
@@ -24,6 +26,24 @@ class Variable(Trace):
 
 		else:
 			raise TypeError('Value should be numerical')
+
+def trace(f, seed):
+	M = len(seed)
+	new_vars = list(get_vars([f'x{m+1}' for m in range(M)], seed))
+	new_var_names = list(map(lambda v : v._formula, new_vars))
+	result = f(new_vars)
+
+	def add_zeros_to_der(t):
+		for x in new_var_names:
+			if x not in t._der:
+				t._der[x] = 0.0
+	try:
+		for t in result:
+			add_zeros_to_der(t)
+		result = VectorFunction(result)
+	except TypeError:
+		add_zeros_to_der(result)
+	return result
 
 def get_x(seed):
 	assert len(seed) == 1

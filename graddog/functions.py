@@ -11,36 +11,37 @@ class VectorFunction:
         # use the map and reduce functions to combine
         # all of the variables from all the functions in funcs
         # into a single sorted list called total_vars
-        self.total_vars = sorted(reduce(lambda s, t : s.union(t), list(map(lambda f : set(f.der.keys()), funcs))))
-        
+        self.total_variables = sorted(reduce(lambda s, t : s.union(t), list(map(lambda f : set(f.der.keys()), funcs))))
+        self._name = 'output'
         self.calculate_jacobian()
     
     def calculate_jacobian(self):
-        N = len(self.total_vars)
-        M = len(self.funcs)
+        M = len(self.total_variables)
+        N = len(self.funcs)
+        self.jacobian = np.array([[self.funcs[n].der_of(self.total_variables[m]) for m in range(M)] for n in range(N)])
 
-        j = np.zeros(shape = (M, N))
+    @property
+    def name(self):
+        '''
+        Returns non-public attribute _name
+        '''
+        return self._name
 
-        for m in range(M):
-            der = self.funcs[m].der
-            for n in range(N):
-                x = self.total_vars[n]
-                try:
-                    j[m,n] = der[x]
-                except KeyError:
-                    # a key error means that x is not a variable defined within
-                    # the scope of the current function self.funcs[m]
-                    # therefore, the derivative of that function
-                    # with respect to x is zero
-                    j[m,n] = 0
-        self.jacobian = j
+    @name.setter
+    def name(self, new_name):
+        '''
+        This resets the _name of a Trace instance
+        '''
+        self._name = new_name
 
     @property
     def der(self):
+        print('Jacobian matrix of', self.name)
         return self.jacobian
 
     @property
     def trace_table(self):
+        print('Trace table of a forward pass')
         return repr(CompGraph.instance)
 
 def sin(t : Trace):
@@ -95,15 +96,12 @@ def exp(t : Trace, base=np.e):
 
     Return Trace that constitues exp() elementary function with input base (default=e)
     '''
-    
     if base==np.e:
         new_formula = f'exp({t._trace_name})'
-        new_val = np.exp(t.val)
-        new_der = calc_rules.deriv(t, 'exp')
     else:
         new_formula = f'{np.round(base,3)} ^ ({t._trace_name})'
-        new_val = np.power(base, t.val)
-        new_der = calc_rules.deriv(t, 'exp', base)
+    new_val = np.power(base, t.val)
+    new_der = calc_rules.deriv(t, 'exp', base)
     return Trace(new_formula, new_val, new_der)
 
 def log(t : Trace, base=np.e):
@@ -116,15 +114,12 @@ def log(t : Trace, base=np.e):
 
     Return Trace that constitues log() elementary function with input base (default=e)
     '''
-
     if base==np.e:
         new_formula = f'log({t._trace_name})'
-        new_val = np.log(t.val)
-        new_der = calc_rules.deriv(t, 'log')
     else:
         new_formula = f'log_{np.round(base,3)}({t._trace_name})'
-        new_val = np.log(t.val)/np.log(base)
-        new_der = calc_rules.deriv(t, 'log', base)
+    new_val = np.log(t.val)/np.log(base)
+    new_der = calc_rules.deriv(t, 'log', base)
     return Trace(new_formula, new_val, new_der)
 
 def sinh(t : Trace, base=np.e):

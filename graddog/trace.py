@@ -62,7 +62,7 @@ class Trace:
 			raise TypeError('Value should be numerical')
 
 	@property
-	def der(self, key = None):
+	def der(self):
 		'''
 		Returns non-public attribute _der
 
@@ -71,13 +71,15 @@ class Trace:
 		Optional parameter: key, for example 'x', so that the user can call f.der('x')
 		'''
 
-		if key:
-			assert key in CompGraph.instance.var_names
-			return self._der[key]
-
 		if len(self._der) == 1:
-			return self._der.values()[0]
+			return list(self._der.values())[0]
 		return self._der
+
+	def der_of(self, key):
+		try:
+			return self._der[key]
+		except KeyError:
+			return 0
 
 	def __repr__(self): 
 		
@@ -88,14 +90,17 @@ class Trace:
 
 	@property
 	def trace_table(self):
+
 		'''
 		Returns the string representation of the current CompGraph object
 		'''
+		print('Trace table of a forward pass')
 		return repr(CompGraph.instance)
 
 	@property
 	def comp_graph(self):
-		return CompGraph.instance.graph
+		print('Comp graph : outs & ins')
+		return repr(CompGraph.instance.outs) + '\n' + repr(CompGraph.instance.ins)
 
 	def __add__(self, other):
 		'''
