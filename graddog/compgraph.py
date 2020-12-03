@@ -26,7 +26,7 @@ class CompGraph:
 
 			if formula in self.var_names:
 				self.reset()
-				self.add_var(formula, val)
+				return self.add_var(formula, val)
 			else:
 				'''
 				TODO: instead of resetting the table when a variable is replaced,

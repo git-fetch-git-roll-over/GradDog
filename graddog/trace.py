@@ -102,6 +102,12 @@ class Trace:
 		print('Comp graph : outs & ins')
 		return repr(CompGraph.instance.outs) + '\n' + repr(CompGraph.instance.ins)
 
+	def __eq__(self, other):
+		try:
+			return self.val == other.val
+		except AttributeError:
+			return self.val == other
+
 	def __add__(self, other):
 		'''
 		This allows to do addition with Trace instances or scalar numbers. 
