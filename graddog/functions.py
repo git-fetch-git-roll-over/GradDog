@@ -1,5 +1,5 @@
 import numpy as np
-import graddog.calc_rules
+import graddog.calc_rules as calc_rules
 from graddog.trace import Trace
 from graddog.compgraph import CompGraph
 from functools import reduce
