@@ -24,22 +24,22 @@ def test_cos():
     assert c._val == 1
     assert c._der['x'] == pytest.approx(0, abs=1e-6)
     
-# def test_string_input():
-#     with pytest.raises(TypeError):
-#         x_str = Variable('s', 'CS107')
+def test_string_input():
+    with pytest.raises(TypeError):
+        x_str = Variable('s', 'CS107')
         
 def test_log_base2():
     x = Variable('x', 32)
     base = 2
     f = log(x, base=base)
-    assert f._val == 5
+    assert f._val == pytest.approx(5)
     assert f._der['x'] == 1/(x._val * np.log(base))
     
 def test_exp_base2():
     x = Variable('x', 5)
     base = 2
     f = exp(x, base=base)
-    assert f._val == 32
+    assert f._val == pytest.approx(32)
     assert f._der['x'] == (base**x._val)*np.log(base)
 
 def test_log():
@@ -53,7 +53,7 @@ def test_log():
 def test_exp():
     x = Variable('x', 67)
     f = exp(x)
-    assert f._val == np.exp(67)
+    assert f._val == pytest.approx(np.exp(67))
     assert f._der['x'] == f._val
 
 def test_composition():
