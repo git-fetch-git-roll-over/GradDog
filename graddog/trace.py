@@ -1,8 +1,8 @@
 # :)
 import numpy as np
 import pandas as pd
-import calc_rules
-from compgraph import CompGraph
+import graddog.calc_rules as calc_rules
+from graddog.compgraph import CompGraph
 
 class Trace:
 	'''

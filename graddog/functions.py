@@ -1,7 +1,7 @@
 import numpy as np
-import calc_rules
-from trace import Trace
-from compgraph import CompGraph
+import graddog.calc_rules
+from graddog.trace import Trace
+from graddog.compgraph import CompGraph
 from functools import reduce
 
 class VectorFunction:

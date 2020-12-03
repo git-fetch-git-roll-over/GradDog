@@ -1,8 +1,8 @@
 import numpy as np
-from variable import get_xy, get_xyz, trace
-from functions import sin, cos, tan, exp, log
-from functions import VectorFunction as vec
-from compgraph import CompGraph
+from graddog.variable import get_xy, get_xyz, trace
+from graddog.functions import sin, cos, tan, exp, log
+from graddog.functions import VectorFunction as vec
+from graddog.compgraph import CompGraph
 
 def demo1():
 	print('demo 1')
@@ -42,9 +42,8 @@ def demo4():
 	print('demo 4')
 	CompGraph.reset()
 	def f(v):
-		#assume v is a list, numpy array, whateva :)
 		# f : Rm --> Rn
-		return [v[0] + 3*v[2]**2, v[1] - v[0]]
+		return [v[0] + 3*v[2]**2, v[1] - v[0], v[2] + sin(v[1])]
 
 	# convert a function of an iterable into a Trace object
 	f = trace(f, [1,2,3])

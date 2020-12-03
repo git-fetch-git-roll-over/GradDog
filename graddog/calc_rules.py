@@ -1,6 +1,27 @@
 # :)
 import numpy as np
 
+class Ops:
+
+	sin = 'sin'
+	cos = 'cos'
+	tan = 'tan'
+	exp = 'exp'
+	log = 'log'
+	sqrt = 'sqrt' 
+	sigm = 'sigm' 
+	sinh = 'sinh'
+	cosh = 'cosh'
+	tanh = 'tanh'
+	const_exp=  '^'
+	const_exp_R = '^R'
+	const_mul = '*'
+	const_div = '/'
+	const_divR = '/R'
+	const_add = '+'
+	const_sub = '-'
+	const_subR = '-R'
+
 def deriv_1(t, op, partial_only = False, param = None):
 	'''
 	Deriv of single-input operators, or double-digit operators with one scalar input
