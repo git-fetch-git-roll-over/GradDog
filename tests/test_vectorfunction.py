@@ -1,7 +1,9 @@
 import pytest
 import numpy as np
-from graddog.trace import Trace, get_x, get_xy, get_xyz, function_to_Trace, get_vars
+from graddog.trace import Trace
 from graddog.functions import sin, cos, tan, exp, log
+from graddog.variable import get_x, get_xy, get_xyz, function_to_Trace, get_vars
+
 from graddog.functions import VectorFunction as vec
 
 # Partial Derivatives example

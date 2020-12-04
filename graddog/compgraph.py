@@ -47,6 +47,7 @@ class CompGraph:
 				if self.size > 0:
 					# create new column for derivatives with respect to this new var
 					self.table['der_'+formula] = np.zeros(shape = (self.size,))
+
 				else:
 					self.table['der_'+formula] = [1.0]
 
