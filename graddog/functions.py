@@ -4,6 +4,8 @@ from graddog.trace import Trace
 from graddog.compgraph import CompGraph
 from functools import reduce
 
+# TODO: add exception to these functions to allow scalar inputs as well as trace objects
+
 # TODO: should VectorFunction be in its own file?
 
 class VectorFunction:
