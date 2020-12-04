@@ -20,8 +20,7 @@ def test_getx():
     x = get_x([1])
     assert x._val == 1
     assert x._formula == 'x'
-    
-
+   
     
 def test_ValueError_gets():
     with pytest.raises(ValueError):
@@ -30,4 +29,6 @@ def test_ValueError_gets():
         len3list = [5,6,7]
         x_str = get_x(len3list)
         x, y, z = get_xyz(len2list)
+        x, y = get_xy(len1list)
+        a, b, c, d, e = get_vars(['a', 'b', 'c', 'd', 'e'], len2list)
 
