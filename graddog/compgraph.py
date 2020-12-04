@@ -47,6 +47,7 @@ class CompGraph:
 				if self.size > 0:
 					# create new column for derivatives with respect to this new var
 					self.table['der_'+formula] = np.zeros(shape = (self.size,))
+
 				else:
 					self.table['der_'+formula] = [1.0]
 
@@ -141,6 +142,9 @@ class CompGraph:
 				res[trace] = r
 			return {x : res[self.get_trace_name(x)] for x in self.var_names}
 
+		def partial_deriv(self, f, x):
+			return self.partials[f][x]
+
 		def get_trace_name(self, var_name):
 			return self.table.loc[self.table['formula'] == var_name]['trace_name'].iloc[0]
 
@@ -183,6 +187,10 @@ class CompGraph:
 	def reverse_mode():
 		if CompGraph.instance:
 			print(CompGraph.instance.reverse_mode_der())
+
+	def partial_deriv(f, x):
+		if CompGraph.instance:
+			return CompGraph.instance.partial_deriv(f, x)
 
 
 

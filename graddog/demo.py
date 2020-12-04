@@ -23,6 +23,9 @@ def demo1():
 
 	x, y = get_xy(seed = [1,2])
 
+	# equivalent to
+	# x, y = Variable('x', 1), Variable('y', 2)
+
 	# f : Rm --> R
 
 	f = x*y + exp(x*y)
@@ -75,7 +78,8 @@ def demo4():
 	f = trace(f, [1,2,3])
 
 	f.name = 'A function Rm --> Rn using vectors'
-	print(f.der)
+	#print(f.der)
+	CompGraph.show_trace_table()
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 def demo5():
@@ -91,9 +95,26 @@ def demo5():
 	CompGraph.reverse_mode()
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-def run_demos():
-	l = [demo0, demo1, demo2, demo3, demo4, demo5]
-	for d in l:
-		d()
+def demo6():
+	print('demo 6')
+	CompGraph.reset()
+
+	x, y = get_xy(seed = [1,2])
+
+	f = x*y + exp(x*y)
+
+	CompGraph.show_trace_table()
+
+	print('Since v4 = exp(v3), the partial derivative dv4/dv3 = exp(v3.val)')
+
+	print('Since v3 = v1 * v2, the partial derivatives are dv3/dv1 = v2.val and dv3/dv2 = v1.val')
+
+	CompGraph.show_partials()
+
+	print(CompGraph.partial_deriv('v4', 'v3'), np.exp(2))
+
+	print(CompGraph.partial_deriv('v3', 'v1'), CompGraph.partial_deriv('v3', 'v2'))
+
+
 
 

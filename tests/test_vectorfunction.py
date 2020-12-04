@@ -1,14 +1,15 @@
 import pytest
 import numpy as np
-from graddog.variable import Variable
+from graddog.trace import Trace
 from graddog.functions import sin, cos, tan, exp, log
+from graddog.variable import get_x, get_xy, get_xyz, function_to_Trace, get_vars
+
 from graddog.functions import VectorFunction as vec
 
 # Partial Derivatives example
 def test_threevar():
-    x = Variable('x', 3)
-    y = Variable('y', 4)
-    z = Variable('z', 2)
+#     Make x,y,z variables w/ defined values
+    x, y, z = get_xyz([3,4,2])
 
     f = 2*y**2 + x ** z - 3*x/y 
     # manually compute the partial derivatives to test
@@ -21,9 +22,10 @@ def test_threevar():
 
     # Jacobian example
 
-    x = Variable('x', np.pi/2)
-    y = Variable('y', np.pi/3)
-    z = Variable('z', np.pi/4)
+    xval = np.pi/2
+    yval = np.pi/3
+    zval = np.pi/4
+    x, y, z = get_xyz([xval,yval,zval])
 
     f = vec([exp(-(sin(x) - cos(y))**2), - log(x) ** 2 + tan(z)])
     manual_jacobian = [[-4.76877943e-17, -6.74461263e-1,  0.0], [-5.74972958e-01,  0.0,  2.0]]
@@ -33,12 +35,9 @@ def test_threevar():
 
     
 def test_fivevar():
-    a = Variable('a', 3)
-    b = Variable('b', 5)
-    c = Variable('c', 7)
-    d = Variable('d', 11)
-    e = Variable('e', -2)
-    
+    names = ['a', 'b', 'c', 'd', 'e']
+    vals = [3, 5, 7, 11, -2]
+    a, b, c, d, e = get_vars(names, vals)
     f = 2*log(a) + sin(b) + 2**c + 4*e
     g = 2*a + 3*b - cos(d)
     
@@ -68,4 +67,4 @@ def test_fivevar():
     
     h = vec([f, g])
     manual_h_jacobian = [[ 0.66666667,  0.28366219, 88.72283911,  0.        ,  4.        ],[ 2.        ,  3.        ,  0.        , -0.99999021,  0.        ]]
-    assert h.jacobian == manual_h_jacobian
+    assert h.jacobian == pytest.approx(manual_h_jacobian)

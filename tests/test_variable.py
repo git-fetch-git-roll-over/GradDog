@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
-from graddog.variable import Variable
+from graddog.variable import Variable, get_x, get_xy, get_xyz, function_to_Trace, get_vars
+
 
 def test_name_reset():
     x1 = Variable('x', 2)
@@ -11,11 +12,40 @@ def test_val_reset():
     x1 = Variable('x', 2)
     x1._val = 4
     assert str(x1) == str(Variable('x', 4))
+    
+def test_getvars():
+    a, b, c = get_vars(['a', 'b', 'c'], [3, 2, 1])
+    assert a._val == 3
+    assert b._val == 2
+    assert c._val == 1
+    assert a._formula == 'a'
+    assert b._formula == 'b'
+    assert c._formula == 'c'
+    
+def test_string_input():
+    with pytest.raises(TypeError):
+        x_str = get_x(['CS107'])
+        
+def test_getx():
+    x = get_x([1])
+    assert x._val == 1
+    assert x._formula == 'x'
+   
+    
+def test_ValueError_gets():
+    with pytest.raises(ValueError):
+        len1list = [1]
+        len2list = [3,4]
+        len3list = [5,6,7]
+        x_str = get_x(len3list)
+        x, y, z = get_xyz(len2list)
+        x, y = get_xy(len1list)
+        a, b, c, d, e = get_vars(['a', 'b', 'c', 'd', 'e'], len2list)
 
-# def test_val_reset_error():
-#     x1 = Variable('x', 2)
-#     with pytest.raises(TypeError):
-#         x1._val = 'four'
+def test_val_reset_error():
+    x1 = Variable('x', 2)
+    with pytest.raises(TypeError):
+        x1._val = 'four'
 
 # def test_variable_add():
 #     x1 = Variable('x', 2)
@@ -70,26 +100,26 @@ def test_val_reset():
 #     assert -x1._val == x2._val
 #     assert -x1._der == x2._der
 
-def test_variable_pow():
-    x1 = Variable('x', 2)
-    x2 = x1 ** 2
-    x3 = x1 ** 0 
-    x4 = x1 ** x1
-    x5 = 2 ** x1
+# def test_variable_pow():
+#     x1 = Variable('x', 2)
+#     x2 = x1 ** 2
+#     x3 = x1 ** 0 
+#     x4 = x1 ** x1
+#     x5 = 2 ** x1
     
-    assert x2._val == 4
-    assert x2._der['x'] == 4
-    assert x3 == 1 
-    assert x2._formula == f"{x1._formula}^2"
-    assert x4._formula == f"{x1._formula}^{x1._formula}"
-    assert x4._val == 4
-    assert x5._val == 4
-    assert x5._formula == str(2) + f"^{x1._formula}"
+#     assert x2._val == 4
+#     assert x2._der['x'] == 4
+#     assert x3 == 1 
+#     assert x2._formula == f"{x1._formula}^2"
+#     assert x4._formula == f"{x1._formula}^{x1._formula}"
+#     assert x4._val == 4
+#     assert x5._val == 4
+#     assert x5._formula == str(2) + f"^{x1._formula}"
 
-def test_polynom():
-    x1 = Variable('x', 5)
-    f = 3*x1**2 + 2*x1 + 5
-    assert f._der['x'] == 32
+# def test_polynom():
+#     x1 = Variable('x', 5)
+#     f = 3*x1**2 + 2*x1 + 5
+#     assert f._der['x'] == 32
 
 # def test_string_input():
 #     with pytest.raises(TypeError):

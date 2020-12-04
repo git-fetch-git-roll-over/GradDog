@@ -3,6 +3,8 @@ from graddog.trace import Trace
 from graddog.functions import VectorFunction
 import numpy as np
 
+
+
 # TODO: change assert statements to ValueError exception handlers
 
 # TODO: better name for trace function
@@ -34,7 +36,7 @@ class Variable(Trace):
 		else:
 			raise TypeError('Value should be numerical')
 
-def trace(f, seed):
+def function_to_Trace(f, seed):
 	M = len(seed)
 	new_vars = list(get_vars([f'x{m+1}' for m in range(M)], seed))
 	new_var_names = list(map(lambda v : v._formula, new_vars))
@@ -53,25 +55,32 @@ def trace(f, seed):
 	return result
 
 def get_x(seed):
-	assert len(seed) == 1
+# 	assert len(seed) == 1
+	if len(seed) != 1:
+		raise ValueError('Length of seed must be 1.')
 	return get_vars(['x'], seed)[0]
 
 def get_y(seed):
-	assert len(seed) == 1
+	if len(seed) != 1:
+		raise ValueError('Length of seed must be 1.')
 	return get_vars(['y'], seed)[0]
 
 def get_xy(seed):
-	assert len(seed) == 2
+	if len(seed) != 2:
+		raise ValueError('Length of seed must be 2.')
 	return get_vars(['x', 'y'], seed)
 
 def get_xyz(seed):
-	assert len(seed) == 3
+	if len(seed) != 3:
+		raise ValueError('Length of seed must be 3.')
 	return get_vars(['x', 'y', 'z'], seed)
 
 def get_abc(seed):
-	assert len(seed) == 3
+	if len(seed) != 3:
+		raise ValueError('Length of seed must be 3.')
 	return get_vars(['a', 'b', 'c'], seed)
 
 def get_vars(names, seed):
-	assert len(names) == len(seed)
+	if len(names) != len(seed):
+		raise ValueError("Lengths of seed and name lists must match")
 	return list(Variable(names[i], seed[i]) for i in range(len(names)))
