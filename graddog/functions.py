@@ -282,21 +282,6 @@ def sigmoid(t: Trace):
     return Trace(new_formula, new_val, new_der)
 
 
-    
-
-
-x = Variable('x', 1)
-# = Variable('y', 1)
-f1 = sin(x)
-print(f1)
-#y = Variable('y', 1)
-#f1 = sin(x)
-#f2 = cos(y)
-#f3 = exp(x, base=2.4444)
-# print(x)
-# print(CompGraph.instance)
-#vectfun = VectorFunction([f1, f2, f3])
-#print(f3)
 
 
 
