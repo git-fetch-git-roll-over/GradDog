@@ -1,4 +1,3 @@
-# :)
 import numpy as np
 
 # TODO: convert lambda expressions to closure functions where appropriate
@@ -7,11 +6,22 @@ import numpy as np
 
 # TODO: How do we distinguish that this file is meant for internal use and not for the user?
 
+'''
+Changes I made to Max's code:
+	1. 
+
+Questions to Max's code:
+	1. can we just use the string as the key in deriv_rules?
+'''
+
 class Ops:
 
 	sin = 'sin'
+	arcsin = 'arcsin'
 	cos = 'cos'
+	arccos = 'arccos'
 	tan = 'tan'
+	arctan = 'arctan'
 	exp = 'exp'
 	log = 'log'
 	sqrt = 'sqrt' 
@@ -30,8 +40,11 @@ class Ops:
 
 	deriv_rules = {
 	sin : lambda t, param : np.cos(t.val),
+	arcsin: lambda t, param: 1/(np.sqrt(1-t.val**2)),
 	cos : lambda t, param : -np.sin(t.val),
+	arccos: lambda t, param: -1/(np.sqrt(1-t.val**2)),
 	tan : lambda t, param : 1/(np.cos(t.val)**2),
+	arctan: lambda t, param: 1/(1+t.val**2),
 	exp : lambda t, param : np.power(param, t.val)*np.log(param),
 	log : lambda t, param : 1/(t.val*np.log(param)),
 	sqrt : lambda t, param : 1/(2*t.val**0.5),
@@ -49,6 +62,9 @@ class Ops:
 	const_sub_R : lambda t, param : -1.0
 	}
 
+
+
+
 def deriv_1(t, op, partial = False, param = None):
 	'''
 	Deriv of single-input operators, or double-input operators with one scalar input
@@ -59,9 +75,11 @@ def deriv_1(t, op, partial = False, param = None):
 
 	result = {x : t._der[x] * d_op_dt for x in t._der}
 
-	if partial: return result, {t._trace_name : d_op_dt}
+	if partial: 
+		return result, {t._formula : d_op_dt}
 
 	return result, None
+
 
 def deriv_2(t1, op, t2, partial = False):
 
