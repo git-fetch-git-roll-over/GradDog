@@ -75,7 +75,6 @@ def get_x(seed):
 	return get_vars(['x'], seed)[0]
 
 def get_y(seed):
-	get_x(seed):
 	'''
 	This method is to create a Variable instance with name 'y' 
 	and value in the seed (list).
