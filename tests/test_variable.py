@@ -16,7 +16,6 @@ def test_val_reset():
     x1 = Variable('x', 2)
     x1.val = 4
     assert x1.val == 4
-
     
 def test_getvars():
     a, b, c = get_vars(['a', 'b', 'c'], [3, 2, 1])
@@ -60,6 +59,8 @@ def test_variable_add():
     assert x1._trace_id == v1
     assert x2._trace_id == v2
     assert f._trace_id == v3
+    x3 = Variable('z', 6)
+    g = f + x3
     
 def test_variable_radd():
     x1 = 4
@@ -85,7 +86,7 @@ def test_variable_sub_error():
     f = x2 - x1
     assert f.val == np.approx(0, abs=1e-6)
     #FORMULA SHOULD BE ACCESSIBLE VIA ATTRIBUTE OF F
-    assert f.formula == '4 - x' # and/or contains 'y' 'x' '-'
+    assert f.formula == '4 - x' # and/or contains '4' 'x' '-'
     #IT COULD HAVE A DIFFERENT (hidden?) ATTRIBUTE TO STORE THE TRACE FORMULA/NAME INFO
     assert f._trace_formula == '4 - v1'
     assert f._trace_id == 'v2'
@@ -96,16 +97,110 @@ def test_variable_rsub():
     f = x1 - x2
     assert f.val == np.approx(0, abs=1e-6)
     #FORMULA SHOULD BE ACCESSIBLE VIA ATTRIBUTE OF F
-    assert f.formula == 'x - 4' # and/or contains 'y' 'x' '-'
+    assert f.formula == 'x - 4' # and/or contains '4' 'x' '-'
     #IT COULD HAVE A DIFFERENT (hidden?) ATTRIBUTE TO STORE THE TRACE FORMULA/NAME INFO
     assert f._trace_formula == 'v1 - 4'
     assert f._trace_id == 'v2'
     
-# def test_variable_mul():
-#     x1 = Variable('x', 2)
-#     x2 = Variable('x', 2)
-#     assert str(x1 * x2) == str(Variable('x*x', 4, 4))
+def test_variable_div():
+    x1 = Variable('x', 2)
+    x2 = Variable('y', 6)
+    f = x2/x1
+    assert f.val == 3
+    #FORMULA SHOULD BE ACCESSIBLE VIA ATTRIBUTE OF F
+    assert f.formula == 'y/x' # and/or contains 'y' 'x' '/'
+    #IT COULD HAVE A DIFFERENT (hidden?) ATTRIBUTE TO STORE THE TRACE FORMULA/NAME INFO
+    assert f._trace_formula == 'v2/v1'
+    assert f._trace_id == 'v3'
+    
+def test_variable_div_error():
+    x1 = Variable('x', 4)
+    x2 = 6
+    f = x2/x1
+    assert f.val == 1.5
+    #FORMULA SHOULD BE ACCESSIBLE VIA ATTRIBUTE OF F
+    assert f.formula == '6/x' # and/or contains '6' 'x' '/'
+    #IT COULD HAVE A DIFFERENT (hidden?) ATTRIBUTE TO STORE THE TRACE FORMULA/NAME INFO
+    assert f._trace_formula == '6/v1'
+    assert f._trace_id == 'v2'
 
+def test_variable_rdiv():
+    x1 = Variable('x', 4)
+    x2 = 6
+    f = x1/x2
+    assert f.val == 2/3
+    #FORMULA SHOULD BE ACCESSIBLE VIA ATTRIBUTE OF F
+    assert f.formula == 'x/6' # and/or contains '6' 'x' '/'
+    #IT COULD HAVE A DIFFERENT (hidden?) ATTRIBUTE TO STORE THE TRACE FORMULA/NAME INFO
+    assert f._trace_formula == 'v1/6'
+    assert f._trace_id == 'v2'
+    
+def test_variable_mul():
+    x1 = Variable('x', 2)
+    x2 = Variable('y', 6)
+    f = x2*x1
+    assert f.val == 12
+    #FORMULA SHOULD BE ACCESSIBLE VIA ATTRIBUTE OF F
+    assert f.formula == 'y*x' # and/or contains 'y' 'x' '*'
+    #IT COULD HAVE A DIFFERENT (hidden?) ATTRIBUTE TO STORE THE TRACE FORMULA/NAME INFO
+    assert f._trace_formula == 'v2*v1'
+    assert f._trace_id == 'v3'
+    
+def test_variable_mul_error():
+    x1 = Variable('x', 4)
+    x2 = 6
+    f = x2*x1
+    assert f.val == 24
+    #FORMULA SHOULD BE ACCESSIBLE VIA ATTRIBUTE OF F
+    assert f.formula == '6*x' # and/or contains '6' 'x' '*'
+    #IT COULD HAVE A DIFFERENT (hidden?) ATTRIBUTE TO STORE THE TRACE FORMULA/NAME INFO
+    assert f._trace_formula == '6*v1'
+    assert f._trace_id == 'v2'
+
+def test_variable_rmul():
+    x1 = Variable('x', 4)
+    x2 = 6
+    f = x1*x2
+    assert f.val == 24
+    #FORMULA SHOULD BE ACCESSIBLE VIA ATTRIBUTE OF F
+    assert f.formula == 'x*6' # and/or contains '6' 'x' '/'
+    #IT COULD HAVE A DIFFERENT (hidden?) ATTRIBUTE TO STORE THE TRACE FORMULA/NAME INFO
+    assert f._trace_formula == 'v1*6'
+    assert f._trace_id == 'v2'    
+
+# SHOULD THE USER EVER HAVE TO EVEN MAKE A VARIABLE?
+# FUNCTIONTOTRACE 
+    
+def test_mult_indivinputs():
+    #NEED TO BE ABLE TO HANDLE FXNS OF MULT INPUTS
+    def f(x,y):
+        return x*y
+    tr = function_to_Trace(f, [4, 5])
+    assert tr.der['x'] == 5.0
+    assert tr.der['y'] == 4.0
+    
+def test_mult_vector():
+    def f(v):
+        return v[0]*v[1]
+    tr = function_to_Trace(f, [4, 5])
+    assert tr.der['x1'] == 5
+    assert tr.der['x2'] == 4
+       
+def test_div_indivinputs():
+    #NEED TO BE ABLE TO HANDLE FXNS OF MULT INPUTS
+    def f(x,y):
+        return x/y
+    tr = function_to_Trace(f, [3, 2])
+    assert tr.der['x'] == 0.5
+    assert tr.der['y'] == -0.75
+    
+def test_div_vector():
+    def f(v):
+        return v[0]/v[1]
+    tr = function_to_Trace(f, [3, 2])
+    assert tr.der['x1'] == 0.5
+    assert tr.der['x2'] == -0.75
+    
 # def test_variable_div():
 #     x1 = Variable('x', 2)
 #     x2 = Variable('x', 2)
@@ -144,10 +239,10 @@ def test_variable_rsub():
 #     assert x5._val == 4
 #     assert x5._formula == str(2) + f"^{x1._formula}"
 
-# def test_polynom():
-#     x1 = Variable('x', 5)
-#     f = 3*x1**2 + 2*x1 + 5
-#     assert f._der['x'] == 32
+def test_polynom():
+    x1 = Variable('x', 5)
+    f = 3*x1**2 + 2*x1 + 5
+    assert f.der == 32
 
 # def test_string_input():
 #     with pytest.raises(TypeError):
