@@ -8,18 +8,48 @@ from functools import reduce
 
 # TODO: should VectorFunction be in its own file?
 
+'''
+Changes I made to Max's code:
+    1. change map(lambda f : set(f.der.keys()), funcs))) into map(lambda f : set(f._der.keys()), funcs)))
+    2. Added the inverse trig functions.
+
+Questions to Max's code:
+    1. the _name attribute here again is troubling me
+'''
+
 class VectorFunction:
+    '''
+    This is a class for creating vectorFunction class.
+    '''
     def __init__(self, funcs):
+        '''
+        The constructor for VectorFunction class.
+        It calculates the jacobian matrix of the vector functions.
+
+        Parameters:
+            funcs: vector functions in a list, e.g. [f1, f2, f3]
+        
+        Attributes:
+            funcs: vector functions in a list, e.g. [f1, f2, f3]
+            total_variables: an alphabetic sorted list of variables.
+            _name: name of the vectorFunction
+            jacobian: the numpy form of the associated jacobian matrix
+        '''
         self.funcs = funcs
 
         # use the map and reduce functions to combine
         # all of the variables from all the functions in funcs
         # into a single sorted list called total_vars
-        self.total_variables = sorted(reduce(lambda s, t : s.union(t), list(map(lambda f : set(f.der.keys()), funcs))))
+        self.total_variables = sorted(reduce(lambda s, t : s.union(t), list(map(lambda f : set(f._der.keys()), funcs))))
         self._name = 'output'
         self.calculate_jacobian()
     
     def calculate_jacobian(self):
+        '''
+        This calculates the jacobian matrix of the vector function in numpy 2-D arrays.
+        The columns of the jacobian matrix is the alphabetic orderd variable name.
+        The rows of the jacobian matrix is the input functions in funcs list.
+        '''
         M = len(self.total_variables)
         N = len(self.funcs)
         self.jacobian = np.array([[self.funcs[n].der_wrt(self.total_variables[m]) for m in range(M)] for n in range(N)])
@@ -53,7 +83,7 @@ def sin(t : Trace):
     This allows to create sin().
 
     Parameters:
-        t (Trace instance)
+        t: (Trace instance)
 
     Return Trace that constitues sin() elementary function
     '''
@@ -62,12 +92,30 @@ def sin(t : Trace):
     new_der = calc_rules.deriv(t, 'sin')
     return Trace(new_formula, new_val, new_der)
 
+def arcsin(t:Trace):
+    '''
+    This allows to creat arcsin(). ValueError is caught if the input Trace
+    instance has value not in the domain of (-1, 1)
+    
+    Parameters:
+        t: (Trace instance)
+
+    Return Trace that constitues arcsin() elementary function
+    '''
+    if (t.val <= -1) or (t.val >= 1):
+        raise ValueError("The domain of arcsin is (-1, 1)")
+    else:
+        new_formula = f'arcsin({t._trace_name})'
+        new_val = np.arcsin(t.val)
+        new_der = calc_rules.deriv(t, 'arcsin')
+        return Trace(new_formula, new_val, new_der)
+
 def cos(t : Trace):
     '''
     This allows to create cos().
 
     Parameters:
-        t (Trace instance)
+        t: (Trace instance)
 
     Return Trace that constitues cos() elementary function
     '''
@@ -76,12 +124,31 @@ def cos(t : Trace):
     new_der = calc_rules.deriv(t, 'cos')
     return Trace(new_formula, new_val, new_der)
 
+def arccos(t:Trace):
+    '''
+    This allows to creat arccos(). ValueError is caught if the input Trace
+    instance has value not in the domain of (-1, 1)
+    
+    Parameters:
+        t: (Trace instance)
+
+    Return Trace that constitues arccos() elementary function
+    '''
+    if (t.val <= -1) or (t.val >= 1):
+        raise ValueError("The domain of arcsin is (-1, 1)")
+    else:
+        new_formula = f'arccos({t._trace_name})'
+        new_val = np.arccos(t.val)
+        new_der = calc_rules.deriv(t, 'arccos')
+        return Trace(new_formula, new_val, new_der)
+
+
 def tan(t : Trace):
     '''
     This allows to create tan().
 
     Parameters:
-        t (Trace instance)
+        t: (Trace instance)
 
     Return Trace that constitues tan() elementary function
     '''
@@ -89,6 +156,22 @@ def tan(t : Trace):
     new_val = np.tan(t.val)
     new_der = calc_rules.deriv(t, 'tan')
     return Trace(new_formula, new_val, new_der)
+
+def arctan(t:Trace):
+    '''
+    This allows to creat arctan()
+    
+    Parameters:
+        t: (Trace instance)
+
+    Return Trace that constitues arctan() elementary function
+    '''
+    new_formula = f'arctan({t._trace_name})'
+    new_val = np.arctan(t.val)
+    new_der = calc_rules.deriv(t, 'arctan')
+    return Trace(new_formula, new_val, new_der)
+
+
 
 def exp(t : Trace, base=np.e):
     '''

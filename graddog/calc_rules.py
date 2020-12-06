@@ -10,8 +10,11 @@ import numpy as np
 class Ops:
 
 	sin = 'sin'
+	arcsin = 'arcsin'
 	cos = 'cos'
+	arccos = 'arccos'
 	tan = 'tan'
+	arctan = 'arctan'
 	exp = 'exp'
 	log = 'log'
 	sqrt = 'sqrt' 
@@ -30,8 +33,11 @@ class Ops:
 
 	deriv_rules = {
 	sin : lambda t, param : np.cos(t.val),
+	arcsin: lambda t, param: 1/(np.sqrt(1-t.val**2)),
 	cos : lambda t, param : -np.sin(t.val),
+	arccos: lambda t, param: -1/(np.sqrt(1-t.val**2)),
 	tan : lambda t, param : 1/(np.cos(t.val)**2),
+	arctan: lambda t, param: 1/(1+t.val**2),
 	exp : lambda t, param : np.power(param, t.val)*np.log(param),
 	log : lambda t, param : 1/(t.val*np.log(param)),
 	sqrt : lambda t, param : 1/(2*t.val**0.5),
