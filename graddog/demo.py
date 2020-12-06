@@ -116,5 +116,24 @@ def demo6():
 	print(CompGraph.partial_deriv('v3', 'v1'), CompGraph.partial_deriv('v3', 'v2'))
 
 
+def Physics_Demo(x0=2, v=4):
+	print('Physics Demo: A Simple Harmonic Oscillator')
+	print('Motion: position x = x0 + v*t^2')
+	print('x0 =', x0)
+	print('v =', v)
+#     def x(t):
+#         return x0 + v*t^2
+#     function_to_Trace(x, [5])
+
+	t = Variable('t', 5)
+	x = x0 + v*t**2
+	print('dx/dt =', x.der)
+
+	# SECOND DERIVATIVE 
+	a = x.second_der['t']
+	print('Requires an acceleration of', a)
+    
+    
+    
 
 
