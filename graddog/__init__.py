@@ -1,12 +1,15 @@
 # :)
 import numpy as np
-from graddog.variable import Variable
-from graddog.functions import sin, cos, tan, exp, log
+from graddog.trace import Variable
 from graddog.compgraph import CompGraph
 
 
-def trace(f, seed):
+def trace(f, seed, mode = None):
 	'''
+
+	Optional parameter mode
+	default is 'forward'
+
 	Infers the dimension of input from the seed
 	Dimension of output inferred in CompGraph
 
@@ -32,10 +35,10 @@ def trace(f, seed):
 	# for now, always reset the CompGraph when tracing a new function
 	CompGraph.reset()
 
-	try:# if multidimensional
+	try:# if multidimensional input
 		M = len(seed) # get the dimension of the input
 		seed = np.array(seed)
-	except TypeError:
+	except TypeError: # if sinledimensional input
 		M = 1
 		seed = np.array([seed])
 	new_variable_names = [f'v{m+1}' for m in range(M)]
@@ -53,8 +56,21 @@ def trace(f, seed):
 		# single-variable input
 		f(new_vars[0])
 
-def show(f):
-	CompGraph.show_trace_table()
-	CompGraph.reverse_mode()
-	CompGraph.forward_mode()
-	
+	N = CompGraph.num_outputs()
+
+	if mode is None:
+	# go with more efficient algorithm if mode parameter is not specified by the user
+		if M > N :
+			mode = 'reverse'
+		else:
+			mode = 'forward'
+	if mode == 'reverse':
+		print('Computing reverse mode')
+		CompGraph.reverse_mode()
+	elif mode == 'forward':
+		print('Computing forward mode')
+		CompGraph.forward_mode()
+	else:
+		raise ValueError('Didnt recognize mode, should be forward or reverse')
+
+

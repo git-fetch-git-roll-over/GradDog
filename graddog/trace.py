@@ -1,29 +1,11 @@
 # :)
 import numpy as np
+import numbers
 import pandas as pd
-import graddog.calc_rules as calc_rules
-Ops = calc_rules.Ops
+import graddog.math as math
 from graddog.compgraph import CompGraph
 
 # TODO: dunder methods for comparison operators like __lt__ <
-
-# TODO: figure out how to recursively print a trace object's FULL formula 
-# because a Trace element no longer stores its full own formula
-# e.g.
-
-# f = sin(x) - cos(3y)
-
-# v1 = x
-# v2 = y
-# v3 = sin(v1)
-# v4 = 3*v2
-# v5 = cos(v4)
-# v6 = v3 - v5 <------ f
-
-
-
-# TODO: add missing docstrings
-
 
 class Trace:
 	'''
@@ -57,6 +39,7 @@ class Trace:
 		self._op = op
 
 		# optional parameter for a function, e.g. the base of a logarithm
+		# default is None
 		self._param = param
 
 		# accesses the current CompGraph to know what this Trace's tracename should be
@@ -65,21 +48,6 @@ class Trace:
 
 		#name by default is the trace name, but can be changed to something like 'Cost' or 'Objective' or 'Loss'
 		self._name = self._trace_name
-
-			
-	@property
-	def name(self):
-		'''
-		Returns non-public attribute _name
-		'''
-		return self._name
-
-	@name.setter
-	def name(self, new_name):
-		'''
-		This resets the _name of a Trace instance
-		'''
-		self._name = new_name
 
 	@property
 	def val(self):
@@ -97,30 +65,6 @@ class Trace:
 			self._val = new_val
 		else:
 			raise TypeError('Value should be numerical')
-
-	@property
-	def der(self):
-		'''
-		Returns non-public attribute _der
-
-		If the function is single-variable, returns as a scalar instead of a dictionary
-
-		Optional parameter: key, for example 'x', so that the user can call f.der('x')
-		'''
-
-		if len(self._der) == 1:
-			return list(self._der.values())[0]
-		return self._der
-
-	def der_wrt(self, key):
-
-		# current design choice
-		# if the key doesnt exist yet the derivative still is zero
-		# because why not :)
-		try:
-			return self._der[key]
-		except KeyError:
-			return 0
 
 	def __repr__(self): 
 		return self._name
@@ -143,7 +87,7 @@ class Trace:
 
 		Returns Trace: contains new formula, new value and new derivative.
 		'''
-		return two_parents(self, Ops.add, other)
+		return two_parents(self, math.Ops.add, other)
 
 
 	def __radd__(self, other):
@@ -165,7 +109,7 @@ class Trace:
 
 		Returns Trace: contains new formula, new value and new derivative.
 		'''
-		return two_parents(self, Ops.sub, other)
+		return two_parents(self, math.Ops.sub, other)
 
 	def __rsub__(self, other):
 		'''
@@ -173,7 +117,7 @@ class Trace:
 
 		Returns Trace: contains new value and new derivative
 		'''
-		return one_parent(self, Ops.sub_R, other)
+		return one_parent(self, math.Ops.sub_R, other)
 
 	def __mul__(self, other):
 		'''
@@ -186,7 +130,7 @@ class Trace:
 
 		Returns Trace: contains new formula, new value and new derivative.
 		'''
-		return two_parents(self, Ops.mul, other)
+		return two_parents(self, math.Ops.mul, other)
 
 	def __rmul__(self, other):
 		'''
@@ -207,7 +151,7 @@ class Trace:
 
 		Returns Trace: contains new formula, new value and new derivative.
 		'''
-		return two_parents(self, Ops.div, other)
+		return two_parents(self, math.Ops.div, other)
 
 	def __rtruediv__(self, other):
 		'''
@@ -215,7 +159,7 @@ class Trace:
 		
 		Returns Trace: contains new formula, new value and new derivative
 		'''
-		return one_parent(self, Ops.div_R, other, formula = str(other) + '/' + self._trace_name)    
+		return one_parent(self, math.Ops.div_R, other, formula = f'{other}/{self._trace_name}')    
 	
 	def __neg__(self):
 		'''
@@ -223,7 +167,7 @@ class Trace:
 		
 		Returns Trace: contains instance name, (-1) * instance value and (-1) * instance derivative.
 		'''
-		return one_parent(self, Ops.sub_R, 0, formula = '-'+self._trace_name)
+		return one_parent(self, math.Ops.sub_R, 0, formula = f'-{self._trace_name}')
 
 	def __pow__(self, other):
 		'''
@@ -236,7 +180,7 @@ class Trace:
 
 		Returns Trace: contains new formula, new value and new derivative.
 		'''
-		return two_parents(self, Ops.power, other)
+		return two_parents(self, math.Ops.power, other)
 	
 	def __rpow__(self, other):
 		'''
@@ -244,7 +188,18 @@ class Trace:
 		
 		Returns Trace: contains new formula, new value and new derivative
 		'''
-		return one_parent(self, Ops.exp, other, formula = str(other) + '^' + self._trace_name)
+		return one_parent(self, math.Ops.exp, other, formula = f'{other}^{self._trace_name}')
+
+class Variable(Trace):
+
+	def __init__(self, name, val):
+		# by default, the derivative of a variable with respect to itself is 1.0
+		# the parents of a variable is an emptylist
+
+		if not isinstance(val, numbers.Number):
+			raise TypeError('Value should be numerical')
+		super().__init__(name, val, {name : 1.0}, [])
+		self._name = name
 
 def one_parent(t, op, param = None, formula = None):
 	'''
@@ -254,12 +209,12 @@ def one_parent(t, op, param = None, formula = None):
 		new_formula =  f'{op}({t._trace_name})'
 		if formula:
 			new_formula = formula
-		val = calc_rules.val(t, op, param)
-		der =  calc_rules.deriv(t, op, param)
+		val = math.val(t, op, param)
+		der =  math.deriv(t, op, param)
 		parents = [t]
 		return Trace(new_formula, val, der, parents, op, param)	
 	except AttributeError:
-		# when t is actually a vector input, we are still able to apply the op to the whole vector (e.g. sin([x1,x2]) = [sin(x1),sin(x2)])
+		#when t is actually a vector input, we are still able to apply the op to the whole vector (e.g. sin([x1,x2]) = [sin(x1),sin(x2)])
 		return np.array([one_parent(t_, op, param, formula) for t_ in t])
 
 def two_parents(t1, op, t2, formula = None):
@@ -269,12 +224,12 @@ def two_parents(t1, op, t2, formula = None):
 	try: 
 		# when t2 is a trace
 		new_formula =  t1._trace_name + op + t2._trace_name
-		val = calc_rules.val(t1, op, t2)
-		der =  calc_rules.deriv(t1, op, t2)
+		val = math.val(t1, op, t2)
+		der =  math.deriv(t1, op, t2)
 		parents = [t1, t2]
 		return Trace(new_formula, val, der, parents, op)
 	except AttributeError: 
 		# when t2 is actually a constant, not a trace, and this should really be a one parent trace
-		return one_parent(t1, op, t2, formula = t1._trace_name + op + str(t2))
+		return one_parent(t1, op, t2, formula = f'{t1._trace_name}{op}{t2}')
 
 

@@ -1,9 +1,10 @@
 # :)
 import numpy as np
+import matplotlib.pyplot as plt
 import graddog as gd
 from graddog.functions import sin, cos, tan, exp, log
 
-seed0 = 1
+seed0 = 0.5
 def f0(x):
 	return x**3 - 4*x + cos(exp(-sin(tan(log(x)))))
 
@@ -39,10 +40,10 @@ fs = [f0, f1, f2, f3, f4, f5, f6, f7]
 
 def run_demos():
 	for i, f in enumerate(fs):
-		seed = seeds[i]
 		print('demo', i)
-		gd.trace(f, seed)
-		gd.show(f)
+		gd.trace(f, seeds[i])
 		print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+
 
 run_demos()

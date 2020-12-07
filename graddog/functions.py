@@ -1,8 +1,11 @@
 # :)
 import numpy as np
-import graddog.calc_rules as calc_rules
-Ops = calc_rules.Ops
-from graddog.trace import Trace, one_parent, two_parents
+import graddog.math as math
+from graddog.trace import Trace, one_parent
+
+'''
+Any implementable unary (one_parent) or binary (two_parent) operations can be added here
+'''
 
 def sin(t : Trace):
     '''
@@ -13,7 +16,7 @@ def sin(t : Trace):
 
     Return Trace that constitues sin() elementary function
     '''
-    return one_parent(t, Ops.sin)
+    return one_parent(t, math.Ops.sin)
 
 def cos(t : Trace):
     '''
@@ -24,7 +27,7 @@ def cos(t : Trace):
 
     Return Trace that constitues cos() elementary function
     '''
-    return one_parent(t, Ops.cos)
+    return one_parent(t, math.Ops.cos)
 
 def tan(t : Trace):
     '''
@@ -35,7 +38,7 @@ def tan(t : Trace):
 
     Return Trace that constitues tan() elementary function
     '''
-    return one_parent(t, Ops.tan)
+    return one_parent(t, math.Ops.tan)
 
 def exp(t : Trace, base=np.e):
     '''
@@ -50,7 +53,7 @@ def exp(t : Trace, base=np.e):
     formula = None
     if base != np.e:
         formula = f'{np.round(base,3)} ^ ({t._trace_name})'
-    return one_parent(t, Ops.exp, param = base, formula = formula)
+    return one_parent(t, math.Ops.exp, param = base, formula = formula)
 
 def log(t : Trace, base=np.e):
     '''
@@ -65,7 +68,7 @@ def log(t : Trace, base=np.e):
     formula = None
     if base != np.e:
         formula = f'log_{np.round(base,3)}({t._trace_name})'
-    return one_parent(t, Ops.log, base, formula = formula)
+    return one_parent(t, math.Ops.log, base, formula = formula)
 
 def sinh(t : Trace):
     '''
@@ -77,7 +80,7 @@ def sinh(t : Trace):
 
     Return Trace that constitues sinh() elementary function
     '''
-    return one_parent(t, Ops.sinh)
+    return one_parent(t, math.Ops.sinh)
 
 def cosh(t : Trace):
     '''
@@ -88,7 +91,7 @@ def cosh(t : Trace):
 
     Return Trace that constitues cosh() elementary function
     '''
-    return one_parent(t, Ops.cosh)
+    return one_parent(t, math.Ops.cosh)
 
 def tanh(t : Trace):
     '''
@@ -99,7 +102,7 @@ def tanh(t : Trace):
 
     Return Trace that constitues tanh() elementary function
     '''
-    return one_parent(t, Ops.tanh)
+    return one_parent(t, math.Ops.tanh)
 
 def sqrt(t : Trace):
     '''
@@ -110,7 +113,7 @@ def sqrt(t : Trace):
 
     Return Trace that constitues sqrt() elementary function
     '''
-    return one_parent(t, Ops.sqrt)
+    return one_parent(t, math.Ops.sqrt)
 
 def sigmoid(t : Trace):
     '''
@@ -121,5 +124,5 @@ def sigmoid(t : Trace):
 
     Return Trace that constitues sigmoig() elementary function
     '''
-    return one_parent(t, Ops.sigm)
+    return one_parent(t, math.Ops.sigm)
 

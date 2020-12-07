@@ -1,7 +1,7 @@
 # :)
 import numpy as np
 import pandas as pd
-import graddog.calc_rules as calc_rules
+import graddog.math as math
 
 # TODO: come up with a better name for this class
 
@@ -89,7 +89,7 @@ class CompGraph:
 		def add_trace(self, trace):
 
 			# unpack trace data
-			formula, val, parents, op, param = trace._formula, trace._val, trace._parents, trace._op, trace._param
+			formula, val, der, parents, op, param = trace._formula, trace._val, trace._der, trace._parents, trace._op, trace._param
 
 			# check if we can avoid a repeated calculation
 			existing_trace = self.get_existing_trace(formula)
@@ -109,7 +109,7 @@ class CompGraph:
 			self.traces[new_trace_name] = trace
 
 			# calculate partial derivatives for the table
-			derivs = self.partial_derivs_for_table(new_trace_name, op, parents, param)
+			derivs = self.partial_derivs_for_table(new_trace_name, der, op, parents, param)
 
 			# update trace table
 			self.add_trace_table_row(new_trace_name, label_string, formula, val, derivs)
@@ -120,21 +120,12 @@ class CompGraph:
 			# add new row to the trace table
 			self.table.loc[self.size - 1] = [new_trace_name, label_string, formula, val] + partial_derivs_list
 
-		def partial_derivs_for_table(self, new_trace_name, op, parents, param):
-			############# calculate the partial derivatives of a trace with respect to its children
-			# save these partial derivatives in the dictionary self.partials for use in forward and reverse mode
-
-			########################################################################
-			if op: #only enters this if statement when the new trace is not a variable
-				try:
-					t, other = parents[0], parents[1]
-				except IndexError:
-					t, other = parents[0], param
-				partial_der = calc_rules.deriv(t, op, other)
-			else: # the derivative of a variable w.r.t. itself is 1
-				partial_der = {new_trace_name : 1.0}
-			self.partials[new_trace_name] = partial_der
-			partial_derivs_list = list(partial_der.values())
+		def partial_derivs_for_table(self, new_trace_name, der, op, parents, param):
+			'''
+			Partial derivative(s) of this trace
+			'''
+			self.partials[new_trace_name] = der
+			partial_derivs_list = list(der.values())
 			if len(partial_derivs_list) == 1:
 				partial_derivs_list.append('NaN')
 			return partial_derivs_list
@@ -194,6 +185,9 @@ class CompGraph:
 			# lookup a variable in the table to get its trace name
 			return self.table.loc[self.table['formula'] == var_name]['trace_name'].iloc[0]
 
+		def num_outputs(self):
+			return len(self.table.loc[self.table['label'] == 'OUTPUT'])
+
 		@property
 		def comp_graph(self):
 			return {'in' : self.ins, 'out' : self.outs}
@@ -251,5 +245,8 @@ class CompGraph:
 			CompGraph.instance = CompGraph.__CompGraph()
 		return CompGraph.instance.add_trace(trace)
 
+	def num_outputs():
+		if CompGraph.instance:
+			return CompGraph.instance.num_outputs()
 
 
