@@ -36,6 +36,9 @@ class Ops:
 	sinh = 'sinh'
 	cosh = 'cosh'
 	tanh = 'tanh'
+	arcsin = 'arcsin'
+	arccos = 'arccos'
+	arctan = 'arctan'
 	
 	one_parent_rules = {
 	# value rules must be (t, param) --> R
