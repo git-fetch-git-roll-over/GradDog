@@ -112,7 +112,7 @@ class CompGraph:
 
 			# update trace table
 			self.add_trace_table_row(new_trace_name, label_string, formula, val, partial_derivs_list)
-			
+
 			return new_trace_name
 
 		def add_trace_table_row(self, new_trace_name, label_string, formula, val, partial_derivs_list):
@@ -139,7 +139,7 @@ class CompGraph:
 			self.partials[new_trace_name] = partial_der
 			partial_derivs_list = list(partial_der.values())
 			if len(partial_derivs_list) == 1:
-				partial_derivs_list.append(0.0)
+				partial_derivs_list.append('NaN')
 			return partial_derivs_list
 
 		def new_trace_name(self):

@@ -250,13 +250,17 @@ def one_parent(t, op, param = None, formula = None):
 	'''
 	Creates a trace from one parent, with an optional parameter and optional formula
 	'''
-	new_formula =  f'{op}({t._trace_name})'
-	if formula:
-		new_formula = formula
-	val = calc_rules.val(t, op, param)
-	der =  calc_rules.deriv(t, op, param)
-	parents = [t]
-	return Trace(new_formula, val, der, parents, op, param)	
+	try:
+		new_formula =  f'{op}({t._trace_name})'
+		if formula:
+			new_formula = formula
+		val = calc_rules.val(t, op, param)
+		der =  calc_rules.deriv(t, op, param)
+		parents = [t]
+		return Trace(new_formula, val, der, parents, op, param)	
+	except AttributeError:
+		# when t is not actually a trace but a VECTOR
+		return 
 
 def two_parents(t1, op, t2, formula = None):
 	'''
