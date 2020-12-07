@@ -24,10 +24,6 @@ from graddog.compgraph import CompGraph
 
 # TODO: add missing docstrings
 
-# TODO: maybe make all strings formatted with a function instead of hard-coded
-
-# TODO (optional): replace hard-coded strings with Ops strings
-
 
 class Trace:
 	'''
@@ -135,6 +131,7 @@ class Trace:
 		except AttributeError:
 			return self.val == other
 
+
 	def __add__(self, other):
 		'''
 		This allows to do addition with Trace instances or scalar numbers. 
@@ -146,22 +143,8 @@ class Trace:
 
 		Returns Trace: contains new formula, new value and new derivative.
 		'''
-	
-		#new_formula = self.make_formula(self, op, other)
-		op = Ops.add
-		try: 
-			new_formula =  self._trace_name + op + other._trace_name
-			new_val = self._val + other._val
-			new_parents = [self, other]
-			new_param = None
-		except AttributeError: 
-			new_formula = self._trace_name + op + str(other)
-			new_val = self._val + other
-			new_parents = [self]
-			new_param = other
-		new_der =  calc_rules.deriv(self, op, other)
-		
-		return Trace(new_formula, new_val, new_der, new_parents, op, new_param)	
+		return two_parents(self, Ops.add, other)
+
 
 	def __radd__(self, other):
 		'''
@@ -182,19 +165,7 @@ class Trace:
 
 		Returns Trace: contains new formula, new value and new derivative.
 		'''
-		op = Ops.sub
-		try: 
-			new_formula =  self._trace_name + op + other._trace_name
-			new_val = self._val - other._val
-			new_parents = [self, other]
-			new_param = None
-		except AttributeError: 
-			new_formula = self._trace_name + op + str(other)
-			new_val = self._val - other
-			new_parents = [self]
-			new_param = other
-		new_der =  calc_rules.deriv(self, op, other)
-		return Trace(new_formula, new_val, new_der, new_parents, op, new_param)	
+		return two_parents(self, Ops.sub, other)
 
 	def __rsub__(self, other):
 		'''
@@ -202,13 +173,7 @@ class Trace:
 
 		Returns Trace: contains new value and new derivative
 		'''
-		op = Ops.sub_R
-		new_formula =  + str(other) + '-' + self._trace_name
-		new_val = other - self._val
-		new_der =  calc_rules.deriv(self, op, other)
-		new_parents = [self]
-		new_param = other
-		return Trace(new_formula, new_val, new_der, new_parents, op, new_param)	
+		return one_parent(self, Ops.sub_R, other)
 
 	def __mul__(self, other):
 		'''
@@ -221,24 +186,11 @@ class Trace:
 
 		Returns Trace: contains new formula, new value and new derivative.
 		'''
-		op = Ops.mul
-		try: 
-			new_formula = self._trace_name + op + other._trace_name 
-			new_val = self._val * other._val
-			new_parents = [self, other]
-			new_param = None
-		except AttributeError: 
-			new_formula = self._trace_name + op + str(other)
-			new_val = self._val * other
-			new_parents = [self]
-			new_param = other
-		new_der = calc_rules.deriv(self, op, other)
-		
-		return Trace(new_formula, new_val, new_der, new_parents, op, new_param)
+		return two_parents(self, Ops.mul, other)
 
 	def __rmul__(self, other):
 		'''
-		This is called when int of float / an instance of Trace class.
+		This is called when int or float / an instance of Trace class.
 
 		Returns Trace: contains new formula, new value and new derivative
 		'''
@@ -255,21 +207,7 @@ class Trace:
 
 		Returns Trace: contains new formula, new value and new derivative.
 		'''
-		op = Ops.div
-		try: 
-			new_formula = self._trace_name +  op + other._trace_name
-			new_val = self._val / other._val
-			new_parents = [self, other]
-			new_param = None
-		except AttributeError: 
-			new_formula = self._trace_name + op + str(other)
-			new_val = self._val / other
-			new_parents = [self]
-			new_param = other
-		new_der = calc_rules.deriv(self, op, other)
-		
-		
-		return Trace(new_formula, new_val, new_der, new_parents, op, new_param)
+		return two_parents(self, Ops.div, other)
 
 	def __rtruediv__(self, other):
 		'''
@@ -277,13 +215,7 @@ class Trace:
 		
 		Returns Trace: contains new formula, new value and new derivative
 		'''
-		op = Ops.div_R
-		new_formula = str(other) + '/' + self._trace_name
-		new_val = other / self._val
-		new_der = calc_rules.deriv(self, op, other)
-		new_parents = [self]
-		new_param = other
-		return Trace(new_formula, new_val, new_der, new_parents, op, new_param)      
+		return one_parent(self, Ops.div_R, other, formula = str(other) + '/' + self._trace_name)    
 	
 	def __neg__(self):
 		'''
@@ -291,12 +223,7 @@ class Trace:
 		
 		Returns Trace: contains instance name, (-1) * instance value and (-1) * instance derivative.
 		'''
-		op = Ops.sub_R
-		new_formula = '-'+self._trace_name
-		new_val = -self._val
-		new_der = calc_rules.deriv(self, op, 0)
-		new_parents = [self]
-		return Trace(new_formula, new_val, new_der, new_parents, op)   
+		return one_parent(self, Ops.sub_R, 0, formula = '-'+self._trace_name)
 
 	def __pow__(self, other):
 		'''
@@ -309,20 +236,7 @@ class Trace:
 
 		Returns Trace: contains new formula, new value and new derivative.
 		'''
-		op = Ops.power
-		try: 
-			new_formula = self._trace_name +  op + other._trace_name
-			new_val = self._val ** other._val
-			new_parents = [self, other]
-			new_param = None
-		except AttributeError: 
-			new_formula = self._trace_name + op + str(other)
-			new_val = self._val**other
-			new_parents = [self]
-			new_param = other
-		new_der = calc_rules.deriv(self, op, other)
-		
-		return Trace(new_formula, new_val, new_der, new_parents, op, new_param) 
+		return two_parents(self, Ops.power, other)
 	
 	def __rpow__(self, other):
 		'''
@@ -330,11 +244,33 @@ class Trace:
 		
 		Returns Trace: contains new formula, new value and new derivative
 		'''
-		op = Ops.exp
-		new_formula = str(other) + '^' + self._trace_name
-		new_val = other ** self._val
-		new_der = calc_rules.deriv(self, op, other)
-		new_parents = [self]
-		new_param = other
-		return Trace(new_formula, new_val, new_der, new_parents, op, new_param) 
+		return one_parent(self, Ops.exp, other, formula = str(other) + '^' + self._trace_name)
+
+def one_parent(t, op, param = None, formula = None):
+	'''
+	Creates a trace from one parent, with an optional parameter and optional formula
+	'''
+	new_formula =  f'{op}({t._trace_name})'
+	if formula:
+		new_formula = formula
+	val = calc_rules.val(t, op, param)
+	der =  calc_rules.deriv(t, op, param)
+	parents = [t]
+	return Trace(new_formula, val, der, parents, op, param)	
+
+def two_parents(t1, op, t2, formula = None):
+	'''
+	Creates a trace from two parents, with an optional formula
+	'''
+	try: 
+		# when t2 is a trace
+		new_formula =  t1._trace_name + op + t2._trace_name
+		val = calc_rules.val(t1, op, t2)
+		der =  calc_rules.deriv(t1, op, t2)
+		parents = [t1, t2]
+		return Trace(new_formula, val, der, parents, op)
+	except AttributeError: 
+		# when t2 is actually a constant, not a trace, and this should really be a one parent trace
+		return one_parent(t1, op, t2, formula = t1._trace_name + op + str(t2))
+
 

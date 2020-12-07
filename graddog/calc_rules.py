@@ -3,8 +3,6 @@ import numpy as np
 
 # TODO: convert lambda expressions to closure functions where appropriate
 
-# TODO: how can this be organized better?
-
 # TODO: How do we distinguish that this file is meant for internal use and not for the user?
 
 class Ops:
@@ -95,9 +93,25 @@ def deriv_1(t, op, param = None):
 def deriv_2(t1, op, t2):
 	# derivative of a trace with two parents
 	try:
-		t2_val = t2.val # causes an AttributeError to force deriv_1_new to get called instead :P
+		t2_val = t2.val # causes an AttributeError to force deriv_1 to get called instead :P
 		d_op_dt1, d_op_dt2 = Ops.two_parent_deriv_rules[op](t1, t2)
 		return {t1._trace_name : d_op_dt1, t2._trace_name : d_op_dt2}
+	except KeyError:
+		raise ValueError('need to implement operation', op)
+
+def val_1(t, op, param = None):
+	# value of a trace with one parent
+	try:
+		return Ops.one_parent_rules[op](t, param)
+	except KeyError:
+		raise ValueError('need to implement operation', op)
+	
+
+def val_2(t1, op, t2):
+	# value of a trace with two parents
+	try:
+		t2_val = t2.val # causes an AttributeError to force val_1 to get called instead :P
+		return Ops.two_parent_rules[op](t1, t2)
 	except KeyError:
 		raise ValueError('need to implement operation', op)
 
@@ -111,5 +125,15 @@ def deriv(t, op, other = None):
 	except AttributeError:
 		# if other is a param, AKA just a number
 		return deriv_1(t, op, other)
+
+def val(t, op, other = None):
+	if other is None:
+		return val_1(t, op)
+	try:
+		# if other is a trace
+		return val_2(t, op, other)
+	except AttributeError:
+		# if other is a param, AKA just a number
+		return val_1(t, op, other)
 
 

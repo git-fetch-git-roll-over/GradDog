@@ -1,13 +1,10 @@
 import numpy as np
 import pandas as pd
 import graddog.calc_rules as calc_rules
-#from graddog.trace import Trace
 
 # TODO: come up with a better name for this class
 
 # TODO: add docstrings and examples
-
-# TODO: choose better location for reverse_mode
 
 class CompGraph:
 
@@ -22,6 +19,9 @@ class CompGraph:
 			return repr(self)
 
 		def reset(self):
+			'''
+			Sets all the attributes to their initial values
+			'''
 			self.size = 0
 
 			#store the number of variables, as well as the variable names
@@ -31,6 +31,11 @@ class CompGraph:
 			# store the graph connections in two separate dictionaries, ins (AKA parents) and outs (AKA children)
 			self.outs = {}
 			self.ins = {}
+
+			# stores the trace_names of the Trace objects that are the current inputs and outputs of the computational graph
+			# This is for convenience. These attributes could be calculated based on self.ins and self.outs, but this is easier
+			self.outputs = []
+			self.inputs = []
 
 			# store the actual trace objects to avoid repeated calculations
 			self.traces = {}
@@ -51,13 +56,14 @@ class CompGraph:
 			else:
 				return None
 
-		def get_label_string(self, op, der):
+		def get_label_string(self, op, new_trace_name, formula):
 			# when adding a trace, if it is a variable, label it 'INPUT' and add it to the variables
 			# otherwise, if it is not a variable, the row is labelled 'OUTPUT' unless later it becomes a parent, in which case the OUTPUT label is removed
 			if op is None:
-				variable_name = list(der.keys())[0]
+				variable_name = formula
 				if variable_name in self.var_names:
 					self.reset()
+				self.inputs.append(new_trace_name)
 				self.var_names.append(variable_name)
 				self.num_vars += 1
 				label_string = 'INPUT'
@@ -82,19 +88,19 @@ class CompGraph:
 		def add_trace(self, trace):
 
 			# unpack trace data
-			formula, val, der, parents, op, param = trace._formula, trace._val, trace._der, trace._parents, trace._op, trace._param
-
-			# get new label
-			label_string = self.get_label_string(op, der)
+			formula, val, parents, op, param = trace._formula, trace._val, trace._parents, trace._op, trace._param
 
 			# check if we can avoid a repeated calculation
 			existing_trace = self.get_existing_trace(formula)
 			if existing_trace:
 				return existing_trace._trace_name
-		
+
 			# get new trace name
 			new_trace_name = self.new_trace_name()
 
+			# get new label
+			label_string = self.get_label_string(op, new_trace_name, formula)
+		
 			# update computational graph
 			self.update_computational_graph(new_trace_name, parents)
 
@@ -106,7 +112,7 @@ class CompGraph:
 
 			# update trace table
 			self.add_trace_table_row(new_trace_name, label_string, formula, val, partial_derivs_list)
-
+			
 			return new_trace_name
 
 		def add_trace_table_row(self, new_trace_name, label_string, formula, val, partial_derivs_list):
@@ -128,7 +134,7 @@ class CompGraph:
 				except IndexError:
 					t, other = parents[0], param
 				partial_der = calc_rules.deriv(t, op, other)
-			else:
+			else: # the derivative of a variable w.r.t. itself is 1
 				partial_der = {new_trace_name : 1.0}
 			self.partials[new_trace_name] = partial_der
 			partial_derivs_list = list(partial_der.values())
@@ -145,41 +151,44 @@ class CompGraph:
 			return int(self.table.loc[self.table['formula'] == var_name]['trace_name'].iloc[0][1:]) - 1
 
 		def forward_mode_der(self):
-
-			# stores d_trace/d_x for each input variable x, initialized with 1s and 0s for the derivatives of variables
+			self.outputs = self.table.loc[self.table['label'] == 'OUTPUT']['trace_name'].values
+			# stores d_trace/d_x for each trace for each input variable x, initialized with 1s and 0s for the derivatives of variables
 			trace_derivs = {self.get_trace_name(x) : np.eye(self.num_vars)[i,:] for i, x in enumerate(self.var_names)}
-
-			# step up through the trace table starting after all the variables
+			# step FORWARDS through the trace table 
+			# if there are n variables (for example, 3 variables x, y, and z)
+			# then start at row n + 1 (for example, 4) in the trace table
 			for row in range(self.num_vars, self.size):
 				trace_name = self.table.loc[row]['trace_name']
 				d_trace_d_chilren = np.array([[self.partials[trace_name][in_] for in_ in self.ins[trace_name]]])
 				d_children_d_vars = np.vstack([trace_derivs[in_] for in_ in self.ins[trace_name]])
 				trace_derivs[trace_name] = np.dot(d_trace_d_chilren, d_children_d_vars)
-
-			#return {v : res[self.get_trace_name(x)] for x in self.var_names}
-			outputs = self.table.loc[self.table['label'] == 'OUTPUT']['trace_name'].values
-			return np.array([trace_derivs[output][0] for output in outputs])
+			return np.array([trace_derivs[output][0] for output in self.outputs])
 
 		def reverse_mode_der(self):
-
-			# get all the current outputs of the function
-			outputs = self.table.loc[self.table['label'] == 'OUTPUT']['trace_name'].values
-
+			self.outputs = self.table.loc[self.table['label'] == 'OUTPUT']['trace_name'].values
 			# stores d_f/d_trace for each trace for each output term f
-			trace_derivs = {x : np.eye(len(outputs))[:,i].reshape(-1,1) for i, x in enumerate(outputs)}
+			trace_derivs = {x : np.eye(len(self.outputs))[:,i].reshape(-1,1) for i, x in enumerate(self.outputs)}
 
+			# step BACKWARDS through the trace table 
+			# start at the last row 
+			# and as you step backwards, skip all the rows labelled 'OUTPUT'
 			for row in reversed(range(self.size)):
 				trace_name = self.table.loc[row]['trace_name']
 				label = self.table.loc[row]['label']
+
+				# skip the rows labelled 'OUTPUT'
 				if label != 'OUTPUT':
 
-					if self.outs[trace_name]:
+					# if this trace element leads to anything at all in the outputs, calculate derivatives
+					if self.outs[trace_name] != []:
 						d_outs_d_children = np.hstack([trace_derivs[out_] for out_ in self.outs[trace_name]])
 						d_children_d_trace = np.array([[self.partials[out_][trace_name] for out_ in self.outs[trace_name]]])
 						d_outs_d_trace = np.dot(d_outs_d_children, d_children_d_trace.T)
-					else:
-						#this is the case there the trace is never used anywhere, so the derivatives of the outputs with respect to this trace are all zero
-						d_outs_d_trace = np.zeros(shape=(len(outputs), 1))
+
+					# reaches this if statement if this trace has no outputs, but it's not an output
+					else: #i.e., it was a variable that was used in the calculation
+						#so the derivatives of the outputs with respect to this trace are all zero
+						d_outs_d_trace = np.zeros(shape=(len(self.outputs), 1))
 					
 					trace_derivs[trace_name] = d_outs_d_trace
 			return np.hstack([trace_derivs[x] for x in list(map(lambda x : self.get_trace_name(x), self.var_names))])
@@ -223,6 +232,14 @@ class CompGraph:
 	def reset():
 		if CompGraph.instance:
 			CompGraph.instance.reset()
+
+	def derivative(mode = 'forward'):
+		if mode == 'forward':
+			CompGraph.forward_mode()
+		elif mode == 'reverse':
+			CompGraph.reverse_mode()
+		else:
+			raise ValueError('Mode attribute must be forward or reverse')
 
 	def forward_mode():
 		if CompGraph.instance:
