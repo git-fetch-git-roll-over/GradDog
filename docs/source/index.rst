@@ -60,7 +60,6 @@ Go to the directory that you want to run this package, and then open a command l
 * ``pip install -r requirements.txt`` to install the necessary dependencies
 * ``cd forward_mode`` to go inside the directory containing the modules
 * create your own driver script, following the basic demos below
-
 Basic Demo
 ----------
 
@@ -78,11 +77,11 @@ Then create an instance of Variable class and construct your elementary function
    x = Variable('x', 4)
    f1 = sin(x)
    f2 = cos(x)
-
-Last create a variable f to add of your f1 and f2 and print out f::
+Last, create a variable f to add of your f1 and f2 and print out f::
 
     f = f1 + f2 
     print(f)
+
     >>> sinx+cosx: sinx+cosx value: -1.410; derivative: 0.103
 
 Both the values and the derivative values are wrapped up in attributes belonging to these objects. For example::
@@ -97,7 +96,6 @@ Both the values and the derivative values are wrapped up in attributes belonging
     >>> 0.7568024953079282
     f.der
     >>> 0.10315887444431626
-
 
 Software organization
 =====================
@@ -116,6 +114,7 @@ With our main directory ``cs107-FinalProject``, We plan to organize our package 
 
 Basic Modules
 -------------
+
 
 We plan to include two modules: ``variable``, which defines the variable object and the differentiation rules that govern its behavior, and ``function`` which defines the elementary functions (e.g. sine, cosine, logarithms). 
 
@@ -136,13 +135,16 @@ Implementation Details
 Descriptions
 ------------
 
+
 Our implementation isn't currently built on any singular data structure, but as we expand to account for multiple inputs we plan to use numpy arrays. This will make it easy to perform operations on either single values or single or multidimensional arrays. 
 
 The main class of this package is the are ``Variable`` and ``Function`` classes and ``Variable`` creates instances of single input varaibles. This class contains arrtibutes such as *name*, *value* and default *derivative*. On the other hand, ``Function`` classes creates basic elementary function methods (e.g. :math:`sin, cos, tan, exp` and :math:`log`)
 
 
+
 Future Direction
 ----------------
+
 
 We are planning to extend our basic automatic differentation package to handle cases where involves multi-dimensional inputs and outputs. We are also interested in implementing an extra feature either with dual numbers or optimization. 
 

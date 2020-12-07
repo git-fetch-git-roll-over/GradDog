@@ -17,8 +17,13 @@
 
 # -- Project information -----------------------------------------------------
 
+
 project = 'AutoDiff'
 copyright = '2020, Ivan Shu, Max Cembalest, Peyton Benac and Seeam Shahid Noor'
+
+
+
+
 author = 'Ivan Shu, Max Cembalest, Peyton Benac and Seeam Shahid Noor'
 
 # The full version, including alpha/beta/rc tags
