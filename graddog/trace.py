@@ -206,7 +206,7 @@ class Trace:
 
 class Variable(Trace):
 	'''
-	This is a class to create Varaible instance
+	This is a class to create Variable instance
 	'''
 	def __init__(self, name, val):
 		'''

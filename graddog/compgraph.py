@@ -149,7 +149,7 @@ class CompGraph:
 				trace_name = self.table.loc[row]['trace_name']
 				d_trace_d_chilren = np.array([[self.partials[trace_name][in_] for in_ in self.ins[trace_name]]])
 				d_children_d_vars = np.vstack([trace_derivs[in_] for in_ in self.ins[trace_name]])
-				trace_derivs[trace_name] = np.dot(d_trace_d_chilren, d_children_d_vars)
+				trace_derivs[trace_name] = np.dot(d_trace_d_chilren, d_children_d_vars)            
 			return np.array([trace_derivs[output][0] for output in self.outputs])
 
 		def reverse_mode_der(self):
@@ -225,20 +225,20 @@ class CompGraph:
 			CompGraph.instance.reset()
 
 	def derivative(mode = 'forward'):
-		if mode == 'forward':
+		if mode.lower() == 'forward':
 			CompGraph.forward_mode()
-		elif mode == 'reverse':
+		elif mode.lower() == 'reverse':
 			CompGraph.reverse_mode()
 		else:
 			raise ValueError('Mode attribute must be forward or reverse')
 
 	def forward_mode():
 		if CompGraph.instance:
-			print(CompGraph.instance.forward_mode_der())
+			return CompGraph.instance.forward_mode_der()
 
 	def reverse_mode():
 		if CompGraph.instance:
-			print(CompGraph.instance.reverse_mode_der())
+			return CompGraph.instance.reverse_mode_der()
 
 	def add_trace(trace):
 		if not CompGraph.instance:
