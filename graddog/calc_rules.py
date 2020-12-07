@@ -19,16 +19,42 @@ class Ops:
 	sinh = 'sinh'
 	cosh = 'cosh'
 	tanh = 'tanh'
-	const_exp=  '^'
-	const_exp_R = '^R'
-	const_mul = '*'
-	const_div = '/'
-	const_div_R = '/R'
-	const_add = '+'
-	const_sub = '-'
-	const_sub_R = '-R'
+	power = '^'
+	mul = '*'
+	div = '/'
+	div_R = '/R'
+	add = '+'
+	sub = '-'
+	sub_R = '-R'
 
-	deriv_rules = {
+	one_parent_rules = {
+	add: lambda t, param : t.val + param,
+	sub: lambda t, param : t.val - param,
+	sub_R : lambda t, param : param - t.val,
+	mul: lambda t, param : t.val*param,
+	div: lambda t, param : t.val/param,
+	div_R : lambda t, param : param/t.val,
+	power: lambda t, param : t._val**param,
+	sin : lambda t, param: np.sin(t.val),
+	cos : lambda t, param : np.cos(t.val),
+	tan : lambda t, param : np.tan(t.val),
+	exp : lambda t, param : np.power(param, t.val),
+	log : lambda t, param : np.log(t.val)/np.log(param),
+	sqrt : lambda t, param : t.val**0.5,
+	sigm : lambda t, param : 1/(1 + np.exp(-t.val)),
+	sinh : lambda t, param : (np.exp(t.val) - np.exp(-t.val))/2,
+	cosh : lambda t, param : (np.exp(t.val) + np.exp(-t.val))/2,
+	tanh : lambda t, param : (np.exp(t.val) - np.exp(-t.val))/(np.exp(t.val) + np.exp(-t.val)),
+	}
+
+	one_parent_deriv_rules = {
+	add: lambda t, param : 1.0,
+	sub: lambda t, param : 1.0,
+	sub_R : lambda t, param : -1.0,
+	mul: lambda t, param : param,
+	div: lambda t, param : 1/param,
+	div_R : lambda t, param : -param / ((t._val)**2),
+	power : lambda t, param : param * t._val ** (param - 1),
 	sin : lambda t, param : np.cos(t.val),
 	cos : lambda t, param : -np.sin(t.val),
 	tan : lambda t, param : 1/(np.cos(t.val)**2),
@@ -39,84 +65,51 @@ class Ops:
 	sinh : lambda t, param : (np.exp(t.val) + np.exp(-t.val))/2,
 	cosh : lambda t, param : (np.exp(t.val) - np.exp(-t.val))/2,
 	tanh : lambda t, param : 4/((np.exp(t.val) + np.exp(-t.val))**2),
-	const_exp: lambda t, param : param*t._val**(param-1),
-	const_exp_R : lambda t, param : param ** t._val * np.log(param),
-	const_mul: lambda t, param : param,
-	const_div: lambda t, param : 1/param,
-	const_div_R : lambda t, param : -param / ((t._val)**2),
-	const_add: lambda t, param : 1.0,
-	const_sub: lambda t, param : 1.0,
-	const_sub_R : lambda t, param : -1.0
 	}
 
-def deriv_1(t, op, partial = False, param = None):
-	'''
-	Deriv of single-input operators, or double-input operators with one scalar input
-	'''
-
-	# d_op_dx = d_op_dt * dt_dx
-	d_op_dt = Ops.deriv_rules[op](t, param)
-
-	result = {x : t._der[x] * d_op_dt for x in t._der}
-
-	if partial: return result, {t._trace_name : d_op_dt}
-
-	return result, None
-
-def deriv_2(t1, op, t2, partial = False):
-
-	'''
-	Deriv of double-input operators
-
-	for each variable x, specify *three* derivative rules for each operator, for each of the following cases:
-	a) when x in both t1 and t2
-	b) when x in t1 and not in t2
-	c) when x in t2 and not in t1
-	'''
-
-	bi_deriv_rules = {
-	'+' : [lambda t1, t2, x: t1._der[x] + t2._der[x], lambda t1, t2, x: t1._der[x], lambda t1, t2, x: t2._der[x]],
-	'-' : [lambda t1, t2, x: t1._der[x] - t2._der[x], lambda t1, t2, x: t1._der[x], lambda t1, t2, x: -t2._der[x]],
-	'*' : [lambda t1, t2, x: t1._der[x]*t2._val + t2._der[x]*t1._val, lambda t1, t2, x: t1._der[x]*t2._val, lambda t1, t2, x: t2._der[x]*t1._val],
-	'/' : [lambda t1, t2, x : (t1._der[x]*t2._val - t1._val*t2._der[x])/(t2._val**2), lambda t1, t2, x : t1._der[x] / t2._val, lambda t1, t2, x : (-t1._val * t2._der[x]) / (t2._val)**2],
-	'^' : [lambda t1, t2, x: (t1.val ** t2.val) * (t2._der[x]*np.log(t1._val) + t2._val*t1._der[x]/t1._val), lambda t1, t2, x: t2._val * t1._der[x] * (t1._val ** (t2._val - 1)), lambda t1, t2, x: (t1.val ** t2.val) * t2._der[x]*np.log(t1._val)]
+	two_parent_rules = {
+	add : lambda t1, t2 : t1.val + t2.val,
+	sub : lambda t1, t2 : t1.val - t2.val,
+	mul : lambda t1, t2 : t1.val * t2.val,
+	div : lambda t1, t2 : t1.val / t2.val,
+	power : lambda t1, t2 : t1.val ** t2.val,
 	}
 
-	new_der = {}
+	two_parent_deriv_rules = {
+	add : lambda t1, t2 : (1.0, 1.0),
+	sub : lambda t1, t2 : (1.0, -1.0),
+	mul : lambda t1, t2 : (t2.val, t1.val),
+	div : lambda t1, t2 : (1/t2.val, -t1.val/(t2.val**2)),
+	power : lambda t1, t2 : (t2.val*(t1.val**(t2.val-1)), (t1.val**t2.val)*np.log(t1.val)),
+	}
 
-	for x in t1._der:
-		if x in t2._der:
-			new_der[x] = bi_deriv_rules[op][0](t1, t2, x) #function to combine derivs when x is in the domain of both functions
-		else:
-			new_der[x] = bi_deriv_rules[op][1](t1, t2, x) #function to combine derivs when x is in the domain of t1 only
-	for x in t2._der:
-		if x not in t1._der:
-			new_der[x] = bi_deriv_rules[op][2](t1, t2, x) #function to combine derivs when x is in the domain of t2 only
+def deriv_1(t, op, param = None):
+	# derivative of a trace with one parent
+	try:
+		d_op_dt = Ops.one_parent_deriv_rules[op](t, param)
+		return {t._trace_name : d_op_dt}
+	except KeyError:
+		raise ValueError('need to implement operation', op)
+	
 
-	if partial: 
-		if op == '+' : return new_der, {t1._trace_name : 1.0, t2._trace_name : 1.0}
-		elif op == '-' : return new_der, {t1._trace_name : 1.0, t2._trace_name : -1.0}
-		elif op == '*' : return new_der, {t1._trace_name : t2.val, t2._trace_name : t1.val}
-		elif op == '/' : return new_der, {t1._trace_name : 1/t2.val, t2._trace_name : -t1.val/(t2.val**2)}
+def deriv_2(t1, op, t2):
+	# derivative of a trace with two parents
+	try:
+		t2_val = t2.val # causes an AttributeError to force deriv_1_new to get called instead :P
+		d_op_dt1, d_op_dt2 = Ops.two_parent_deriv_rules[op](t1, t2)
+		return {t1._trace_name : d_op_dt1, t2._trace_name : d_op_dt2}
+	except KeyError:
+		raise ValueError('need to implement operation', op)
 
-		elif op == '^' : return {t1._trace_name : 1.0, t2._trace_name : 1.0} # skip implementing this for now
-		
-	else:
-		return new_der, None
 
-def deriv(t, op, other = None, partial = False):
-
-	result = None
-
+def deriv(t, op, other = None):
 	if other is None:
-		result, partial = deriv_1(t, op, partial)
-	else:
-		try:
-			result, partial = deriv_2(t, op, other, partial)
-		except AttributeError:
-			result, partial = deriv_1(t, op, partial, other)
-	if partial:
-		return partial
-	return result
+		return deriv_1(t, op)
+	try:
+		# if other is a trace
+		return deriv_2(t, op, other)
+	except AttributeError:
+		# if other is a param, AKA just a number
+		return deriv_1(t, op, other)
 
 

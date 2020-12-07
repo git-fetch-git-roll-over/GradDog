@@ -1,10 +1,13 @@
 import numpy as np
 import graddog.calc_rules as calc_rules
+Ops = calc_rules.Ops
 from graddog.trace import Trace
 from graddog.compgraph import CompGraph
 from functools import reduce
 
 # TODO: should VectorFunction be in its own file?
+
+# TODO: need to ensure input to log is positive!
 
 class VectorFunction:
     def __init__(self, funcs):
@@ -13,38 +16,38 @@ class VectorFunction:
         # use the map and reduce functions to combine
         # all of the variables from all the functions in funcs
         # into a single sorted list called total_vars
-        self.total_variables = sorted(reduce(lambda s, t : s.union(t), list(map(lambda f : set(f.der.keys()), funcs))))
-        self._name = 'output'
-        self.calculate_jacobian()
+        # self.total_variables = sorted(reduce(lambda s, t : s.union(t), list(map(lambda f : set(f._der.keys()), funcs))))
+        # self._name = 'output'
+        # self.calculate_jacobian()
     
-    def calculate_jacobian(self):
-        M = len(self.total_variables)
-        N = len(self.funcs)
-        self.jacobian = np.array([[self.funcs[n].der_wrt(self.total_variables[m]) for m in range(M)] for n in range(N)])
+    # def calculate_jacobian(self):
+    #     M = len(self.total_variables)
+    #     N = len(self.funcs)
+    #     self.jacobian = np.array([[self.funcs[n].der_wrt(self.total_variables[m]) for m in range(M)] for n in range(N)])
 
-    @property
-    def name(self):
-        '''
-        Returns non-public attribute _name
-        '''
-        return self._name
+    # @property
+    # def name(self):
+    #     '''
+    #     Returns non-public attribute _name
+    #     '''
+    #     return self._name
 
-    @name.setter
-    def name(self, new_name):
-        '''
-        This resets the _name of a Trace instance
-        '''
-        self._name = new_name
+    # @name.setter
+    # def name(self, name):
+    #     '''
+    #     This resets the _name of a Trace instance
+    #     '''
+    #     self._name = name
 
-    @property
-    def der(self):
-        print('Jacobian matrix of', self.name)
-        return self.jacobian
+    # @property
+    # def der(self):
+    #     print('Jacobian matrix of', self.name)
+    #     return self.jacobian
 
-    @property
-    def trace_table(self):
-        print('Trace table of a forward pass')
-        return repr(CompGraph.instance)
+    # @property
+    # def trace_table(self):
+    #     print('Trace table of a forward pass')
+    #     return repr(CompGraph.instance)
 
 def sin(t : Trace):
     '''
@@ -55,10 +58,13 @@ def sin(t : Trace):
 
     Return Trace that constitues sin() elementary function
     '''
-    new_formula = f'sin({t._trace_name})'
-    new_val = np.sin(t.val)
-    new_der = calc_rules.deriv(t, 'sin')
-    return Trace(new_formula, new_val, new_der)
+    op = Ops.sin
+    formula = f'{op}({t._trace_name})'
+    param = None
+    val = Ops.one_parent_rules[op](t, param)#np.sin(t.val)
+    der = Ops.one_parent_deriv_rules[op](t,param)#calc_rules.deriv(t, op)
+    parents = [t]
+    return Trace(formula, val, der, parents, op)
 
 def cos(t : Trace):
     '''
@@ -69,10 +75,12 @@ def cos(t : Trace):
 
     Return Trace that constitues cos() elementary function
     '''
-    new_formula = f'cos({t._trace_name})'
-    new_val = np.cos(t.val)
-    new_der = calc_rules.deriv(t, 'cos')
-    return Trace(new_formula, new_val, new_der)
+    op = Ops.cos
+    formula = f'{op}({t._trace_name})'
+    val = np.cos(t.val)
+    der = calc_rules.deriv(t, op)
+    parents = [t]
+    return Trace(formula, val, der, parents, op)
 
 def tan(t : Trace):
     '''
@@ -83,10 +91,12 @@ def tan(t : Trace):
 
     Return Trace that constitues tan() elementary function
     '''
-    new_formula = f'tan({t._trace_name})'
-    new_val = np.tan(t.val)
-    new_der = calc_rules.deriv(t, 'tan')
-    return Trace(new_formula, new_val, new_der)
+    op = Ops.tan
+    formula = f'{op}({t._trace_name})'
+    val = np.tan(t.val)
+    der = calc_rules.deriv(t, op)
+    parents = [t]
+    return Trace(formula, val, der, parents, op)
 
 def exp(t : Trace, base=np.e):
     '''
@@ -98,13 +108,16 @@ def exp(t : Trace, base=np.e):
 
     Return Trace that constitues exp() elementary function with input base (default=e)
     '''
+    op = Ops.exp
     if base==np.e:
-        new_formula = f'exp({t._trace_name})'
+        formula = f'{op}({t._trace_name})'
     else:
-        new_formula = f'{np.round(base,3)} ^ ({t._trace_name})'
-    new_val = np.power(base, t.val)
-    new_der = calc_rules.deriv(t, 'exp', other=base)
-    return Trace(new_formula, new_val, new_der)
+        formula = f'{np.round(base,3)} ^ ({t._trace_name})'
+    val = np.power(base, t.val)
+    der = calc_rules.deriv(t, op, base)
+    parents = [t]
+    param = base
+    return Trace(formula, val, der, parents, op, param)
 
 def log(t : Trace, base=np.e):
     '''
@@ -116,15 +129,18 @@ def log(t : Trace, base=np.e):
 
     Return Trace that constitues log() elementary function with input base (default=e)
     '''
+    op = Ops.log
     if base==np.e:
-        new_formula = f'log({t._trace_name})'
+        formula = f'{op}({t._trace_name})'
     else:
-        new_formula = f'log_{np.round(base,3)}({t._trace_name})'
-    new_val = np.log(t.val)/np.log(base)
-    new_der = calc_rules.deriv(t, 'log', base)
-    return Trace(new_formula, new_val, new_der)
+        formula = f'log_{np.round(base,3)}({t._trace_name})'
+    val = np.log(t.val)/np.log(base)
+    der = calc_rules.deriv(t, op, base)
+    parents = [t]
+    param = base
+    return Trace(formula, val, der, parents, op, param)
 
-def sinh(t : Trace, base=np.e):
+def sinh(t : Trace):
     '''
     This allows to create sinh().
 
@@ -134,10 +150,12 @@ def sinh(t : Trace, base=np.e):
 
     Return Trace that constitues sinh() elementary function
     '''
-    new_formula = f'sinh({t._trace_name})'
-    new_val = (np.exp(t.val) - np.exp(-t.val))/2
-    new_der = calc_rules.deriv(t, 'sinh')
-    return Trace(new_formula, new_val, new_der)
+    op = Ops.sinh
+    formula = f'{op}({t._trace_name})'
+    val = (np.exp(t.val) - np.exp(-t.val))/2
+    der = calc_rules.deriv(t, op)
+    parents = [t]
+    return Trace(formula, val, der, parents, op)
 
 def cosh(t : Trace):
     '''
@@ -148,10 +166,12 @@ def cosh(t : Trace):
 
     Return Trace that constitues cosh() elementary function
     '''
-    new_formula = f'cosh({t._trace_name})'
-    new_val = (np.exp(t.val) + np.exp(-t.val))/2
-    new_der = calc_rules.deriv(t, 'cosh')
-    return Trace(new_formula, new_val, new_der)
+    op = Ops.cosh
+    formula = f'{op}({t._trace_name})'
+    val = (np.exp(t.val) + np.exp(-t.val))/2
+    der = calc_rules.deriv(t, op)
+    parents = [t]
+    return Trace(formula, val, der, parents, op)
 
 def tanh(t : Trace):
     '''
@@ -162,10 +182,12 @@ def tanh(t : Trace):
 
     Return Trace that constitues tanh() elementary function
     '''
-    new_formula = f'tanh({t._trace_name})'
-    new_val = (np.exp(t.val) + np.exp(-t.val))/(np.exp(t.val) - np.exp(-t.val))
-    new_der = calc_rules.deriv(t, 'tanh')
-    return Trace(new_formula, new_val, new_der)
+    op = Ops.tanh
+    formula = f'{op}({t._trace_name})'
+    val = (np.exp(t.val) + np.exp(-t.val))/(np.exp(t.val) - np.exp(-t.val))
+    der = calc_rules.deriv(t, op)
+    parents = [t]
+    return Trace(formula, val, der, parents, op)
 
 def sqrt(t : Trace):
     '''
@@ -176,10 +198,12 @@ def sqrt(t : Trace):
 
     Return Trace that constitues sqrt() elementary function
     '''
-    new_formula = f'sqrt({t._trace_name})'
-    new_val = t.val**0.5
-    new_der = calc_rules.deriv(t, 'sqrt')
-    return Trace(new_formula, new_val, new_der)
+    op = Ops.sqrt
+    formula = f'{op}({t._trace_name})'
+    val = t.val**0.5
+    der = calc_rules.deriv(t, op)
+    parents = [t]
+    return Trace(formula, val, der, parents, op)
 
 def sigmoid(t : Trace):
     '''
@@ -190,10 +214,12 @@ def sigmoid(t : Trace):
 
     Return Trace that constitues sigmoig() elementary function
     '''
-    new_formula = f'sigm({t._trace_name})'
-    new_val = 1/(1 + np.exp(-t.val))
-    new_der = calc_rules.deriv(t, 'sigm')
-    return Trace(new_formula, new_val, new_der)
+    op = Ops.sigm
+    formula = f'{op}({t._trace_name})'
+    val = 1/(1 + np.exp(-t.val))
+    der = calc_rules.deriv(t, op)
+    parents = [t]
+    return Trace(formula, val, der, parents, op)
 
 
     

@@ -3,17 +3,14 @@ from graddog.trace import Trace
 from graddog.functions import VectorFunction
 import numpy as np
 
-# TODO: change assert statements to ValueError exception handlers
-
-# TODO: better name for trace function
-# reminder: the trace function exists to create a trace object based on a function
 
 class Variable(Trace):
 
 	def __init__(self, name, val):
 		# by default, the derivative of a variable with respect to itself is 1.0
-
-		super().__init__(name, val, {name : 1.0}, is_var = True)
+		# the parents of a variable is an emptylist
+		# the operation of a variable is, for now, represented as an emptystring
+		super().__init__(name, val, {name : 1.0}, [])
 		self._name = name
 
 	@property
@@ -35,22 +32,23 @@ class Variable(Trace):
 			raise TypeError('Value should be numerical')
 
 def trace(f, seed):
-	M = len(seed)
-	new_vars = list(get_vars([f'x{m+1}' for m in range(M)], seed))
-	new_var_names = list(map(lambda v : v._formula, new_vars))
-	result = f(new_vars)
+	M = len(seed) # dimension of the input
+	new_var_names = [f'v{m+1}' for m in range(M)]
+	new_vars = list(get_vars(new_var_names, seed))
 
-	def add_zeros_to_der(t):
-		for x in new_var_names:
-			if x not in t._der:
-				t._der[x] = 0.0
 	try:
-		for t in result:
-			add_zeros_to_der(t)
-		result = VectorFunction(result)
+		# when f takes the input as a vector
+		result = f(new_vars)
 	except TypeError:
-		add_zeros_to_der(result)
-	return result
+		# when f takes the input explicitly as variables
+		result = f(*new_vars)
+
+	try:
+		# when f outputs a list
+		return VectorFunction(result)
+	except TypeError:
+		# when f outputs a single value
+		return result
 
 def get_x(seed):
 	assert len(seed) == 1

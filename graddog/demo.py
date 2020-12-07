@@ -5,53 +5,40 @@ from graddog.functions import VectorFunction as vec
 from graddog.compgraph import CompGraph
 
 def demo0():
-	pass
-	# print('demo 0')
+	print('demo 0')
 
-	# x = get_x(seed = [0.])
+	def f(x):
+		return x**3 - 4*x + cos(exp(-sin(tan(log(x)))))
 
-	# # f : R --> R
-
-	# f = x**3 - 4*x + sin(log(tan(exp(cos(x/2)))))
-
-	# f.name = 'A function R --> R using variables'
-	# print(f.der)
-	# print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+	seed = [1.0]
+	assert seed[0] > 0 # input to log must be positive
+	f = trace(f, seed)
+	f.name = 'A function R --> R using variable-input'
+	CompGraph.show_trace_table()
+	CompGraph.forward_mode()
+	CompGraph.reverse_mode()
+	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 def demo1():
 	print('demo 1')
 
-	x, y = get_xy(seed = [1,2])
+	#x, y = get_xy(seed = [1,2])
 
 	# f : Rm --> R
 
-	f = x*y + exp(x*y)
-
-	f.name = 'A function Rm --> R using variables'
-	print(f.der)
+	def f(x, y):
+		return x*y + exp(x*y)
+	seed = [1, 2]
+	f = trace(f, seed)
+	f.name = 'A function Rm --> R using variable-input'
+	CompGraph.show_trace_table()
+	CompGraph.forward_mode()
+	CompGraph.reverse_mode()
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
 
 def demo2():
 	print('demo 2')
-
-	x, y, z = get_xyz(seed = [np.pi/2,np.pi/3,np.pi/4])
-
-	# f : Rm --> Rn
-
-	f = vec([
-		exp(-(sin(x) - cos(y))**2), 
-		sin(- log(x) ** 2 + tan(z))
-	])
-
-	f.name = 'A function Rm --> Rn using variables'
-	print(f.der)
-	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-
-def demo3():
-	print('demo 3')
-	CompGraph.reset()
-
-	# f : Rm --> R
 
 	def f(v):
 		
@@ -59,40 +46,43 @@ def demo3():
 
 	f = trace(f, [1,2,3])
 
-	f.name = 'A function Rm --> R using vectors'
-	print(f.der)
+	f.name = 'A function Rm --> R using vector-input'
+	CompGraph.show_trace_table()
+	CompGraph.forward_mode()
+	CompGraph.reverse_mode()
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-def demo4():
-	print('demo 4')
-	CompGraph.reset()
-
-	# f : Rm --> Rn
+def demo3():
+	print('demo 3')
 
 	def f(v):
 		return [v[0] + 3*v[2]**2, v[1] - v[0], v[2] + sin(v[1])]
 
 	f = trace(f, [1,2,3])
 
-	f.name = 'A function Rm --> Rn using vectors'
-	print(f.der)
+	f.name = 'A function Rm --> Rn using a vector-input vector-output design'
+	#print(f.der)
+	CompGraph.show_trace_table()
+	CompGraph.forward_mode()
+	CompGraph.reverse_mode()
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-def demo5():
-	print('demo 5')
-	CompGraph.reset()
 
-	w1, w2, w3, w4, w5 = get_vars(['w1', 'w2', 'w3', 'w4', 'w5'], seed = [2,1,1,1,1])
+def demo4():
+	print('demo 4')
 
-	# f : Rm --> R
+	def f(x, y, z):
+		return [exp(-(sin(x) - cos(y))**2), sin(- log(x) ** 2 + tan(z))]
 
-	f = w1*w2*w3*w4*w5
+	f = trace(f, seed = [np.pi/2,np.pi/3,np.pi/4])
+	f.name = 'A function Rm --> Rn using a variable-input vector-output design'
 	CompGraph.show_trace_table()
+	CompGraph.forward_mode()
 	CompGraph.reverse_mode()
 	print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 def run_demos():
-	l = [demo0, demo1, demo2, demo3, demo4, demo5]
+	l = [demo0, demo1, demo2, demo3, demo4]
 	for d in l:
 		d()
 

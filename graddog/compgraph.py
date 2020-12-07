@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import graddog.calc_rules as calc_rules
+#from graddog.trace import Trace
 
 # TODO: come up with a better name for this class
 
@@ -8,140 +9,183 @@ import graddog.calc_rules as calc_rules
 
 # TODO: choose better location for reverse_mode
 
-# TODO: fix redundancy between add_var and add_trace
-
-# TODO: figure out how to pass in parent nodes as a param to add_trace instead of the godawful read_formula method
-
 class CompGraph:
 
 	# implements the singleton design pattern 
 	# so that only one instance of a CompGraph object ever exists
 
 	class __CompGraph:
-		def __init__(self, trace):
+		def __init__(self):
 			self.reset()
-			self.add_var(trace)
 
 		def __str__(self):
 			return repr(self)
 
 		def reset(self):
 			self.size = 0
+
+			#store the number of variables, as well as the variable names
 			self.num_vars = 0
 			self.var_names = []
+
+			# store the graph connections in two separate dictionaries, ins (AKA parents) and outs (AKA children)
 			self.outs = {}
 			self.ins = {}
+
+			# store the actual trace objects to avoid repeated calculations
 			self.traces = {}
-			self.partials = {} # use for reverse mode
-			self.table = pd.DataFrame(columns = ['trace_name', 'label', 'formula', 'val'])
 
-		def add_var(self, var):
-			formula, val = var._formula, var.val
+			# store the partial derivatives
+			self.partials = {}
 
-			if formula in self.var_names:
-				self.reset()
-				return self.add_var(var)
-			else:
-				self.var_names.append(formula)
-				
-				if self.size > 0:
-					# create new column for derivatives with respect to this new var
-					self.table['der_'+formula] = np.zeros(shape = (self.size,))
-				else:
-					self.table['der_'+formula] = [1.0]
+			#set up the table as a pandas DataFrame for now. makes things simpler tbh.
+			self.table = pd.DataFrame(columns = ['trace_name', 'label', 'formula', 'val', 'partial1', 'partial2'])
 
-				new_trace_name = self.new_trace_name()
-
-				self.traces[new_trace_name] = var
-
-				self.outs[new_trace_name] = []
-				self.ins[new_trace_name] = []
-
-				# create new row for this new var
-				self.table.loc[self.size - 1] = [new_trace_name, 'INPUT', formula, val] + [0.0 for _ in range(self.num_vars)] + [1.0]
-
-				self.num_vars += 1
-				return new_trace_name
-
-		def read_formula(self, formula):
-			if formula[0]=='-':
-				trace1 = self.traces[formula[1:]]
-				op = '-R'
-				trace2 = 0
-			elif '(' in formula:
-				i1 = formula.index('(')
-				op = formula[:i1]
-				trace1 = self.traces[formula[i1+1:-1]]
-				trace2 = None
-				if op in ['exp', 'log'] : trace2 = np.e
-			else:
-				trace1 = self.traces[formula[:2]]
-				try:
-					op, trace2 = formula[2:-2], self.traces[formula[-2:]]
-				except KeyError:
-					op, trace2 = formula[2:-1], float(formula[-1:])
-			return trace1, op, trace2
-
-		def add_trace(self, trace):
-			formula, val, der = trace._formula, trace.val, trace._der
-
-			# if you are calculating a term already in the table, just look it up (e.g. f = x*y + exp(x*y))
+		def get_existing_trace(self, formula):
+			# if you are calculating a term already in the table, just look it up 
+			# (e.g. in the function f = x*y + exp(x*y) we only need to compute x*y once)
 			already = self.table.loc[self.table['formula'] == formula]
 			if not already.empty:
 				trace_name = already['trace_name'].values[0]
-				return trace_name
+				return self.traces[trace_name]
+			else:
+				return None
 
-			# create new row for this trace element
-			new_trace_name = self.new_trace_name()
+		def get_label_string(self, op, der):
+			# when adding a trace, if it is a variable, label it 'INPUT' and add it to the variables
+			# otherwise, if it is not a variable, the row is labelled 'OUTPUT' unless later it becomes a parent, in which case the OUTPUT label is removed
+			if op is None:
+				variable_name = list(der.keys())[0]
+				if variable_name in self.var_names:
+					self.reset()
+				self.var_names.append(variable_name)
+				self.num_vars += 1
+				label_string = 'INPUT'
+			else:
+				label_string = 'OUTPUT'
+			return label_string
 
-			self.ins[new_trace_name] = []
-			for x in self.table['trace_name'].values:
-				if x in formula:
-					self.ins[new_trace_name].append(x)
-					self.outs[x].append(new_trace_name)
-
+		def update_computational_graph(self, new_trace_name, parents):
+			# the 'ins' of the new trace are the parents
+			self.ins[new_trace_name] = list(map(lambda p : p._trace_name, parents))
+			# the 'outs' of each parent now include the new trace
+			# and now the parents can no longer be outputs, so we ensure their label_string is '' instead of 'OUTPUT'
+			for x in parents:
+				self.outs[x._trace_name].append(new_trace_name)
+				row_index = int(x._trace_name[1:]) - 1
+				f = self.table.loc[row_index]['formula']
+				if f not in self.var_names:
+					self.table.at[row_index, 'label'] = ''
+			# the 'outs' of the new trace start out empty
 			self.outs[new_trace_name] = []
 
+		def add_trace(self, trace):
+
+			# unpack trace data
+			formula, val, der, parents, op, param = trace._formula, trace._val, trace._der, trace._parents, trace._op, trace._param
+
+			# get new label
+			label_string = self.get_label_string(op, der)
+
+			# check if we can avoid a repeated calculation
+			existing_trace = self.get_existing_trace(formula)
+			if existing_trace:
+				return existing_trace._trace_name
+		
+			# get new trace name
+			new_trace_name = self.new_trace_name()
+
+			# update computational graph
+			self.update_computational_graph(new_trace_name, parents)
+
+			# add this new trace to the dictionary of traces so far
 			self.traces[new_trace_name] = trace
 
-			t, op, other = self.read_formula(formula)
+			# calculate partial derivatives
+			partial_derivs_list = self.calculate_partial_deriv_list(new_trace_name, op, parents, param)
 
-			partial_der = calc_rules.deriv(t, op, other, partial = True)
+			# update trace table
+			self.add_trace_table_row(new_trace_name, label_string, formula, val, partial_derivs_list)
 
-			self.partials[new_trace_name] = partial_der
-
-			derivs = []
-			for x in self.var_names:
-				if x in der:
-					derivs.append(der[x])
-				else:
-					derivs.append(0.0)
-
-			self.table.loc[self.size - 1] = [new_trace_name, '', formula, val] + derivs
 			return new_trace_name
 
+		def add_trace_table_row(self, new_trace_name, label_string, formula, val, partial_derivs_list):
+			# add new row to the trace table
+			self.table.loc[self.size - 1] = [new_trace_name, label_string, formula, val] + partial_derivs_list
+
+		def calculate_partial_deriv_list(self, new_trace_name, op, parents, param):
+			############# calculate the partial derivatives of a trace with respect to its children
+			# save these partial derivatives in the dictionary self.partials for use in forward and reverse mode
+
+			# reresent the partial derivatives as a 2-element list to go in the trace table
+			# if the new trace has two parents (like v3 = v1*v2), then the partial derivs will be the derivs w.r.t. v1 and v2
+			# if the new trace has one parent (like v5 = sin(v4)), then the partial derivs will be the deriv w.r.t. v4, followed by 0
+			
+			########################################################################
+			if op: #only enters this if statement when the new trace is not a variable
+				try:
+					t, other = parents[0], parents[1]
+				except IndexError:
+					t, other = parents[0], param
+				partial_der = calc_rules.deriv(t, op, other)
+			else:
+				partial_der = {new_trace_name : 1.0}
+			self.partials[new_trace_name] = partial_der
+			partial_derivs_list = list(partial_der.values())
+			if len(partial_derivs_list) == 1:
+				partial_derivs_list.append(0.0)
+			return partial_derivs_list
+
 		def new_trace_name(self):
+			# creates trace names v1, v2, v3, etc.
 			self.size += 1
 			return 'v' + str(self.size)
 
+		def get_variable_row(self, var_name):
+			return int(self.table.loc[self.table['formula'] == var_name]['trace_name'].iloc[0][1:]) - 1
+
+		def forward_mode_der(self):
+
+			# stores d_trace/d_x for each input variable x, initialized with 1s and 0s for the derivatives of variables
+			trace_derivs = {self.get_trace_name(x) : np.eye(self.num_vars)[i,:] for i, x in enumerate(self.var_names)}
+
+			# step up through the trace table starting after all the variables
+			for row in range(self.num_vars, self.size):
+				trace_name = self.table.loc[row]['trace_name']
+				d_trace_d_chilren = np.array([[self.partials[trace_name][in_] for in_ in self.ins[trace_name]]])
+				d_children_d_vars = np.vstack([trace_derivs[in_] for in_ in self.ins[trace_name]])
+				trace_derivs[trace_name] = np.dot(d_trace_d_chilren, d_children_d_vars)
+
+			#return {v : res[self.get_trace_name(x)] for x in self.var_names}
+			outputs = self.table.loc[self.table['label'] == 'OUTPUT']['trace_name'].values
+			return np.array([trace_derivs[output][0] for output in outputs])
+
 		def reverse_mode_der(self):
-			res = {}
-			i = self.size - 1
-			trace = self.table.loc[i]['trace_name']
-			n_traces = int(trace[1:])
-			res = {trace : 1.0}
-			while i > 0:
-				i -= 1
-				trace = self.table.loc[i]['trace_name']
-				r = 0
-				for out_ in self.outs[trace]:
-					d1 = res[out_] 
-					d2 = self.partials[out_][trace]
-					r += d1 * d2
-				res[trace] = r
-			return {x : res[self.get_trace_name(x)] for x in self.var_names}
+
+			# get all the current outputs of the function
+			outputs = self.table.loc[self.table['label'] == 'OUTPUT']['trace_name'].values
+
+			# stores d_f/d_trace for each trace for each output term f
+			trace_derivs = {x : np.eye(len(outputs))[:,i].reshape(-1,1) for i, x in enumerate(outputs)}
+
+			for row in reversed(range(self.size)):
+				trace_name = self.table.loc[row]['trace_name']
+				label = self.table.loc[row]['label']
+				if label != 'OUTPUT':
+
+					if self.outs[trace_name]:
+						d_outs_d_children = np.hstack([trace_derivs[out_] for out_ in self.outs[trace_name]])
+						d_children_d_trace = np.array([[self.partials[out_][trace_name] for out_ in self.outs[trace_name]]])
+						d_outs_d_trace = np.dot(d_outs_d_children, d_children_d_trace.T)
+					else:
+						#this is the case there the trace is never used anywhere, so the derivatives of the outputs with respect to this trace are all zero
+						d_outs_d_trace = np.zeros(shape=(len(outputs), 1))
+					
+					trace_derivs[trace_name] = d_outs_d_trace
+			return np.hstack([trace_derivs[x] for x in list(map(lambda x : self.get_trace_name(x), self.var_names))])
 
 		def get_trace_name(self, var_name):
+			# lookup a variable in the table to get its trace name
 			return self.table.loc[self.table['formula'] == var_name]['trace_name'].iloc[0]
 
 		@property
@@ -153,9 +197,9 @@ class CompGraph:
 
 	instance = None
 
-	def __init__(self, trace):
+	def __init__():
 		if not CompGraph.instance:
-			CompGraph.instance = CompGraph.__CompGraph(trace)
+			CompGraph.instance = CompGraph.__CompGraph()
 
 	def __getattr__(self, name):
 		return getattr(self.instance, name)
@@ -180,9 +224,18 @@ class CompGraph:
 		if CompGraph.instance:
 			CompGraph.instance.reset()
 
+	def forward_mode():
+		if CompGraph.instance:
+			print(CompGraph.instance.forward_mode_der())
+
 	def reverse_mode():
 		if CompGraph.instance:
 			print(CompGraph.instance.reverse_mode_der())
+
+	def add_trace(trace):
+		if not CompGraph.instance:
+			CompGraph.instance = CompGraph.__CompGraph()
+		return CompGraph.instance.add_trace(trace)
 
 
 
