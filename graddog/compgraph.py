@@ -1,3 +1,4 @@
+# :)
 import numpy as np
 import pandas as pd
 import graddog.calc_rules as calc_rules
@@ -107,11 +108,11 @@ class CompGraph:
 			# add this new trace to the dictionary of traces so far
 			self.traces[new_trace_name] = trace
 
-			# calculate partial derivatives
-			partial_derivs_list = self.calculate_partial_deriv_list(new_trace_name, op, parents, param)
+			# calculate partial derivatives for the table
+			derivs = self.partial_derivs_for_table(new_trace_name, op, parents, param)
 
 			# update trace table
-			self.add_trace_table_row(new_trace_name, label_string, formula, val, partial_derivs_list)
+			self.add_trace_table_row(new_trace_name, label_string, formula, val, derivs)
 
 			return new_trace_name
 
@@ -119,14 +120,10 @@ class CompGraph:
 			# add new row to the trace table
 			self.table.loc[self.size - 1] = [new_trace_name, label_string, formula, val] + partial_derivs_list
 
-		def calculate_partial_deriv_list(self, new_trace_name, op, parents, param):
+		def partial_derivs_for_table(self, new_trace_name, op, parents, param):
 			############# calculate the partial derivatives of a trace with respect to its children
 			# save these partial derivatives in the dictionary self.partials for use in forward and reverse mode
 
-			# reresent the partial derivatives as a 2-element list to go in the trace table
-			# if the new trace has two parents (like v3 = v1*v2), then the partial derivs will be the derivs w.r.t. v1 and v2
-			# if the new trace has one parent (like v5 = sin(v4)), then the partial derivs will be the deriv w.r.t. v4, followed by 0
-			
 			########################################################################
 			if op: #only enters this if statement when the new trace is not a variable
 				try:
