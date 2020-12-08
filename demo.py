@@ -10,6 +10,7 @@ def f0(x):
     return x**3 - 4*x + cos(exp(-sin(tan(log(x)))))
 
 seed1 = [1,2]
+seed1_other = [3,4]
 def f1(x, y):
     return x*y + exp(x*y)
 
@@ -36,10 +37,9 @@ def f6(v):
 seed7 = seed6
 f7 = f0
 
-seed8 = np.arange(50)
+seed8 = np.arange(6)
 def f8(v):
-    l = len(v)
-    return sum([v[2*i]*v[2*i+1] for i in range(l//2)])
+    return v[0]*v[1] + v[2]*v[3] + v[4]*v[5]
 
 seed9 = np.arange(2)
 def f9(v):
@@ -77,6 +77,9 @@ def time_demo(f, seed):
     plt.show()
 
 def hessian_demo():
+    # f_, f__ = gd.trace(f8, seed8, return_hessian = True)
+    # print(f_)
+    # print(f__)
     f_, f__ = gd.trace(f1, seed1, return_hessian = True)
     print(f_)
     print(f__)
