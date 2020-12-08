@@ -234,11 +234,13 @@ class CompGraph:
 
 	def forward_mode():
 		if CompGraph.instance:
+			print(CompGraph.instance.forward_mode_der())
 			return CompGraph.instance.forward_mode_der()
 
 	def reverse_mode():
 		if CompGraph.instance:
-			return CompGraph.instance.reverse_mode_der()
+			print(CompGraph.instance.reverse_mode_der())
+			return str(CompGraph.instance.reverse_mode_der())
 
 	def add_trace(trace):
 		if not CompGraph.instance:

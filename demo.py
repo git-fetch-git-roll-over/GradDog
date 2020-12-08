@@ -45,6 +45,16 @@ seed9 = np.arange(2)
 def f9(v):
     return [i*v[0] + i**2 * v[1] for i in range(50)]
 
+#CURRENTLY FAILING- IMPLICIT VECTOR INPUT W OUR FUNCTIONS
+seed10 = np.linspace(-np.pi, np.pi, num=10)
+def f10(v):
+    return sin(v)
+
+seed11 = np.linspace(1,10, num=9)
+def f11(v):
+    return log(seed11, base=2)
+    
+
 seeds = [seed0, seed1, seed2, seed3, seed4, seed5, seed6, seed7, seed8, seed9]
 fs = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9]
 

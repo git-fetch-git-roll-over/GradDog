@@ -24,15 +24,15 @@ def trace(f, seed, mode = None):
     # for now, always reset the CompGraph when tracing a new function
     CompGraph.reset()
 
-    try:# if multidimensional input
+    try:# if multi-dimensional input
         M = len(seed) # get the dimension of the input
         seed = np.array(seed)
-    except TypeError: # if sinledimensional input
+    except TypeError: # if single-dimensional input
         M = 1
         seed = np.array([seed])
     new_variable_names = [f'v{m+1}' for m in range(M)]
     new_vars = np.array([Variable(new_variable_names[i], seed[i]) for i in range(M)])
-
+    print(f'{M} dimensional input')
     if M > 1:
         # multi-variable input
         try:
@@ -46,7 +46,7 @@ def trace(f, seed, mode = None):
         f(new_vars[0])
 
     N = CompGraph.num_outputs()
-
+    print(f'{N} dimensional fxn')
     if mode is None:
     # go with more efficient algorithm if mode parameter is not specified by the user
         if M > N :

@@ -48,7 +48,7 @@ def find_extrema_firstorder(function, xmin, xmax, n_pts=100, tolerance = 1e-10):
     xmin: lower bound on which to calculate derivative
     xmax: upper bound on which to calculate derivative
     n_pts [int](Default: 100): how many points to use when evaluating derivative (more = better resolution but slower)
-    tolerance [float](Default: 1e-10): how close to zero should a value be before it's considered an extremum?
+    tolerance [float](Default: 1e-10): how close to zero should a value be before it's considered an extrema?
     
     Outputs:
     xs: the x values of the extrema

@@ -2,6 +2,8 @@
 import numpy as np
 import graddog.math as math
 from graddog.trace import Trace, one_parent
+import numbers
+
 
 '''
 Any implementable unary (one_parent) or binary (two_parent) operations can be added here
@@ -12,13 +14,19 @@ def sin(t : Trace):
     This allows to create sin().
     Parameters:
         t (Trace instance)
-    Return Trace that constitues sin() elementary function
+    Return Trace that constitutes sin() elementary function
     '''
     try:
         hasvalue=t.val
         return one_parent(t, math.Ops.sin)
     except AttributeError:
-        return np.sin(t)
+            if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+                return np.sin(t)
+            else:
+                raise ValueError("Input must be numerical or Trace instance")
+    else:
+        raise ValueError("Input must be numerical or Trace instance")
+
 
 
 def arcsin(t:Trace):
@@ -203,7 +211,7 @@ def sigmoid(t : Trace):
         hasvalue = t.val
         return one_parent(t, math.Ops.sigm)
     except AttributeError:
-        return 1/(1 + np.exp(-t.val))
+        return 1/(1 + np.exp(-t))
 
 
 
