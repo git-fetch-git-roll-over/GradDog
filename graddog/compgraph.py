@@ -4,6 +4,7 @@ import pandas as pd
 import graddog.math as math
 from itertools import combinations_with_replacement
 
+
 # TODO: come up with a better name for this class
 
 # TODO: add docstrings and examples
@@ -86,6 +87,7 @@ class CompGraph:
 			# unpack trace data
 			formula, val, der, parents, op, param = trace._formula, trace._val, trace._der, trace._parents, trace._op, trace._param
 
+
 			# check if we can avoid a repeated calculation
 			existing_trace = self.get_existing_trace(formula)
 			if existing_trace:
@@ -133,6 +135,7 @@ class CompGraph:
 		def get_variable_row(self, var_name):
 			return int(self.table.loc[self.table['formula'] == var_name]['trace_name'].iloc[0][1:]) - 1
 
+
 		def outputs(self):
 			return self.table.loc[self.table['label'] == 'OUTPUT']['trace_name'].values
 
@@ -143,10 +146,12 @@ class CompGraph:
 			Returns numpy array of derivatives df_i/dx_j for each output function f_i w.r.t. each input variable x_j
 			'''
 			trace_derivs = {self.get_trace_name(x) : np.eye(self.num_vars)[i,:] for i, x in enumerate(self.var_names)}
+
 			for row in range(self.num_vars, self.size):
 				trace_name = self.table.loc[row]['trace_name']
 				d_trace_d_chilren = np.array([[self.partials[trace_name][in_] for in_ in self.ins[trace_name]]])
 				d_children_d_vars = np.vstack([trace_derivs[in_] for in_ in self.ins[trace_name]])
+
 				trace_derivs[trace_name] = np.dot(d_trace_d_chilren, d_children_d_vars)
 			return np.array([trace_derivs[output][0] for output in self.outputs()])
 
@@ -167,6 +172,7 @@ class CompGraph:
 						d_outs_d_children = np.hstack([trace_derivs[out_] for out_ in self.outs[trace_name]])
 						d_children_d_trace = np.array([[self.partials[out_][trace_name] for out_ in self.outs[trace_name]]])
 						d_outs_d_trace = np.dot(d_outs_d_children, d_children_d_trace.T)
+
 					trace_derivs[trace_name] = d_outs_d_trace
 			return np.hstack([trace_derivs[x] for x in list(map(lambda x : self.get_trace_name(x), self.var_names))])
 
@@ -280,14 +286,6 @@ class CompGraph:
 		if CompGraph.instance:
 			CompGraph.instance.reset()
 
-	def derivative(mode = 'forward'):
-		if mode == 'forward':
-			CompGraph.forward_mode()
-		elif mode == 'reverse':
-			CompGraph.reverse_mode()
-		else:
-			raise ValueError('Mode attribute must be forward or reverse')
-
 	def forward_mode():
 		if CompGraph.instance:
 			return CompGraph.instance.forward_mode_der()
@@ -306,9 +304,9 @@ class CompGraph:
 			return CompGraph.instance.num_outputs()
 
 	def hessian():
-		CompGraph.show_trace_table()
 		if CompGraph.instance:
 			return CompGraph.instance.hessian()
+
 
 
 

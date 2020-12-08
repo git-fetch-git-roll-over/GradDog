@@ -206,7 +206,7 @@ class Trace:
 
 class Variable(Trace):
 	'''
-	This is a class to create Varaible instance
+	This is a class to create Variable instance
 	'''
 	def __init__(self, name, val):
 		'''
@@ -241,9 +241,11 @@ def one_parent(t, op, param = None, formula = None):
 		der =  math.deriv(t, op, param)
 		parents = [t]
 		return Trace(new_formula, val, der, parents, op, param)	
+
 	except AttributeError:
 		#when t is actually a vector input, we are still able to apply the op to the whole vector (e.g. sin([x1,x2]) = [sin(x1),sin(x2)])
 		return np.array([one_parent(t_, op, param, formula) for t_ in t])
+
 
 def two_parents(t1, op, t2, formula = None):
 	'''

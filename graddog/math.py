@@ -16,10 +16,12 @@ class Ops:
 	# certain _R operators like __radd__ and __rmul__ actually have no difference from __add__ and __mul__
 	# but __rsub__ and __rdiv__, for example, have different derivatives than __sub__ and __div__
 
+
 	#### used internally
 	val = 'val'
 	der = 'der'
 	double_der = 'double_der'
+
 
 	add = '+'
 	sub = '-'
@@ -41,6 +43,7 @@ class Ops:
 	arcsin = 'arcsin'
 	arccos = 'arccos'
 	arctan = 'arctan'
+
 
 
 	def double_deriv_add(t1, t2, t3):
@@ -98,6 +101,7 @@ class Ops:
 	
 	one_parent_rules = {
 	# Contains the value and derivative rules for all one-parent operations
+
 	# value rules must be (t, param) --> R
 	# derivative rules must be (t, param) --> R, a partial derivative w.r.t. t
 	# it's fine if the value or derivative rule doesnt reference the param, its to make the code more concise
@@ -157,6 +161,7 @@ class Ops:
 			val : lambda t1, t2 : t1.val / t2.val, der : lambda t1, t2 : (1/t2.val, -t1.val/(t2.val**2)), double_der : double_deriv_div},
 		power : {
 			val : lambda t1, t2 : t1.val ** t2.val, der : lambda t1, t2 : (t2.val*(t1.val**(t2.val-1)), (t1.val**t2.val)*np.log(t1.val)), double_der : double_deriv_power}
+
 	}
 
 def deriv_one_parent(t, op, param = None):
@@ -213,6 +218,7 @@ def val(t, op, other = None):
 		# if other is a param, AKA just a number
 		return val_one_parent(t, op, other)
 
+
 def double_deriv(t1, t2, t3):
 	'''
 	Returns double derivative of t1 w.r.t. both t2 and t3
@@ -220,7 +226,6 @@ def double_deriv(t1, t2, t3):
 	e.g. d^2f/dxdy or d^2g/dz^2
 	'''
 	return Ops.one_parent_rules[t1._op][Ops.double_der](t1, t2, t3)
-
 
 
 

@@ -11,6 +11,7 @@ def f0(x):
 
 seed1 = [1,2]
 seed1_other = [3,4]
+
 def f1(x, y):
     return x*y + exp(x*y)
 
@@ -37,6 +38,7 @@ def f6(v):
 seed7 = seed6
 f7 = f0
 
+
 seed8 = np.arange(6)
 def f8(v):
     return v[0]*v[1] + v[2]*v[3] + v[4]*v[5]
@@ -44,6 +46,18 @@ def f8(v):
 seed9 = np.arange(2)
 def f9(v):
     return [i*v[0] + i**2 * v[1] for i in range(50)]
+
+
+#CURRENTLY FAILING- IMPLICIT VECTOR INPUT W OUR FUNCTIONS
+seed10 = np.linspace(-np.pi, np.pi, num=10)
+def f10(v):
+    return sin(v)
+
+seed11 = np.linspace(1,10, num=9)
+def f11(v):
+    return log(seed11, base=2)
+    
+
 
 seeds = [seed0, seed1, seed2, seed3, seed4, seed5, seed6, seed7, seed8, seed9]
 fs = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9]
@@ -77,15 +91,4 @@ def time_demo(f, seed):
     plt.ylabel('frequency')
     plt.show()
 
-def hessian_demo():
-    # f_, f__ = gd.trace(f8, seed8, return_hessian = True)
-    # print(f_)
-    # print(f__)
-    f_ = gd.trace(f1, seed1)
-    print(f_)
-    #print(f__)
-
-hessian_demo()
-
-#time_demo(f9,seed9)
-#run_demos()
+run_demos()
