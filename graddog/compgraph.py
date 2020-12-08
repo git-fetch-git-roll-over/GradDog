@@ -144,15 +144,16 @@ class CompGraph:
 			step FORWARDS through the trace table, calculate derivatives along the way in trace_derivs
 			
 			Returns numpy array of derivatives df_i/dx_j for each output function f_i w.r.t. each input variable x_j
+
 			'''
 			trace_derivs = {self.get_trace_name(x) : np.eye(self.num_vars)[i,:] for i, x in enumerate(self.var_names)}
 
 			for row in range(self.num_vars, self.size):
 				trace_name = self.table.loc[row]['trace_name']
-				d_trace_d_chilren = np.array([[self.partials[trace_name][in_] for in_ in self.ins[trace_name]]])
-				d_children_d_vars = np.vstack([trace_derivs[in_] for in_ in self.ins[trace_name]])
+				d_trace_d_parents = np.array([[self.partials[trace_name][in_] for in_ in self.ins[trace_name]]])
+				d_parents_d_vars = np.vstack([trace_derivs[in_] for in_ in self.ins[trace_name]])
 
-				trace_derivs[trace_name] = np.dot(d_trace_d_chilren, d_children_d_vars)
+				trace_derivs[trace_name] = np.dot(d_trace_d_parents, d_parents_d_vars)
 			return np.array([trace_derivs[output][0] for output in self.outputs()])
 
 		def reverse_mode_der(self):
