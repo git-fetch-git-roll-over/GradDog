@@ -2,6 +2,8 @@
 import numpy as np
 import graddog.math as math
 from graddog.trace import Trace, one_parent
+import numbers
+
 
 '''
 Any implementable unary (one_parent) or binary (two_parent) operations can be added here
@@ -12,9 +14,19 @@ def sin(t : Trace):
     This allows to create sin().
     Parameters:
         t (Trace instance)
-    Return Trace that constitues sin() elementary function
+    Return Trace that constitutes sin() elementary function
     '''
-    return one_parent(t, math.Ops.sin)
+    try:
+        hasvalue=t.val
+        return one_parent(t, math.Ops.sin)
+    except AttributeError:
+            if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+                return np.sin(t)
+            else:
+                raise ValueError("Input must be numerical or Trace instance")
+    else:
+        raise ValueError("Input must be numerical or Trace instance")
+
 
 
 def arcsin(t:Trace):
@@ -27,10 +39,13 @@ def arcsin(t:Trace):
 
     Return Trace that constitues arcsin() elementary function
     '''
-    if (t.val <= -1) or (t.val >= 1):
-        raise ValueError("The domain of arcsin is (-1, 1)")
-    else:
-        return one_parent(t, math.Ops.arcsin)
+    try:     
+        if (t.val <= -1) or (t.val >= 1):
+            raise ValueError("The domain of arcsin is (-1, 1)")
+        else:
+            return one_parent(t, math.Ops.arcsin)
+    except AttributeError:
+        return np.arcsin(t)
 
 
 def cos(t : Trace):
@@ -40,7 +55,13 @@ def cos(t : Trace):
         t (Trace instance)
     Return Trace that constitues cos() elementary function
     '''
-    return one_parent(t, math.Ops.cos)
+    try:
+        hasvalue = t.val
+        return one_parent(t, math.Ops.cos)
+    except AttributeError:
+        return np.cos(t)
+        
+    
 
 
 
@@ -54,11 +75,13 @@ def arccos(t:Trace):
 
     Return Trace that constitues arccos() elementary function
     '''
-    if (t.val <= -1) or (t.val >= 1):
-        raise ValueError("The domain of arcsin is (-1, 1)")
-    else:
-        return one_parent(t, math.Ops.arccos)
-
+    try:     
+        if (t.val <= -1) or (t.val >= 1):
+            raise ValueError("The domain of arccos is (-1, 1)")
+        else:
+            return one_parent(t, math.Ops.arccos)
+    except AttributeError:
+        return np.arccos(t)
 
 def tan(t : Trace):
     '''
@@ -67,7 +90,11 @@ def tan(t : Trace):
         t (Trace instance)
     Return Trace that constitues tan() elementary function
     '''
-    return one_parent(t, math.Ops.tan)
+    try:
+        hasval = t.val
+        return one_parent(t, math.Ops.tan)
+    except AttributeError:
+        return np.tan(t)
 
 
 def arctan(t:Trace):
@@ -79,7 +106,11 @@ def arctan(t:Trace):
 
     Return Trace that constitues arctan() elementary function
     '''
-    return one_parent(t, math.Ops.arctan)
+    try:
+        hasval= t.val
+        return one_parent(t, math.Ops.arctan)
+    except AttributeError:
+        return np.arctan(t)
 
 
 def exp(t : Trace, base=np.e):
@@ -90,10 +121,14 @@ def exp(t : Trace, base=np.e):
         base (int, or float)
     Return Trace that constitues exp() elementary function with input base (default=e)
     '''
-    formula = None
-    if base != np.e:
-        formula = f'{np.round(base,3)} ^ ({t._trace_name})'
-    return one_parent(t, math.Ops.exp, param = base, formula = formula)
+    try:    
+        hasval = t.val
+        formula = None
+        if base != np.e:
+            formula = f'{np.round(base,3)} ^ ({t._trace_name})'
+        return one_parent(t, math.Ops.exp, param = base, formula = formula)
+    except AttributeError:
+        return np.power(base,t)
 
 def log(t : Trace, base=np.e):
     '''
@@ -103,10 +138,14 @@ def log(t : Trace, base=np.e):
         base (int, or float)
     Return Trace that constitues log() elementary function with input base (default=e)
     '''
-    formula = None
-    if base != np.e:
-        formula = f'log_{np.round(base,3)}({t._trace_name})'
-    return one_parent(t, math.Ops.log, base, formula = formula)
+    try:
+        hasvalue = t.val
+        formula = None
+        if base != np.e:
+            formula = f'log_{np.round(base,3)}({t._trace_name})'
+        return one_parent(t, math.Ops.log, base, formula = formula)
+    except AttributeError:
+        return np.log(t)/np.log(base)
 
 def sinh(t : Trace):
     '''
@@ -116,7 +155,11 @@ def sinh(t : Trace):
         base (int, or float)
     Return Trace that constitues sinh() elementary function
     '''
-    return one_parent(t, math.Ops.sinh)
+    try:
+        hasvalue = t.val
+        return one_parent(t, math.Ops.sinh)
+    except AttributeError:
+        return np.sinh(t)
 
 def cosh(t : Trace):
     '''
@@ -125,8 +168,12 @@ def cosh(t : Trace):
         t (Trace instance)
     Return Trace that constitues cosh() elementary function
     '''
-    return one_parent(t, math.Ops.cosh)
-
+    try:
+        hasvalue = t.val
+        return one_parent(t, math.Ops.cosh)
+    except AttributeError:
+        return np.cosh(t)
+    
 def tanh(t : Trace):
     '''
     This allows to create tanh().
@@ -134,7 +181,11 @@ def tanh(t : Trace):
         t (Trace instance)
     Return Trace that constitues tanh() elementary function
     '''
-    return one_parent(t, math.Ops.tanh)
+    try:
+        hasvalue = t.val
+        return one_parent(t, math.Ops.tanh)
+    except AttributeError:
+        return np.tanh(t)
 
 def sqrt(t : Trace):
     '''
@@ -143,16 +194,24 @@ def sqrt(t : Trace):
         t (Trace instance)
     Return Trace that constitues sqrt() elementary function
     '''
-    return one_parent(t, math.Ops.sqrt)
+    try:
+        hasvalue = t.val
+        return one_parent(t, math.Ops.sqrt)
+    except AttributeError:
+        return np.sqrt(t)
 
 def sigmoid(t : Trace):
     '''
     This allows to create sigmoid().
     Parameters:
         t (Trace instance)
-    Return Trace that constitues sigmoig() elementary function
+    Return Trace that constitues sigmoid() elementary function
     '''
-    return one_parent(t, math.Ops.sigm)
+    try:
+        hasvalue = t.val
+        return one_parent(t, math.Ops.sigm)
+    except AttributeError:
+        return 1/(1 + np.exp(-t))
 
 
 
