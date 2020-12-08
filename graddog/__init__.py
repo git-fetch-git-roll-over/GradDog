@@ -4,7 +4,8 @@ from graddog.trace import Variable
 from graddog.compgraph import CompGraph
 
 
-def trace(f, seed, mode = None):
+def trace(f, seed, mode = None, return_second_deriv = False):
+
     '''
     Optional parameter mode
     default is 'forward'
@@ -24,7 +25,8 @@ def trace(f, seed, mode = None):
     # for now, always reset the CompGraph when tracing a new function
     CompGraph.reset()
 
-    try:# if multi-dimensional input
+
+    try:# if multidimensional input
         M = len(seed) # get the dimension of the input
         seed = np.array(seed)
     except TypeError: # if single-dimensional input
@@ -32,7 +34,7 @@ def trace(f, seed, mode = None):
         seed = np.array([seed])
     new_variable_names = [f'v{m+1}' for m in range(M)]
     new_vars = np.array([Variable(new_variable_names[i], seed[i]) for i in range(M)])
-    print(f'{M} dimensional input')
+
     if M > 1:
         # multi-variable input
         try:
@@ -46,18 +48,29 @@ def trace(f, seed, mode = None):
         f(new_vars[0])
 
     N = CompGraph.num_outputs()
-    print(f'{N} dimensional fxn')
+
+    if return_second_deriv:
+        if N == 1:
+            print('Computing first AND second derivative with reverse mode')
+            return CompGraph.hessian()
+        else:
+            raise ValueError('Can only compute Hessian for f:Rm --> R')
+
     if mode is None:
     # go with more efficient algorithm if mode parameter is not specified by the user
         if M > N :
             mode = 'reverse'
         else:
             mode = 'forward'
-    if mode == 'reverse':
-        print('Computing reverse mode')
-        CompGraph.reverse_mode()
-    elif mode == 'forward':
+    if mode == 'forward':
         print('Computing forward mode')
-        CompGraph.forward_mode()
+        return CompGraph.forward_mode()
+    elif mode == 'reverse':
+        print('Computing reverse mode')
+        return CompGraph.reverse_mode()
     else:
         raise ValueError('Didnt recognize mode, should be forward or reverse')
+
+
+
+

@@ -9,12 +9,17 @@ import numbers
 Any implementable unary (one_parent) or binary (two_parent) operations can be added here
 '''
 
+# TODO: remove the assertion that t is a Trace
+# t can be a Trace or a scalar
+
+
 def sin(t : Trace):
     '''
     This allows to create sin().
     Parameters:
         t (Trace instance)
-    Return Trace that constitutes sin() elementary function
+
+    Return Trace that constitues sin() elementary function
     '''
     try:
         hasvalue=t.val
@@ -26,7 +31,6 @@ def sin(t : Trace):
                 raise ValueError("Input must be numerical or Trace instance")
     else:
         raise ValueError("Input must be numerical or Trace instance")
-
 
 
 def arcsin(t:Trace):
@@ -48,6 +52,7 @@ def arcsin(t:Trace):
         return np.arcsin(t)
 
 
+
 def cos(t : Trace):
     '''
     This allows to create cos().
@@ -55,13 +60,13 @@ def cos(t : Trace):
         t (Trace instance)
     Return Trace that constitues cos() elementary function
     '''
+
     try:
         hasvalue = t.val
         return one_parent(t, math.Ops.cos)
     except AttributeError:
         return np.cos(t)
-        
-    
+
 
 
 
@@ -83,6 +88,7 @@ def arccos(t:Trace):
     except AttributeError:
         return np.arccos(t)
 
+
 def tan(t : Trace):
     '''
     This allows to create tan().
@@ -96,7 +102,6 @@ def tan(t : Trace):
     except AttributeError:
         return np.tan(t)
 
-
 def arctan(t:Trace):
     '''
     This allows to creat arctan()
@@ -106,6 +111,7 @@ def arctan(t:Trace):
 
     Return Trace that constitues arctan() elementary function
     '''
+
     try:
         hasval= t.val
         return one_parent(t, math.Ops.arctan)
@@ -130,6 +136,7 @@ def exp(t : Trace, base=np.e):
     except AttributeError:
         return np.power(base,t)
 
+
 def log(t : Trace, base=np.e):
     '''
     This allows to create log().
@@ -147,6 +154,7 @@ def log(t : Trace, base=np.e):
     except AttributeError:
         return np.log(t)/np.log(base)
 
+
 def sinh(t : Trace):
     '''
     This allows to create sinh().
@@ -155,11 +163,13 @@ def sinh(t : Trace):
         base (int, or float)
     Return Trace that constitues sinh() elementary function
     '''
+
     try:
         hasvalue = t.val
         return one_parent(t, math.Ops.sinh)
     except AttributeError:
         return np.sinh(t)
+
 
 def cosh(t : Trace):
     '''
@@ -168,12 +178,14 @@ def cosh(t : Trace):
         t (Trace instance)
     Return Trace that constitues cosh() elementary function
     '''
+
     try:
         hasvalue = t.val
         return one_parent(t, math.Ops.cosh)
     except AttributeError:
         return np.cosh(t)
     
+
 def tanh(t : Trace):
     '''
     This allows to create tanh().
@@ -181,11 +193,13 @@ def tanh(t : Trace):
         t (Trace instance)
     Return Trace that constitues tanh() elementary function
     '''
+
     try:
         hasvalue = t.val
         return one_parent(t, math.Ops.tanh)
     except AttributeError:
         return np.tanh(t)
+
 
 def sqrt(t : Trace):
     '''
@@ -194,24 +208,28 @@ def sqrt(t : Trace):
         t (Trace instance)
     Return Trace that constitues sqrt() elementary function
     '''
+
     try:
         hasvalue = t.val
         return one_parent(t, math.Ops.sqrt)
     except AttributeError:
         return np.sqrt(t)
 
+
 def sigmoid(t : Trace):
     '''
     This allows to create sigmoid().
     Parameters:
         t (Trace instance)
-    Return Trace that constitues sigmoid() elementary function
+    Return Trace that constitues sigmoig() elementary function
     '''
+
     try:
         hasvalue = t.val
         return one_parent(t, math.Ops.sigm)
     except AttributeError:
         return 1/(1 + np.exp(-t))
+
 
 
 
