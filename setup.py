@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="graddog",
+    name="AutoDiff-graddog",
     version="1.3",
     description="Perform automatic differentiation (final project CS107)",
     long_description=README,
@@ -22,7 +22,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
     ],
-    packages= find_packages(where='graddog'),#["__init__", "compgraph", "functions", "math", "tools", "trace"],
+    packages= ["graddog"],
     include_package_data=True,
     install_requires=["numpy", "pytest", "codecov", "pytest-cov", "pandas", "numbers", "matplotlib"],
 )
