@@ -51,7 +51,8 @@ fs = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9]
 def run_demos():
     for i, f in enumerate(fs):
         print('demo', i)
-        gd.trace(f, seeds[i])
+        f_ = gd.trace(f, seeds[i])
+        print(f_)
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 
@@ -80,9 +81,9 @@ def hessian_demo():
     # f_, f__ = gd.trace(f8, seed8, return_hessian = True)
     # print(f_)
     # print(f__)
-    f_, f__ = gd.trace(f1, seed1, return_hessian = True)
+    f_ = gd.trace(f1, seed1)
     print(f_)
-    print(f__)
+    #print(f__)
 
 hessian_demo()
 
