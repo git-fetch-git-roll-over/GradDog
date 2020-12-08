@@ -2,7 +2,7 @@ AutoDiff: Software Library Documentation
 ==================================================
 
 ..
-    Authors:  Peyton Benac, Max CemIvan Shu and Seeam Shahid Noor
+    Authors:  Peyton Benac, Max Cembalest, Ivan Shu and Seeam Shahid Noor
     ^^^^^^^^^^^^^^^^
 Introduction
 ============
@@ -51,7 +51,7 @@ How to use package
 How to install
 --------------
 
-Go to the directory that you want to run this package, and then open a command line prompt. 
+Go to the directory from which you want to run this package, and then open a command line prompt. 
 
 * Visit ``https://github.com/git-fetch-git-roll-over/AutoDiff.git`` and follow the cloning instructions to clone a copy of the repository. This will create an ``AutoDiff`` directory.  (Key command: ``git clone https://github.com/git-fetch-git-roll-over/AutoDiff.git``)
 * ``cd AutoDiff`` to go inside the directory
@@ -67,22 +67,23 @@ Say there is a simple function and we want to get the derivative at :math:`x=4`:
 
 :math:`f(x) = sin(x) + cos(x)`
 
-First, from the module variable.py import class ``Variable`` and from function.py import class ``Function``::
+First, import the full ``graddog`` module (recommended alias: ``gd``) and the functions from the ``functions`` module::
 
-    from variable import Variable
-    from function.Function import sin, cos 
+    import graddog as gd
+    from graddog.functions import sin, cos, tan, exp, log
 
-Then create an instance of Variable class and construct your elementary functions :math:`sin(x), cos(x)`::
-    
-   x = Variable('x', 4)
-   f1 = sin(x)
-   f2 = cos(x)
-Last, create a variable f to add of your f1 and f2 and print out f::
+Then, create the function you would like to evaluate the derivative of (See `this link <http://introtopython.org/introducing_functions.html>`_ for more information on creating your own Python functions)::
+    def f(x):
+        return x**2 + 3x + exp(x, base=2)*sin(2*x)
+Choose a "seed value", which is the value at which the derivative will be evaluated::
+    seed = 3
+   
+Last, perform the ``trace`` on the function and the seed. (This function has an optional ``mode`` parameter which can be used to select either the forward or reverse mode of automatic differentiation.)::
 
-    f = f1 + f2 
-    print(f)
+    gd.trace(f, seed)
 
-    >>> sinx+cosx: sinx+cosx value: -1.410; derivative: 0.103
+    >>> Computing forward mode
+    >>>[[22.81331607]]
 
 Both the values and the derivative values are wrapped up in attributes belonging to these objects. For example::
 
@@ -103,20 +104,34 @@ Software organization
 Directory Structure
 -------------------
 
-With our main directory ``cs107-FinalProject``, We plan to organize our package as follows:
+With our main directory ``cs107-FinalProject``, our package is organized as follows:
 
 * dependencies in ``requirements.txt``
 * continuous integration information in ``.travis.yml`` and coverage information in ``codecov.yml``
 * documentation in ``\docs``
 * test suite in ``\tests``
-* code in ``\forward_mode``
+* code in ``\graddog``
 * images in ``\images``
 
 Basic Modules
 -------------
 
+For users::
+    Our code consists of 3 user-facing modules
+    * __init__, defining the ``trace`` function used to return derivatives
+    * functions, definining elementary functions that are compatible with the trace function.
+    * tools, defining useful tools to plot derivatives and estimate extrema.
+    
+For developers::
+    Our code consists of (4,5,6) total modules
+    * __init__
+    * functions
+    * compgraph
+    * math
+    * trace
+    * tools
+    
 
-We plan to include two modules: ``variable``, which defines the variable object and the differentiation rules that govern its behavior, and ``function`` which defines the elementary functions (e.g. sine, cosine, logarithms). 
 
 How to Test
 ------------
@@ -126,7 +141,7 @@ Both ``TravisCI`` and ``CodeCov`` are used and our test suite will live inside o
 Future Installation 
 -------------------
 
-As of now, we primarily distribute our code by having clients clone our github repository, but we hope to also make it pip-installable. For the future, we plan to package our project using `wheels <https://www.python.org/dev/peps/pep-0427/>`_. This should make it easily pip installable.
+As of now, we primarily distribute our code by having clients clone our github repository, but we hope to also make it pip-installable. For the future, we plan to package our project using `wheels <https://www.python.org/dev/peps/pep-0427/>`_. This should make it easily pip installable. The wheel name for our package is ``graddog-1.3-py3-none-any.whl``.
 
 
 Implementation Details
@@ -136,17 +151,17 @@ Descriptions
 ------------
 
 
-Our implementation isn't currently built on any singular data structure, but as we expand to account for multiple inputs we plan to use numpy arrays. This will make it easy to perform operations on either single values or single or multidimensional arrays. 
 
-The main class of this package is the are ``Variable`` and ``Function`` classes and ``Variable`` creates instances of single input varaibles. This class contains arrtibutes such as *name*, *value* and default *derivative*. On the other hand, ``Function`` classes creates basic elementary function methods (e.g. :math:`sin, cos, tan, exp` and :math:`log`)
-
+For installation, we have chosen wheels because they are smaller in size than a source distribution (sdist) file for the same package, and therefore are faster. They are also faster because installing from a wheel allows one to skip the build step required to install source distributions. Wheels are also very consistent, automatically generate the correct .pyc files for the interpreter, and require no compiler (even for compiled extension modules).
 
 
-Future Direction
-----------------
+Extension
+=============
+Reverse Mode
+----------
 
-
-We are planning to extend our basic automatic differentation package to handle cases where involves multi-dimensional inputs and outputs. We are also interested in implementing an extra feature either with dual numbers or optimization. 
+Higher Order Derivatives
+-------------------------
 
 .. toctree::
    :maxdepth: 2
