@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import time
 import graddog as gd
 from graddog.functions import sin, cos, tan, exp, log
+from graddog.tools import plot_with_tangent_line
 
 seed0 = 0.5
 def f0(x):
@@ -92,3 +93,6 @@ def time_demo(f, seed):
     plt.show()
 
 run_demos()
+# def cubic(x):
+#     return 2*x**3
+# plot_with_tangent_line(cubic, 3, -10, 10, n_pts=1000, figsize=(6,6), xlabel='x', ylabel='y', plotTitle='Function with tangent line')
