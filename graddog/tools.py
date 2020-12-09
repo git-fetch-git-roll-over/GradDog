@@ -19,9 +19,6 @@ def plot_derivative(function, xmin, xmax, n_pts=100, figsize=(6,6), xlabel='x', 
     ylabel [string](Default: 'y'): Label for y axis of plot
     plotTitle [string](Default: 'Derivative'): Label for title of plot
     
-    Outputs: 
-    xs: the array of linearly spaced x values between xmin and xmax
-    ys: the derivative evaluated at the values in xs
     '''
     xs = np.linspace(xmin, xmax, num=n_pts)
     diag_mtx = gd.trace(function, xs)    
@@ -36,8 +33,7 @@ def plot_derivative(function, xmin, xmax, n_pts=100, figsize=(6,6), xlabel='x', 
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.xlim(xmin, xmax)
-    
-    return xs, ys
+    plt.show()
 
 def find_extrema_firstorder(function, xmin, xmax, n_pts=100, tolerance = 1e-10):
     '''
