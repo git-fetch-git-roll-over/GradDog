@@ -9,10 +9,6 @@ import numbers
 Any implementable unary (one_parent) or binary (two_parent) operations can be added here
 '''
 
-# TODO: remove the assertion that t is a Trace
-# t can be a Trace or a scalar
-
-
 def sin(t : Trace):
     '''
     This allows to create sin().
@@ -25,13 +21,10 @@ def sin(t : Trace):
         hasvalue=t.val
         return one_parent(t, math.Ops.sin)
     except AttributeError:
-            if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
-                return np.sin(t)
-            else:
-                raise ValueError("Input must be numerical or Trace instance")
-    else:
-        raise ValueError("Input must be numerical or Trace instance")
-
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return np.sin(t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 def arcsin(t:Trace):
     '''
@@ -48,8 +41,15 @@ def arcsin(t:Trace):
             raise ValueError("The domain of arcsin is (-1, 1)")
         else:
             return one_parent(t, math.Ops.arcsin)
+            
     except AttributeError:
-        return np.arcsin(t)
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            if (t <= -1) or (t >= 1):
+                raise ValueError("The domain of arcsin is (-1, 1)")
+            else:
+                return np.arcsin(t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 
 
@@ -65,8 +65,10 @@ def cos(t : Trace):
         hasvalue = t.val
         return one_parent(t, math.Ops.cos)
     except AttributeError:
-        return np.cos(t)
-
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return np.cos(t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 
 
@@ -86,7 +88,13 @@ def arccos(t:Trace):
         else:
             return one_parent(t, math.Ops.arccos)
     except AttributeError:
-        return np.arccos(t)
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            if (t <= -1) or (t >= 1):
+                raise ValueError("The domain of arccos is (-1, 1)")
+            else:
+                return np.arccos(t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 
 def tan(t : Trace):
@@ -100,7 +108,10 @@ def tan(t : Trace):
         hasval = t.val
         return one_parent(t, math.Ops.tan)
     except AttributeError:
-        return np.tan(t)
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return np.tan(t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 def arctan(t:Trace):
     '''
@@ -115,8 +126,12 @@ def arctan(t:Trace):
     try:
         hasval= t.val
         return one_parent(t, math.Ops.arctan)
+    
     except AttributeError:
-        return np.arctan(t)
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return np.arctan(t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 
 def exp(t : Trace, base=np.e):
@@ -134,7 +149,10 @@ def exp(t : Trace, base=np.e):
             formula = f'{np.round(base,3)} ^ ({t._trace_name})'
         return one_parent(t, math.Ops.exp, param = base, formula = formula)
     except AttributeError:
-        return np.power(base,t)
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return np.power(base, t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 
 def log(t : Trace, base=np.e):
@@ -152,8 +170,10 @@ def log(t : Trace, base=np.e):
             formula = f'log_{np.round(base,3)}({t._trace_name})'
         return one_parent(t, math.Ops.log, base, formula = formula)
     except AttributeError:
-        return np.log(t)/np.log(base)
-
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return np.log(t)/np.log(base)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 def sinh(t : Trace):
     '''
@@ -168,7 +188,10 @@ def sinh(t : Trace):
         hasvalue = t.val
         return one_parent(t, math.Ops.sinh)
     except AttributeError:
-        return np.sinh(t)
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return np.sinh(t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 
 def cosh(t : Trace):
@@ -183,8 +206,11 @@ def cosh(t : Trace):
         hasvalue = t.val
         return one_parent(t, math.Ops.cosh)
     except AttributeError:
-        return np.cosh(t)
-    
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return np.cosh(t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
+
 
 def tanh(t : Trace):
     '''
@@ -198,7 +224,10 @@ def tanh(t : Trace):
         hasvalue = t.val
         return one_parent(t, math.Ops.tanh)
     except AttributeError:
-        return np.tanh(t)
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return np.tanh(t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 
 def sqrt(t : Trace):
@@ -213,7 +242,11 @@ def sqrt(t : Trace):
         hasvalue = t.val
         return one_parent(t, math.Ops.sqrt)
     except AttributeError:
-        return np.sqrt(t)
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return np.sqrt(t)
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
+
 
 
 def sigmoid(t : Trace):
@@ -228,7 +261,10 @@ def sigmoid(t : Trace):
         hasvalue = t.val
         return one_parent(t, math.Ops.sigm)
     except AttributeError:
-        return 1/(1 + np.exp(-t))
+        if isinstance(t, numbers.Number) or isinstance(t, np.ndarray):
+            return 1/(1 + np.exp(-t))
+        else:
+            raise ValueError("Input must be numerical or Trace instance")
 
 
 
