@@ -238,6 +238,7 @@ def one_parent(t, op, param = None, formula = None):
 		raise ValueError("Parameter must be numerical scalar")
 
 	try:
+		# when t is a Trace
 		new_formula =  f'{op}({t._trace_name})'
 		if formula:
 			new_formula = formula
@@ -247,11 +248,12 @@ def one_parent(t, op, param = None, formula = None):
 		return Trace(new_formula, val, der, parents, op, param)	
 
 	except AttributeError:
-		if isinstance(t, Iterable) and not isinstance(t, str):
-			print("X")
-			return np.array([one_parent(t_, op, param, formula) for t_ in t])
+		#when t is actually a vector input, we are still able to apply the op to the whole vector (e.g. sin([x1,x2]) = [sin(x1),sin(x2)])
+		if isinstance(t[0], numbers.Number):
+			return math.val(np.array(t))
 		else:
-			raise ValueError("Input must be Trace instance")
+			return np.array([one_parent(t_, op, param, formula) for t_ in t])
+
 
 
 def two_parents(t1, op, t2, formula = None):
