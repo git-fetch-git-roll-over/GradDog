@@ -63,18 +63,18 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
 
         try:
             # as a vector
-            f(new_variables)
+            output = f(new_variables)
             if verbose:
                 print('...inferred the input is a vector...')
         except TypeError:
             # as variables
-            f(*new_variables)
+            output = f(*new_variables)
             if verbose:
                 print('...inferred the inputs are variables...')
 
     else:
         # single-variable input
-        f(new_variables[0])
+        output = f(new_variables[0])
         if verbose:
             print('...inferred the input is a variable...')
     if verbose:
@@ -86,6 +86,7 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
     N = CompGraph.num_outputs()
     if verbose:
         print(f'Inferred {N}-dimensional output')
+        print(output)
 
 
     ##################### Second Derivative #########################

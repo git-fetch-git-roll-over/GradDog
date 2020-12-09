@@ -244,11 +244,10 @@ def one_parent(t, op, param = None, formula = None):
 
 	except AttributeError:
 		#when t is actually a vector input, we are still able to apply the op to the whole vector (e.g. sin([x1,x2]) = [sin(x1),sin(x2)])
-
 		if isinstance(t[0], numbers.Number):
 			return math.val(np.array(t))
-
-		return np.array([one_parent(t_, op, param, formula) for t_ in t])
+		else:
+			return np.array([one_parent(t_, op, param, formula) for t_ in t])
 
 
 def two_parents(t1, op, t2, formula = None):

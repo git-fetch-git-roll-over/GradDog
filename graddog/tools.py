@@ -23,17 +23,19 @@ def plot_derivative(function, xmin, xmax, n_pts=100, figsize=(6,6), xlabel='x', 
     xs = np.linspace(xmin, xmax, num=n_pts)
     diag_mtx = gd.trace(function, xs)    
     # Assemble values by pulling our diagonal matrix entries
-    ys = []
-    for i in range(n_pts):
-        ys.append(diag_mtx[i][i]) # append the derivative
-        
+    y_ders = [diag_mtx[i][i] for i in range(n_pts)]
+
+    
     plt.figure(figsize=figsize)
-    plt.plot(xs, ys)
+    plt.plot(xs, y_ders, color = 'red', label = 'f\'(x)')
     plt.title(plotTitle)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.xlim(xmin, xmax)
+    plt.legend()
     plt.show()
+
+    return xs, y_ders
 
 def find_extrema_firstorder(function, xmin, xmax, n_pts=100, tolerance = 1e-10):
     '''

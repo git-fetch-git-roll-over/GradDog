@@ -221,7 +221,7 @@ class CompGraph:
 						d_outputs_d_v = np.dot(d_outputs_d_children, d_children_d_v.T)
 				else:
 					d_outputs_d_v = np.ones(shape=(self.num_outputs(), 1))
-				self.trace_derivs[v] = d_outs_d_v
+				self.trace_derivs[v] = d_outputs_d_v
 			return np.hstack([self.trace_derivs[x] for x in list(map(lambda x : self.get_trace_name(x), self.variables))])
 
 		def tensor_product(self, W, u, v):
