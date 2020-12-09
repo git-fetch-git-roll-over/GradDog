@@ -16,17 +16,19 @@ def basic_ops():
     x = Trace('x', 3, {'x' : 1.0}, [])    
     y = Trace('x', 3, {'x' : 1.0}, [])
     z = 3
-    a = z + x
-    b = z * x
-    c = z / x
-    d = x / y
-    e = -x
-    f = x**y
-    g = z**x
-    assert x == y
-    assert (x == z) == False 
-    assert (x != z) == True
-    assert x != z
+    a = x.__radd__(z)
+    b = x.__rmul__(z)
+    c = x.__rtruediv__(z)
+    d = x.__truediv__(y)
+    e = x.__neg__()
+    f = x.__pow__y
+    g = x.__rpow__(z)
+    h = x.__sub__(y)
+    i = x.__rsub__(z)
+    assert x.__eq__(y)
+    assert not x.__eq__(z) 
+    assert x.__ne__(z)
+    assert not x.__ne__(y)
     assert a.val == 6
     assert b.val == 9
     assert c.val == 1
@@ -34,6 +36,8 @@ def basic_ops():
     assert e.val == -3
     assert f.val == 27
     assert g.val == 27
+    assert h.val == 0
+    assert i.val == 0
 
 def test_basic_reverse():
     # Decorator function maker that can be used to create function variables
@@ -80,4 +84,24 @@ def test_two_parent():
 
     with pytest.raises(ValueError):
         z = two_parents(x, 'cos', 'test')    
+
+def test_RMtoR():
+    def f(v):
+        return v[0] + exp(v[1]) + 6*v[2]**2
+    x = gd.trace(f, [1,2,4])
+    assert x[0][0] == 1.0
+    assert x[0][1] == pytest.approx(np.exp(2))
+    assert x[0][2] == 48.0
+
+def test_RMtoRN():
+    def f(v):
+        return [v[0]+v[1], v[1]-v[2], cos(v[2]), exp(v[3])*sin(v[2])]
+    x = gd.trace(f, [1,2,3,4])
+    assert x[0][0] == 1.0
+    assert x[0][1] == 1.0
+    assert x[1][1] == 1.0
+    assert x[1][2] == -1.0
+    assert x[2][2] == pytest.approx(-0.14112001)
+    assert x[3][2] == pytest.approx(-54.05175886)
+    assert x[3][3] == pytest.approx(7.70489137)
 
