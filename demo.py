@@ -5,6 +5,8 @@ import time
 import graddog as gd
 from graddog.functions import sin, cos, tan, exp, log
 from graddog.tools import plot_with_tangent_line
+from graddog.functions import sin, cos, tan, exp, log, sigmoid
+from graddog.trace import Variable
 
 seed0 = 0.5
 def f0(x):
@@ -60,8 +62,8 @@ def f11(v):
     
 
 
-seeds = [seed0, seed1, seed2, seed3, seed4, seed5, seed6, seed7, seed8, seed9]
-fs = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9]
+seeds = [seed0, seed1, seed2, seed3, seed4, seed5, seed6, seed7, seed8, seed9, seed10]
+fs = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10]
 
 def run_demos():
     for i, f in enumerate(fs):

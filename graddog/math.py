@@ -138,7 +138,7 @@ class Ops:
 		sqrt: {
 			val : lambda t, param : t.val**0.5, der : lambda t, param : 1/(2*t.val**0.5), double_der : double_deriv_sqrt},
 		sigm: {
-			val : lambda t, param : 1/(1 + np.exp(-t.val)), der : lambda t, param : param*t.val**(param-1), double_der : double_deriv_sigm},
+			val : lambda t, param : 1/(1 + np.exp(-t.val)), der : lambda t, param : np.exp(-t.val)/((1+np.exp(t.val))**2), double_der : double_deriv_sigm},
 		sinh: {
 			val : lambda t, param : (np.exp(t.val) - np.exp(-t.val))/2, der : lambda t, param : (np.exp(t.val) + np.exp(-t.val))/2, double_der : double_deriv_sinh},
 		cosh: {
@@ -167,6 +167,7 @@ class Ops:
 def deriv_one_parent(t, op, param = None):
 	# derivative of a trace with one parent
 	try:
+		print(t, op, param)
 		d_op_dt = Ops.one_parent_rules[op]['der'](t, param)
 		return {t._trace_name : d_op_dt}
 	except KeyError:
