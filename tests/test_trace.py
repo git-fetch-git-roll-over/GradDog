@@ -12,7 +12,7 @@ def test_string_input_var():
         x.val = 2 
         x.val ='test'
 
-def basic_ops():
+def test_basic_ops():
     x = Trace('x', 3, {'x' : 1.0}, [])    
     y = Trace('x', 3, {'x' : 1.0}, [])
     z = 3
@@ -21,7 +21,7 @@ def basic_ops():
     c = x.__rtruediv__(z)
     d = x.__truediv__(y)
     e = x.__neg__()
-    f = x.__pow__y
+    f = x.__pow__(y)
     g = x.__rpow__(z)
     h = x.__sub__(y)
     i = x.__rsub__(z)
