@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import graddog as gd
+from graddog.functions import sin, cos, tan, exp, log
+from graddog.tools import plot_with_tangent_line
 from graddog.functions import sin, cos, tan, exp, log, sigmoid
 from graddog.tools import plot_derivative
 
@@ -96,8 +98,6 @@ def test_hessian():
     def f2(x, y):
         return x*y + exp(x*y)
 
-    
-
     new_fs = [f1, f2]
     new_seeds = [seed1, seed2]
     for i, f in enumerate(new_fs):
@@ -106,10 +106,13 @@ def test_hessian():
         print(f__)
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 #test_hessian()
-run_demos()
+#run_demos()
 
 
-plot_derivative(lambda x : sin(log(x)), .207, 2)
+#plot_derivative(lambda x : sin(log(x)), .207, 2)
 
 
+def cubic(x):
+    return 2*x**3
+plot_with_tangent_line(cubic, 3, -10, 10, n_pts=1000, figsize=(6,6), xlabel='x', ylabel='y', plotTitle='Function with tangent line')
 

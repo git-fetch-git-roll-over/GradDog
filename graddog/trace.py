@@ -1,5 +1,6 @@
 # :)
 import numpy as np
+from collections.abc import Iterable
 import numbers
 import pandas as pd
 import graddog.math as math
@@ -233,7 +234,11 @@ def one_parent(t, op, param = None, formula = None):
 	'''
 	Creates a trace from one parent, with an optional parameter and optional formula
 	'''
+	if param and not isinstance(param, numbers.Number):
+		raise ValueError("Parameter must be numerical scalar")
+
 	try:
+		# when t is a Trace
 		new_formula =  f'{op}({t._trace_name})'
 		if formula:
 			new_formula = formula
@@ -250,6 +255,7 @@ def one_parent(t, op, param = None, formula = None):
 			return np.array([one_parent(t_, op, param, formula) for t_ in t])
 
 
+
 def two_parents(t1, op, t2, formula = None):
 	'''
 	Creates a trace from two parents, with an optional formula
@@ -261,9 +267,15 @@ def two_parents(t1, op, t2, formula = None):
 		der =  math.deriv(t1, op, t2)
 		parents = [t1, t2]
 		return Trace(new_formula, val, der, parents, op)
-	except AttributeError: 
-		# when t2 is actually a constant, not a trace, and this should really be a one parent trace
-		return one_parent(t1, op, t2, formula = f'{t1._trace_name}{op}{t2}')
+		
+	except AttributeError:
+		if isinstance(t2, numbers.Number):
+            # when t2 is actually a constant, not a trace, and this should really be a one parent trace
+			return one_parent(t1, op, t2, formula = f'{t1._trace_name}{op}{t2}')
+		elif isinstance(t2, Iterable) and not isinstance(t2, str):
+			return np.array([two_parents(t1, op, t_, formula) for t_ in t2]) 
+		else:
+			raise ValueError("Input must be numerical or Trace instance")
 
 
 

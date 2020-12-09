@@ -46,58 +46,59 @@ class Ops:
 
 
 
+	#### Current double derivative rules
 	def double_deriv_add(t1, t2, t3):
-		return 0
+		return np.array([[0]])
 	def double_deriv_sub(t1, t2, t3):
-		return 0
+		return np.array([[0]])
 	def double_deriv_sub_R(t1, t2, t3):
-		return 0
+		return np.array([[0]])
 	def double_deriv_mul(t1, t2, t3):
 		if t2._trace_name != t3._trace_name:
-			return 1
+			return np.array([[1]])
 		else:
-			return 0
+			return np.array([[0]])
 	def double_deriv_div(t1, t2, t3):
 		if t2._trace_name != t3._trace_name:
-			return -t3.val**-2
+			return np.array([[-t3.val**-2]])
 		else:
-			return 0
+			return np.array([[0]])
 	def double_deriv_div_R(t1, t2, t3):
 		if t2._trace_name != t3._trace_name:
-			return 1
+			return np.array([[1]])
 		else:
-			return 0
+			return np.array([[0]])
 	def double_deriv_power(t1, t2, t3):
 		if t2._trace_name != t3._trace_name:
-			return (t2.val**(t3.val-1))*(t3.val*np.log(t2.val) + 1)
+			return np.array([[(t2.val**(t3.val-1))*(t3.val*np.log(t2.val) + 1)]])
 		else:
-			return t3.val*(t3.val-1)*(t2.val**(t3.val-2))
+			return np.array([[t3.val*(t3.val-1)*(t2.val**(t3.val-2))]])
 	def double_deriv_sin(t1, t2, t3):
-		return -np.sin(t2.val)
+		return np.array([[-np.sin(t2.val)]])
 	def double_deriv_cos(t1, t2, t3):
-		return -np.cos(t2.val)
+		return np.array([[-np.cos(t2.val)]])
 	def double_deriv_tan(t1, t2, t3):
-		return 2*np.sin(t2.val)/(np.cos(t2.val)**3)
+		return np.array([[2*np.sin(t2.val)/(np.cos(t2.val)**3)]])
 	def double_deriv_exp(t1, t2, t3):
 		return np.array([[np.exp(t2.val)]])
 	def double_deriv_log(t1, t2, t3):
-		return -t2.val**-2
+		return np.array([[-t2.val**-2]])
 	def double_deriv_sqrt(t1, t2, t3):
-		pass
+		raise ValueError('Currently not implemented :) try again in 2021')
 	def double_deriv_sigm(t1, t2, t3):
-		pass
+		raise ValueError('Currently not implemented :) try again in 2021')
 	def double_deriv_sinh(t1, t2, t3):
-		pass
+		raise ValueError('Currently not implemented :) try again in 2021')
 	def double_deriv_cosh(t1, t2, t3):
-		pass
+		raise ValueError('Currently not implemented :) try again in 2021')
 	def double_deriv_tanh(t1, t2, t3):
-		pass
+		raise ValueError('Currently not implemented :) try again in 2021')
 	def double_deriv_arcsin(t1, t2, t3):
-		pass
+		raise ValueError('Currently not implemented :) try again in 2021')
 	def double_deriv_arccos(t1, t2, t3):
-		pass
+		raise ValueError('Currently not implemented :) try again in 2021')
 	def double_deriv_arctan(t1, t2, t3):
-		pass
+		raise ValueError('Currently not implemented :) try again in 2021')
 	
 	one_parent_rules = {
 	# Contains the value and derivative rules for all one-parent operations
@@ -108,9 +109,9 @@ class Ops:
 		add: {
 			val : lambda t, param : t+param, der : lambda t, param : 1.0, double_der : lambda t, param : np.array([[0]])}, 
 		sub: {
-			val : lambda t, param : t-param, der : lambda t, param : 1.0, double_der : double_deriv_sub},
+			val : lambda t, param : t-param, der : lambda t, param : 1.0, double_der : lambda t, param : np.array([[0]])},
 		sub_R: {
-			val : lambda t, param : param-t, der : lambda t, param : -1.0, double_der : double_deriv_sub_R},
+			val : lambda t, param : param-t, der : lambda t, param : -1.0, double_der : lambda t, param : np.array([[0]])},
 		mul: {
 			val : lambda t, param : t*param, der : lambda t, param : param, double_der : lambda t, param : np.array([[0]])},
 		div: {
