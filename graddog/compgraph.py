@@ -14,9 +14,6 @@ class CompGraph:
 		def __init__(self):
 			self.reset()
 
-		def __str__(self):
-			return repr(self)
-
 		def reset(self):
 			'''
 			Sets all the attributes to their initial values
@@ -173,10 +170,6 @@ class CompGraph:
 
 		def num_outputs(self):
 			return len(self.outputs())
-
-		@property
-		def comp_graph(self):
-			return {'in' : self.ins, 'out' : self.outs}
 
 		def __repr__(self):
 			return repr(self.table)
@@ -345,20 +338,9 @@ class CompGraph:
 		if not CompGraph.instance:
 			CompGraph.instance = CompGraph.__CompGraph()
 
-	def __getattr__(self, name):
-		return getattr(self.instance, name)
-
-	def __repr__(self):
-		if CompGraph.instance:
-			return repr(CompGraph.instance)
-
 	def show_trace_table():
 		if CompGraph.instance:
 			print(repr(CompGraph.instance))
-
-	def show_comp_graph():
-		if CompGraph.instance:
-			print(CompGraph.instance.comp_graph)
 
 	def reset():
 		if CompGraph.instance:
@@ -384,7 +366,5 @@ class CompGraph:
 	def hessian(output, verbose):
 		if CompGraph.instance:
 			return CompGraph.instance.hessian(output, verbose)
-
-
 
 

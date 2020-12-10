@@ -73,4 +73,3 @@ def plotting_demo():
     plot_derivative(sin, 1, 5)
     plot_with_tangent_line(sin, 0, -np.pi, np.pi)
 
-
