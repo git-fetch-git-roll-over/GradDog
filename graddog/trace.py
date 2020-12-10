@@ -6,7 +6,6 @@ import pandas as pd
 import graddog.math as math
 from graddog.compgraph import CompGraph
 
-# TODO: dunder methods for comparison operators like __lt__ <
 
 class Trace:
 	'''
