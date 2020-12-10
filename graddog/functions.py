@@ -24,7 +24,7 @@ def sin(t):
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.sin(t)
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sin(t_) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -51,7 +51,7 @@ def arcsin(t):
                 return np.arcsin(t)
             else:
                 raise ValueError('Input out of domain')
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([arcsin(t_) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -69,7 +69,7 @@ def cos(t):
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.cos(t)
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([cos(t_) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -96,7 +96,7 @@ def arccos(t):
                 return np.arccos(t)
             else:
                 raise ValueError('Input out of domain')
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([arccos(t_) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -114,7 +114,7 @@ def tan(t):
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.tan(t)
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([tan(t_) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -134,7 +134,7 @@ def arctan(t):
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.arctan(t)
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([arctan(t_) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -156,7 +156,7 @@ def exp(t, base=np.e):
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.power(base, t)
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([exp(t_, base) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -184,7 +184,7 @@ def log(t, base=np.e):
                 return np.log(t)/np.log(base)
             else:
                 raise ValueError('Input out of domain')
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([log(t_, base) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -203,7 +203,7 @@ def sinh(t):
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.sinh(t)
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sinh(t_) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -221,7 +221,7 @@ def cosh(t):
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.cosh(t)
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([cosh(t_) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -239,7 +239,7 @@ def tanh(t):
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.tanh(t)
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([tanh(t_) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -263,7 +263,7 @@ def sqrt(t):
                 return t**0.5
             else:
                 raise ValueError('Input out of domain')
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sqrt(t_, base) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
@@ -281,7 +281,7 @@ def sigmoid(t):
     except AttributeError:
         if isinstance(t, numbers.Number):
             return 1/(1 + np.exp(-t))
-        elif isinstance(t, Iterable):
+        elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sigmoid(t_) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
