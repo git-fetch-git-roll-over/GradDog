@@ -53,7 +53,7 @@ def f10(v):
 
 seed11 = np.linspace(1,10, num=9)
 def f11(v):
-    return log(v, base = 2)   
+    return v**2 + 1
 
 seeds = [seed0, seed1, seed2, seed3, seed4, seed5, seed6, seed7, seed8, seed9, seed10, seed11]
 fs = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11]
@@ -97,10 +97,10 @@ def test_hessian():
     f_, f__ = gd.trace(f1, seed1, return_second_deriv = True)
     print(f_)
     print(f__)
-test_hessian()
+#test_hessian()
 
 
-
+f_ = gd.trace(f11, seed11, verbose = True)
 #run_demos()
 
 

@@ -33,7 +33,7 @@ def test_plot_derivative_trig():
 
 def test_find_extrema():
     def sq(x):
-        x**2 + 1
+        return x**2 + 1
     def quadratic(x):
         a=4
         xoffset = 3
@@ -51,7 +51,7 @@ def test_find_extrema():
 
 def test_find_increasing():
     def sq(x):
-        x**2 + 3
+        return x**2 + 3
     x1, y1 = tools.find_increasing(sq, 0, 10, n_pts=5)
     assert ([x1[0], y1[0]] == [2.5 , 5])
     x2 = tools.find_increasing(sq, -10, 0, n_pts=5)
@@ -59,7 +59,7 @@ def test_find_increasing():
 
 def test_find_decreasing():
     def sq(x):
-        x**2 + 3
+        return x**2 + 3
     x1 = tools.find_decreasing(sq, 0, 10, n_pts=5)
     assert x1 == None
     x2, y2 = tools.find_decreasing(sq, -10, 0, n_pts=5)

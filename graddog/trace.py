@@ -16,7 +16,6 @@ class Trace:
 		The constructor for Trace class.
 		Adds the new trace element to the CompGraph
 		'''
-		#print(formula)
 		self._formula = formula
 
 		# val stores the value
