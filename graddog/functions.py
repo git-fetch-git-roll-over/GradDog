@@ -180,11 +180,10 @@ def log(t, base=np.e):
             raise ValueError('Input out of domain')
     except AttributeError:
         if isinstance(t, numbers.Number):
-            if math.in_domain(t_val, math.Ops.log, base):
-                return one_parent(t, math.Ops.log, base)
+            if math.in_domain(t, math.Ops.log, base):
+                return np.log(t)/np.log(base)
             else:
                 raise ValueError('Input out of domain')
-            return np.log(t)/np.log(base)
         elif isinstance(t, Iterable):
             return np.array([log(t_, base) for t_ in t])
         else:
