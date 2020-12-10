@@ -79,12 +79,17 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
             print('...inferred the input is a variable...')
     if verbose:
         print('...finished')
-        CompGraph.show_trace_table()
     ############################################
 
 
-
-    N = CompGraph.num_outputs()
+    try:
+        N = len(output)
+    except AttributeError:
+        N = 1
+        output = [output]
+    except TypeError:
+        N = 1
+        output = [output]
     if verbose:
         print(f'Inferred {N}-dimensional output')
         print(output)
@@ -98,7 +103,7 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
             raise ValueError('Can only compute second derivative for scalar output f')
         if verbose:
             print('Computing reverse mode first AND second derivative...')
-        return CompGraph.hessian()   
+        return CompGraph.hessian(output, verbose)   
     ######################################################
 
 
@@ -123,9 +128,9 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
     if verbose:
         print(f'Computing {mode} mode derivative...')
     if mode == 'forward':
-        return CompGraph.forward_mode()
+        return CompGraph.forward_mode(output, verbose)
     elif mode == 'reverse':
-        return CompGraph.reverse_mode()
+        return CompGraph.reverse_mode(output, verbose)
     else:
         raise ValueError('Didnt recognize mode, should be forward or reverse')
     ########################################################

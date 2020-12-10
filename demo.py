@@ -28,7 +28,7 @@ seed4 = [1,2,3]
 def f4(v):
     return [v[0] + 3*v[2]**2, v[1] - v[0], v[2] + sin(v[1])]
 
-seed5 = np.ones(3)
+seed5 = np.array([3,2,1])
 def f5(x, y, z):
     return [exp(-(sin(x) - cos(y))**2), sin(- log(x) ** 2 + tan(z))]
 
@@ -113,6 +113,11 @@ run_demos()
 
 #plot_derivative(lambda x : sin(log(x)), .207, 2)
 
+def f(x, y):
+    return [x, y*2]
+
+#f_ = gd.trace(f5, seed5, verbose = True) 
+#print(f_)
 
 def cubic(x):
     return 2*x**3

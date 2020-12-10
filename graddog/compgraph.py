@@ -5,10 +5,6 @@ import graddog.math as math
 from itertools import combinations_with_replacement
 
 
-# TODO: come up with a better name for this class
-
-# TODO: add docstrings and examples
-
 class CompGraph:
 
 	# implements the singleton design pattern 
@@ -45,7 +41,7 @@ class CompGraph:
 			self.doubles = {}
 
 			#set up the table as a pandas DataFrame for now. makes things simpler tbh.
-			self.table = pd.DataFrame(columns = ['trace_name', 'label', 'formula', 'val', 'partial1', 'partial2'])
+			self.table = pd.DataFrame(columns = ['trace_name', 'input', 'output', 'formula', 'val', 'partial1', 'partial2'])
 
 		def add_trace(self, trace):
 			'''
@@ -66,7 +62,7 @@ class CompGraph:
 				new_trace_name = self.new_trace_name()
 
 				# get new label
-				label_string = self.get_label_string(op, formula)
+				is_input, is_output = self.get_labels(op, formula)
 			
 				# update computational graph
 				self.update_computational_graph(new_trace_name, parents)
@@ -78,7 +74,7 @@ class CompGraph:
 				derivs = self.partial_derivs_for_table(new_trace_name, der, op, parents, param)
 
 				# update trace table
-				self.add_trace_table_row(new_trace_name, label_string, formula, val, derivs)
+				self.add_trace_table_row(new_trace_name, is_input, is_output, formula, val, derivs)
 
 				# return new_trace_name to the Trace class
 				return new_trace_name
@@ -97,7 +93,7 @@ class CompGraph:
 			else:
 				return None
 
-		def get_label_string(self, op, formula):
+		def get_labels(self, op, formula):
 			'''
 			when adding a trace, if it is a variable, label it 'INPUT' and add it to the variables
 			otherwise, if it is not a variable, the row is labelled 'OUTPUT'
@@ -105,10 +101,10 @@ class CompGraph:
 			'''
 			if op is None:
 				self.add_new_variable(formula)
-				label_string = 'INPUT'
+				is_input, is_output = True, False
 			else:
-				label_string = 'OUTPUT'
-			return label_string
+				is_input, is_output = False, False
+			return is_input, is_output
 
 		def add_new_variable(self, formula):
 			'''
@@ -139,15 +135,14 @@ class CompGraph:
 				self.outs[x._trace_name].append(new_trace_name)
 				row_index = int(x._trace_name[1:]) - 1
 				f = self.table.loc[row_index]['formula']
-				if f not in self.variables:
-					self.table.at[row_index, 'label'] = ''
+				self.table.at[row_index, 'output'] = False
 			self.outs[new_trace_name] = []
 
-		def add_trace_table_row(self, new_trace_name, label_string, formula, val, partial_derivs_list):
+		def add_trace_table_row(self, new_trace_name, is_input, is_output, formula, val, partial_derivs_list):
 			'''
 			Formats a new row in the trace table dataframe
 			'''
-			self.table.loc[self.size - 1] = [new_trace_name, label_string, formula, val] + partial_derivs_list
+			self.table.loc[self.size - 1] = [new_trace_name, is_input, is_output, formula, val] + partial_derivs_list
 
 		def partial_derivs_for_table(self, new_trace_name, der, op, parents, param):
 			'''
@@ -169,8 +164,11 @@ class CompGraph:
 		def get_variable_row(self, var_name):
 			return int(self.table.loc[self.table['formula'] == var_name]['trace_name'].iloc[0][1:]) - 1
 
+		def get_trace_row(self, trace_name):
+			return int(trace_name[1:])-1
+
 		def outputs(self):
-			return self.table.loc[self.table['label'] == 'OUTPUT']['trace_name'].values
+			return self.table.loc[self.table['output'] == True]['trace_name'].values
 
 		def get_trace_name(self, var_name):
 			# lookup a variable in the table to get its trace name
@@ -186,13 +184,23 @@ class CompGraph:
 		def __repr__(self):
 			return repr(self.table)
 
-		def forward_mode_der(self):
+		def label_outputs(self, output):
+			for o in output:
+				t = o._trace_name
+				row = self.get_trace_row(t)
+				self.table.loc[row,'output'] = True
+
+		def forward_mode_der(self, output, verbose):
 			'''
 			step FORWARDS through the trace table, calculate derivatives along the way in trace_derivs
 			
 			Returns the Jacobian matrix of derivatives df_i/dx_j for each output function f_i w.r.t. each input variable x_j
 
 			'''
+			self.label_outputs(output)
+			if verbose:
+				CompGraph.show_trace_table()
+			
 			self.trace_derivs = {self.get_trace_name(x) : np.eye(self.num_vars)[i,:] for i, x in enumerate(self.variables)}
 			for row in range(self.num_vars, self.size):
 				v = self.table.loc[row]['trace_name']
@@ -200,28 +208,32 @@ class CompGraph:
 				d_parents_d_variables = np.vstack([self.trace_derivs[in_] for in_ in self.ins[v]])
 				d_v_d_variables = np.dot(d_v_d_parents, d_parents_d_variables)
 				self.trace_derivs[v] = d_v_d_variables
-			return np.array([self.trace_derivs[output][0] for output in self.outputs()])
+			return np.vstack([self.trace_derivs[output] for output in self.outputs()])
 
-		def reverse_mode_der(self):
+		def reverse_mode_der(self, output, verbose):
 			'''
 			step BACKWARDS through the trace table, calculate derivatives along the way in trace_derivs
 			
 			Returns the Jacobian matrix of derivatives df_i/dx_j for each output function f_i w.r.t. each input variable x_j
 			
 			'''
+			self.label_outputs(output)
+			if verbose:
+				CompGraph.show_trace_table()
+			
 			self.trace_derivs = {x : np.eye(self.num_outputs())[:,i].reshape(-1,1) for i, x in enumerate(self.outputs())}
 			for row in reversed(range(self.size)):
-				v, label = self.table.loc[row]['trace_name'], self.table.loc[row]['label']
-				if label != 'OUTPUT':
+				v, is_output = self.table.loc[row]['trace_name'], self.table.loc[row]['output']
+				if not is_output:
 					if self.outs[v] == []:
+						if verbose:
+							print(f'{v} was a variable with no effect on any of the outputs')
 						d_outputs_d_v = np.zeros(shape=(self.num_outputs(), 1))
 					else:
 						d_outputs_d_children = np.hstack([self.trace_derivs[out_] for out_ in self.outs[v]])
 						d_children_d_v = np.array([[self.partials[out_][v] for out_ in self.outs[v]]])
 						d_outputs_d_v = np.dot(d_outputs_d_children, d_children_d_v.T)
-				else:
-					d_outputs_d_v = np.ones(shape=(self.num_outputs(), 1))
-				self.trace_derivs[v] = d_outputs_d_v
+					self.trace_derivs[v] = d_outputs_d_v
 			return np.hstack([self.trace_derivs[x] for x in list(map(lambda x : self.get_trace_name(x), self.variables))])
 
 		def tensor_product(self, W, u, v):
@@ -243,7 +255,7 @@ class CompGraph:
 			else:
 				raise ValueError('what')
 
-		def hessian(self):
+		def hessian(self, output, verbose):
 			'''
 			Implements the edge-pushing algorithm?
 
@@ -268,16 +280,19 @@ class CompGraph:
 			W = np.array([[0.]])
 			v_bar_T = np.array([[self.table.loc[l - 1]['val']]]) # the initial y-value from the forward pass?
 			for i in reversed(range(m+1,l+1)):
-				print('~ v', i)
+				if verbose:
+					print('~ v', i)
 				v_i = f'v{i}'
 				D_i = np.array([[self.partials[v_i][in_] for in_ in self.ins[v_i]]])
-				print('~~ D', D_i, D_i.shape)
+				if verbose:
+					print('~~ D', D_i, D_i.shape)
 				W = np.dot(W, D_i)
 				#W += np.dot(np.dot(v_bar_T, self.double_deriv(i)), self.trace_derivs[f'v{i-1}'])
 				W += v_bar_T @ self.double_deriv(i) @ self.trace_derivs[f'v{i-1}']
 				v_bar_T = v_bar_T @ D_i
 				#W = self.tensor_product(W, D_i, D_i)
-				print('~~~ W', W, W.shape)
+				if verbose:
+					print('~~~ W', W, W.shape)
 
 			return v_bar_T, W
 
@@ -459,13 +474,13 @@ class CompGraph:
 		if CompGraph.instance:
 			CompGraph.instance.reset()
 
-	def forward_mode():
+	def forward_mode(output, verbose):
 		if CompGraph.instance:
-			return CompGraph.instance.forward_mode_der()
+			return CompGraph.instance.forward_mode_der(output, verbose)
 
-	def reverse_mode():
+	def reverse_mode(output, verbose):
 		if CompGraph.instance:
-			return CompGraph.instance.reverse_mode_der()
+			return CompGraph.instance.reverse_mode_der(output, verbose)
 
 	def add_trace(trace):
 		if not CompGraph.instance:
@@ -476,10 +491,9 @@ class CompGraph:
 		if CompGraph.instance:
 			return CompGraph.instance.num_outputs()
 
-	def hessian():
-		CompGraph.show_trace_table()
+	def hessian(output, verbose):
 		if CompGraph.instance:
-			return CompGraph.instance.hessian()
+			return CompGraph.instance.hessian(output, verbose)
 
 
 
