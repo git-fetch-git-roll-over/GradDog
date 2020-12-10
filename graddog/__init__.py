@@ -4,8 +4,6 @@ from graddog.trace import Variable
 from graddog.compgraph import CompGraph
 
 
-
-
 def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
 
     '''
@@ -82,6 +80,8 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
     ############################################
 
 
+
+    ################ Get Outputs #################
     try:
         N = len(output)
     except AttributeError:
@@ -93,6 +93,8 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
     if verbose:
         print(f'Inferred {N}-dimensional output')
         print(output)
+    ##############################################
+
 
 
     ##################### Second Derivative #########################

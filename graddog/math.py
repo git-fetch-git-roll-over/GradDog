@@ -1,11 +1,6 @@
 # :)
 import numpy as np
 
-# TODO: convert lambda expressions to closure functions if appropriate...
-
-# TODO: How do we distinguish that this file is meant for internal use and not for the user?
-
-# TODO: implement rest of domain checks (e.g. tan can only take inputs when x is not an odd multiple of pi/2...)
 
 class Ops:
 
@@ -157,12 +152,7 @@ class Ops:
 def deriv_one_parent(t, op, param = None):
 	# derivative of a trace with one parent
 	try:
-		# t is a trace
 		d_op_dt = Ops.one_parent_rules[op]['der'](t.val, param)
-		return {t._trace_name : d_op_dt}
-	except AttributeError:
-		# t is a scalar
-		d_op_dt = Ops.one_parent_rules[op]['der'](t, param)
 		return {t._trace_name : d_op_dt}
 	except KeyError:
 		raise ValueError('need to implement operation', op)
@@ -180,9 +170,6 @@ def val_one_parent(t, op, param = None):
 	try:
 		# t is a trace
 		return Ops.one_parent_rules[op]['val'](t.val, param)
-	except AttributeError:
-		# t is a scalar
-		return Ops.one_parent_rules[op]['val'](t, param)
 	except KeyError:
 		raise ValueError('need to implement operation', op)
 
