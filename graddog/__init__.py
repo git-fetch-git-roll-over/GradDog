@@ -79,6 +79,7 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
             print('...inferred the input is a variable...')
     if verbose:
         print('...finished')
+        CompGraph.show_trace_table()
     ############################################
 
 
@@ -115,12 +116,12 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
 
 
 
-    if verbose:
-        print(f'Computing {mode} mode derivative...')
+    
 
 
     ############## First Derivative ####################
-    CompGraph.show_trace_table()
+    if verbose:
+        print(f'Computing {mode} mode derivative...')
     if mode == 'forward':
         return CompGraph.forward_mode()
     elif mode == 'reverse':

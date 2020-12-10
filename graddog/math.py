@@ -21,6 +21,7 @@ class Ops:
 	val = 'val'
 	der = 'der'
 	double_der = 'double_der'
+	in_domain = 'in_domain'
 
 
 	add = '+'
@@ -115,19 +116,19 @@ class Ops:
 		mul: {
 			val : lambda t, param : t*param, der : lambda t, param : param, double_der : lambda t, param : np.array([[0]])},
 		div: {
-			val : lambda t, param : t/param, der : lambda t, param : 1/param, double_der : double_deriv_div},
+			in_domain: lambda t, param: param != 0, val : lambda t, param : t/param, der : lambda t, param : 1/param, double_der : double_deriv_div},
 		div_R: {
-			val : lambda t, param : param/t, der : lambda t, param : -param/((t._val)**2), double_der : double_deriv_div_R},
+			in_domain: lambda t, param: t != 0, val : lambda t, param : param/t, der : lambda t, param : -param/((t._val)**2), double_der : double_deriv_div_R},
 		power: {
 			val : lambda t, param : t**param, der : lambda t, param : param*t**(param-1), double_der : lambda t, param : np.array([[param*(param - 1)*(t**(param-2))]])},
 		sin: {
 			val : lambda t, param : np.sin(t), der : lambda t, param : np.cos(t), double_der : double_deriv_sin},
 		arcsin: {
-			val: lambda t, param: np.arcsin(t), der: lambda t, param: 1/(np.sqrt(1-t**2)), double_der : double_deriv_arcsin},
+			in_domain: lambda t, param: t >= -1 and t <= 1, val: lambda t, param: np.arcsin(t), der: lambda t, param: 1/(np.sqrt(1-t**2)), double_der : double_deriv_arcsin},
 		cos: {
 			val : lambda t, param : np.cos(t), der : lambda t, param : -np.sin(t), double_der : double_deriv_cos},
 		arccos: {
-			val: lambda t, param: np.arccos(t), der: lambda t, param: -1/(np.sqrt(1-t**2)), double_der : double_deriv_arccos},
+			in_domain: lambda t, param: t >= -1 and t <= 1, val: lambda t, param: np.arccos(t), der: lambda t, param: -1/(np.sqrt(1-t**2)), double_der : double_deriv_arccos},
 		tan: {
 			val : lambda t, param : np.tan(t), der : lambda t, param : 1/(np.cos(t)**2), double_der : double_deriv_tan},
 		arctan: {
@@ -135,9 +136,9 @@ class Ops:
 		exp: {
 			val : lambda t, param : np.power(param, t), der : lambda t, param : np.power(param, t)*np.log(param), double_der : lambda t, param : np.array([[np.power(param, t)*np.log(param)*np.log(param)]])},
 		log: {
-			val : lambda t, param : np.log(t)/np.log(param), der : lambda t, param : 1/(t*np.log(param)), double_der : double_deriv_log},
+			in_domain: lambda t, param: t > 0 and param > 0, val : lambda t, param : np.log(t)/np.log(param), der : lambda t, param : 1/(t*np.log(param)), double_der : double_deriv_log},
 		sqrt: {
-			val : lambda t, param : t**0.5, der : lambda t, param : 1/(2*t**0.5), double_der : double_deriv_sqrt},
+			in_domain: lambda t, param: t >= 0, val : lambda t, param : t**0.5, der : lambda t, param : 1/(2*t**0.5), double_der : double_deriv_sqrt},
 		sigm: {
 			val : lambda t, param : 1/(1 + np.exp(-t)), der : lambda t, param : np.exp(-t)/((1+np.exp(t))**2), double_der : double_deriv_sigm},
 		sinh: {
@@ -241,6 +242,9 @@ def new_double_deriv_one_parent(t, op, param = None):
 
 def new_double_deriv_two_parents(t1, op, t2):
 	return Ops.two_parent_rules[op][Ops.double_der](t1.val, t2.val)
+
+def in_domain(t, op, param = None):
+	return Ops.one_parent_rules[op][Ops.in_domain](t, param)
 
 
 
