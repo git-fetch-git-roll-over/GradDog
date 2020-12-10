@@ -38,6 +38,7 @@ def test_basic_ops():
     assert g.val == 27
     assert h.val == 0
     assert i.val == 0
+    assert x.__repr__() == x._name
 
 def test_basic_reverse():
     # Decorator function maker that can be used to create function variables

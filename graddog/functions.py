@@ -264,7 +264,7 @@ def sqrt(t):
             else:
                 raise ValueError('Input out of domain')
         elif isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([sqrt(t_, base) for t_ in t])
+            return np.array([sqrt(t_) for t_ in t])
         else:
             raise TypeError('Input(s) must be Trace or scalar')
 

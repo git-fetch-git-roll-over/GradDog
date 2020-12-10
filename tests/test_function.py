@@ -170,3 +170,43 @@ def test_arc_domains():
         f = arcsin(y)
     with pytest.raises(ValueError):
         f = arccos(y)
+
+def test_other_domains():
+    x = Variable('x', -2)
+    y = -2
+    with pytest.raises(ValueError):
+        f = log(x)
+    with pytest.raises(ValueError):
+        f = log(y)
+    with pytest.raises(ValueError):
+        f = sqrt(x)
+    with pytest.raises(ValueError):
+        f = sqrt(y)
+
+def test_array_input():
+    arr = [Variable('x', 0.5), Variable('x', 0.5)]
+    t1 = sin(arr)
+    t2 = arcsin(arr)
+    t3 = cos(arr)
+    t4 = arccos(arr)
+    t5 = tan(arr)
+    t6 = arctan(arr)
+    t7 = exp(arr)
+    t8 = log(arr)
+    t9 = sinh(arr)
+    t10 = cosh(arr)
+    t11 = tanh(arr)
+    t12 = sqrt(arr)
+    t13 = sigmoid(arr)
+    assert t1[0].val == pytest.approx(np.sin(0.5))
+    assert t2[1].val == pytest.approx(np.arcsin(0.5))
+    assert t3[0].val == pytest.approx(np.cos(0.5))
+    assert t4[1].val == pytest.approx(np.arccos(0.5))
+    assert t5[0].val == pytest.approx(np.tan(0.5))
+    assert t6[1].val == pytest.approx(np.arctan(0.5))
+    assert t8[0].val == pytest.approx(np.log(0.5))
+    assert t9[1].val == pytest.approx(np.sinh(0.5))
+    assert t10[0].val == pytest.approx(np.cosh(0.5))
+    assert t11[1].val == pytest.approx(np.tanh(0.5))
+    assert t12[0].val == pytest.approx(np.sqrt(0.5))
+    assert t13[1].val == pytest.approx(1/(1 + np.exp(-0.5)))
