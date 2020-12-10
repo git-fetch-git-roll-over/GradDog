@@ -61,7 +61,7 @@ fs = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11]
 def run_demos():
     for i, f in enumerate(fs):
         print('demo', i)
-        f_ = gd.trace(f, seeds[i], verbose = True)
+        f_ = gd.trace(f, seeds[i], verbose = False)
         print(f_)
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
@@ -98,6 +98,8 @@ def test_hessian():
     def f2(x, y):
         return x*y + exp(x*y)
 
+    
+
     new_fs = [f1, f2]
     new_seeds = [seed1, seed2]
     for i, f in enumerate(new_fs):
@@ -106,13 +108,13 @@ def test_hessian():
         print(f__)
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 #test_hessian()
-#run_demos()
-
+run_demos()
+#f_ = gd.trace(f5, seed5, verbose = True)
 
 #plot_derivative(lambda x : sin(log(x)), .207, 2)
 
 
 def cubic(x):
     return 2*x**3
-plot_with_tangent_line(cubic, 3, -10, 10, n_pts=1000, figsize=(6,6), xlabel='x', ylabel='y', plotTitle='Function with tangent line')
+#plot_with_tangent_line(cubic, 3, -10, 10, n_pts=1000, figsize=(6,6), xlabel='x', ylabel='y', plotTitle='Function with tangent line')
 

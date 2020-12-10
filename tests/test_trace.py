@@ -59,30 +59,27 @@ def test_composite_reverse():
     assert der[0] == -1*np.sin(value)*np.tan(value) + 1/np.cos(value) + np.exp(value)
 
 def test_one_parent():
-    x = Trace('x', 3, {'x' : 1.0}, [])    
-    y = Trace('x', 3, {'x' : 1.0}, [])
+    x = Trace('x', 3, {'x' : 1.0}, [])   
     a = one_parent(x, 'cos')
-    b = one_parent([x, y], 'cos')
     assert a.val == np.cos(3)
-    assert b[1].val == np.cos(3)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         c = one_parent(x, 'cos', param='test')
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         x = 'test'
         d = one_parent(x, 'cos')
 
 def test_two_parent():
     x = Trace('x', 3, {'x' : 1.0}, [])    
-    y = Trace('x', 3, {'x' : 1.0}, [])
+    y = Trace('y', 3, {'y' : 1.0}, [])
     z = 3
-    a = two_parents(x, '^', z)
-    b = two_parents(x, '^', [x, y])
+    a = two_parents(x, '^', y)
+    b = two_parents(x, '^', z)
     assert a.val == 27
-    assert b[1].val == 27
+    assert b.val == 27
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         z = two_parents(x, 'cos', 'test')    
 
 def test_RMtoR():

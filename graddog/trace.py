@@ -17,6 +17,7 @@ class Trace:
 		The constructor for Trace class.
 		Adds the new trace element to the CompGraph
 		'''
+		#print(formula)
 		self._formula = formula
 
 		# val stores the value
@@ -226,40 +227,34 @@ class Variable(Trace):
 
 		'''
 		if not isinstance(val, numbers.Number):
-			raise TypeError('Value should be numerical')
+			raise TypeError('Value of variable should be numerical')
 		super().__init__(name, val, {name : 1.0}, [])
 		self._name = name
 
-def one_parent(t, op, param = None, formula = None):
+def one_parent(t : Trace, op, param = None, formula = None):
 	'''
 	Creates a trace from one parent, with an optional parameter and optional formula
+	Due to error handling in other files, this function is guaranteed to only be called when t
 	'''
 	if param and not isinstance(param, numbers.Number):
-		raise ValueError("Parameter must be numerical scalar")
+		raise TypeError("Parameter must be scalar type")
 
 	try:
-		# when t is a Trace
 		new_formula =  f'{op}({t._trace_name})'
-		if formula:
-			new_formula = formula
-		val = math.val(t, op, param)
-		der =  math.deriv(t, op, param)
-		parents = [t]
-		return Trace(new_formula, val, der, parents, op, param)	
-
 	except AttributeError:
-		#when t is actually a vector input, we are still able to apply the op to the whole vector (e.g. sin([x1,x2]) = [sin(x1),sin(x2)])
-		if isinstance(t[0], numbers.Number):
-			return math.val(np.array(t))
-		else:
-			return np.array([one_parent(t_, op, param, formula) for t_ in t])
+		raise TypeError('Input t must be of type Trace')
+	if formula:
+		new_formula = formula
+	val = math.val(t, op, param)
+	der =  math.deriv(t, op, param)
+	parents = [t]
+	return Trace(new_formula, val, der, parents, op, param)	
 
-
-
-def two_parents(t1, op, t2, formula = None):
+def two_parents(t1 : Trace, op, t2, formula = None):
 	'''
 	Creates a trace from two parents, with an optional formula
 	'''
+	# t2 is either a trace or a scalar, never a list
 	try: 
 		# when t2 is a trace
 		new_formula =  t1._trace_name + op + t2._trace_name
@@ -272,10 +267,8 @@ def two_parents(t1, op, t2, formula = None):
 		if isinstance(t2, numbers.Number):
             # when t2 is actually a constant, not a trace, and this should really be a one parent trace
 			return one_parent(t1, op, t2, formula = f'{t1._trace_name}{op}{t2}')
-		elif isinstance(t2, Iterable) and not isinstance(t2, str):
-			return np.array([two_parents(t1, op, t_, formula) for t_ in t2]) 
 		else:
-			raise ValueError("Input must be numerical or Trace instance")
+			raise TypeError("Input must be numerical or Trace instance")
 
 
 

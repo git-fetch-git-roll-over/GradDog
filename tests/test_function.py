@@ -132,31 +132,31 @@ def test_composition_der():
     assert der[0] == -1*np.sin(value)*np.tan(value) + 1/np.cos(value) + np.exp(value)
 
 def test_string_input():
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = sin('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = cos('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = tan('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = sinh('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = cosh('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = tanh('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = arcsin('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = arccos('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = arctan('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = sqrt('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = sigmoid('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = log('test')
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         f = exp('test')
 
 def test_arc_domains():
