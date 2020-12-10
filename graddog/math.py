@@ -50,10 +50,6 @@ class Ops:
 
 	
 	one_parent_rules = {
-	# Contains the value and derivative rules for all one-parent operations
-
-	# value rules must be (t, param) --> R
-	# derivative rules must be (t, param) --> R, a partial derivative w.r.t. t
 		add: {
 			val : lambda t, param : t+param, 
 			der : lambda t, param : 1.0, 
@@ -78,21 +74,24 @@ class Ops:
 		div_R: {
 			in_domain: lambda t, param: t != 0, 
 			val : lambda t, param : param/t, 
-			der : lambda t, param : -param/((t._val)**2)},
+			der : lambda t, param : -param/(t**2),
+			double_der : lambda t, param : 2*param/(t**3)},
 		power: {
 			val : lambda t, param : t**param, 
 			der : lambda t, param : param*t**(param-1), 
 			double_der : lambda t, param : param*(param - 1)*(t**(param-2))},
 		sin: {
 			val : lambda t, param : np.sin(t), 
-			der : lambda t, param : np.cos(t)},
+			der : lambda t, param : np.cos(t),
+			double_der : lambda t, param : -np.sin(t)},
 		arcsin: {
 			in_domain: lambda t, param: t >= -1 and t <= 1, 
 			val: lambda t, param: np.arcsin(t), 
 			der: lambda t, param: 1/(np.sqrt(1-t**2))},
 		cos: {
 			val : lambda t, param : np.cos(t), 
-			der : lambda t, param : -np.sin(t)},
+			der : lambda t, param : -np.sin(t),
+			double_der : lambda t, param : -np.cos(t)},
 		arccos: {
 			in_domain: lambda t, param: t >= -1 and t <= 1, 
 			val: lambda t, param: np.arccos(t), 
@@ -110,7 +109,8 @@ class Ops:
 		log: {
 			in_domain: lambda t, param: t > 0 and param > 0, 
 			val : lambda t, param : np.log(t)/np.log(param), 
-			der : lambda t, param : 1/(t*np.log(param))},
+			der : lambda t, param : 1/(np.log(param)*t),
+			double_der : lambda t, param : -1/(np.log(param)*t**2)},
 		sqrt: {
 			in_domain: lambda t, param: t >= 0, 
 			val : lambda t, param : t**0.5, 
