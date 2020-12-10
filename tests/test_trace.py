@@ -1,4 +1,5 @@
 import pytest 
+import graddog.math as ops
 import numpy as np
 import graddog as gd
 from graddog.trace import Trace, Variable, one_parent, two_parents
@@ -86,7 +87,7 @@ def test_two_parent():
 def test_RMtoR():
     def f(v):
         return v[0] + exp(v[1]) + 6*v[2]**2
-    x = gd.trace(f, [1,2,4])
+    x = gd.trace(f, [1,2,4], verbose=True)
     assert x[0][0] == 1.0
     assert x[0][1] == pytest.approx(np.exp(2))
     assert x[0][2] == 48.0
@@ -103,3 +104,18 @@ def test_RMtoRN():
     assert x[3][2] == pytest.approx(-54.05175886)
     assert x[3][3] == pytest.approx(7.70489137)
 
+def test_math_errors():
+    x = Trace('x', 3, {'x' : 1.0}, [])    
+    y = Trace('y', 3, {'y' : 1.0}, [])
+    z = 3
+    with pytest.raises(ValueError):
+        a = ops.deriv_one_parent(x, 'relu')
+    with pytest.raises(ValueError):
+        b = ops.deriv_two_parents(x, 'relu', y)
+    c = ops.val_one_parent(z, 'sin')
+    assert c == np.sin(z)
+    with pytest.raises(ValueError):
+        d = ops.val_one_parent(x, 'relu')
+    with pytest.raises(ValueError):
+        e = ops.val_two_parents(x, 'relu', y)
+    
