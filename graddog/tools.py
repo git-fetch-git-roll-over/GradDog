@@ -81,7 +81,7 @@ def find_extrema_firstorder(function, xmin, xmax, n_pts=100, tolerance = 1e-10):
     xs: a tuple containing the two x values between which the extrema is located
     '''
     xs = np.linspace(xmin, xmax, num=n_pts)
-    diag_mtx = gd.trace(function, xs)    
+    diag_mtx = gd.trace(function, xs, verbose = True)    
     # Assemble values by pulling our diagonal matrix entries
     ys = []
     for i in range(n_pts):
