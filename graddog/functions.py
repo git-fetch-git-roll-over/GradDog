@@ -93,7 +93,7 @@ def arccos(t):
     except AttributeError:
         if isinstance(t, numbers.Number):
             if math.in_domain(t, math.Ops.arccos):
-                return np.arcsin(t)
+                return np.arccos(t)
             else:
                 raise ValueError('Input out of domain')
         elif isinstance(t, Iterable):
@@ -264,7 +264,7 @@ def sqrt(t):
             else:
                 raise ValueError('Input out of domain')
         elif isinstance(t, Iterable):
-            return np.array([log(t_, base) for t_ in t])
+            return np.array([sqrt(t_, base) for t_ in t])
         else:
             raise ValueError('Input(s) must be Trace or scalar')
 
