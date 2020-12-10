@@ -34,6 +34,15 @@ def test_plot_derivative_trig():
 def test_find_extrema():
     def sq(x):
         x**2 + 1
+    def quadratic(x):
+        a=4
+        xoffset = 3
+        yoffset = 0
+        return a*(x-xoffset)**2 + yoffset    
+    x = tools.find_extrema_firstorder(quadratic, -10, 10)
+    assert x[0] == pytest.approx(2.92929292929292)
+    assert x[1] == pytest.approx(3.13131313131313)
+    # x == (2.929292929292929, 3.1313131313131315)
     x1 = tools.find_extrema_firstorder(sq, 0, 5, n_pts=5)
     assert x1[0] == pytest.approx(0)
     x2 = tools.find_extrema_firstorder(sq, 4, 5, n_pts=5)
@@ -56,8 +65,14 @@ def test_find_decreasing():
     x2, y2 = tools.find_decreasing(sq, -10, 0, n_pts=5)
     assert ([x2[0], y2[0]] == [-10, -20])
 
-def plot_with_tangent_line():
-    pass
-
-def plot_with_normal_line():
-    pass
+def test_plot_with_tangent_line():
+    def quadratic(x):
+        a=4
+        xoffset = 3
+        yoffset = 0
+        return a*(x-xoffset)**2 + yoffset    
+    x, val = tools.plot_with_tangent_line(quadratic, 5, 0.5, 10)
+    assert x[0] == 0.5
+    assert x[-1] == 10
+    for i in range(len(x)):
+        assert val[i] == pytest.approx(quadratic(x[i]))
