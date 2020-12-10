@@ -221,7 +221,7 @@ def double_deriv(t1, t2, t3):
 	'''
 	Returns double derivative of t1 w.r.t. both t2 and t3
 
-	e.g. d^2f/dxdy or d^2g/dz^2
+	References the parent traces of t1 because the order of the arguments matters
 	'''
 	parents = t1._parents
 	if len(parents) == 1:

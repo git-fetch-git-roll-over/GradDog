@@ -257,9 +257,7 @@ class CompGraph:
 
 		def hessian(self, output, verbose = False):
 			'''
-			Implements the edge-pushing algorithm?
-
-			
+			Implements the edge-pushing algorithm by Gower and Mello: https://par.nsf.gov/servlets/purl/10039361
 
 			Returns BOTH the jacobian (first derivative) and hessian (second derivative)
 
@@ -269,120 +267,8 @@ class CompGraph:
 			if self.num_outputs() > 1:
 				raise ValueError('Hessian can only be calculated for scalar function')
 
-			# https://arxiv.org/pdf/1309.5479.pdf
-
-			# j = self.forward_mode_der(output, verbose)
-			# print('derivative', j)
-			# #self.doubles = self.get_doubles(op, parents)
-
-			# print(self.trace_derivs)
-
-			# l = self.size
-			# m = self.num_vars
-			# W = np.array([[0.]])
-			# v_bar_T = np.array([[self.table.loc[l - 1]['val']]]) # the initial y-value from the forward pass?
-			# for i in reversed(range(m+1,l+1)):
-			# 	if verbose:
-			# 		print('~ v', i)
-			# 	v_i = f'v{i}'
-			# 	D_i = np.array([[self.partials[v_i][in_] for in_ in self.ins[v_i]]])
-			# 	if verbose:
-			# 		print('~~ D', D_i, D_i.shape)
-			# 	W = np.dot(W, D_i)
-			# 	#W += np.dot(np.dot(v_bar_T, self.double_deriv(i)), self.trace_derivs[f'v{i-1}'])
-			# 	W += v_bar_T @ self.double_deriv(i) @ self.trace_derivs[f'v{i-1}']
-			# 	v_bar_T = v_bar_T @ D_i
-			# 	#W = self.tensor_product(W, D_i, D_i)
-			# 	if verbose:
-			# 		print('~~~ W', W, W.shape)
-
-			# return v_bar_T, W
-
-
-
-
-
-
 			
-
-
-
-
-
-
-
-
-
-
-
-			# https://mlubin.github.io/pdf/edge_pushing_julia.pdf
-
-			#initialize
-			# v_bar = {i : 0.0 for i in range(1,self.size)}
-			# v_bar[l] = 1.0
-			# H = {i : {j : set([]) for j in range(1, l + 1)} for i in range(1, l + 1)}
-			
-			# m = self.num_vars
-			# for i in reversed(range(m+1, l+1)):
-			# 	v_i = f'v{i}'
-			# 	print(H)
-			# 	print('~ v', v_i)
-			# 	print('~~ vbar', v_bar)
-			# 	####### pushing step
-			# 	for p in H:
-			# 		print('~~~ p', p)
-			# 		if p <= i and i in H[p] and H[p][i] != set():
-			# 			print('ding')
-			# 			if p != i:
-
-			# 				for v_j in self.ins[v_i]:
-			# 					j = int(v_j[1:])
-			# 					if j == p:
-			# 						v_p = f'v{p}'
-
-			# 						######### PUSH 3
-			# 						new_set = H[p][p].union([self.partials[v_i][v_p]*h_ for h_ in H[p][i]])
-			# 						H[p][p] = new_set
-
-			# 					else:
-
-			# 						######### PUSH 1
-			# 						new_set = H[j][p].union([self.partials[v_i][v_j]*h_ for h_ in H[p][i]])
-			# 						H[j][p] = new_set
-			# 						H[p][j] = new_set
-
-			# 			else:
-			# 				######### PUSH 2
-			# 				for v_j, v_k in combinations_with_replacement(self.ins[v_i], 2):
-			# 					j, k = int(v_j[1:]), int(v_k[1:])
-			# 					new_set = H[j][k].union([self.partials[v_i][v_k]*self.partials[v_i][v_j]*h_ for h_ in H[i][i]])
-			# 					H[j][k] = new_set
-			# 					H[k][j] = new_set
-			# 	#################################################
-
-			# 	####### creating step
-			# 	for v_j, v_k in combinations_with_replacement(self.ins[v_i], 2):
-			# 		j, k = int(v_j[1:]), int(v_k[1:])
-			# 		print('~~~ j k', j, k)
-			# 		t1, t2, t3 = self.traces[v_i], self.traces[v_k], self.traces[v_j]
-			# 		new_set = H[j][k].union([v_bar[i]*math.double_deriv(t1, t2, t3)])
-			# 		H[j][k] = new_set
-			# 		H[k][j] = new_set
-			# 	#################################################
-
-			# 	####### adjoint step
-			# 	for v_j in self.ins[v_j]:
-			# 		j = int(v_j[1:])
-			# 		v_bar[j] += v_bar[i]*self.partials[v_i][v_j]
-			# 	#################################################
-			# print(v_bar)
-			# print(H)
-
-
-
-			# https://par.nsf.gov/servlets/purl/10039361
-
-			# ensure all partial derivatives exist
+			##### ensure all partial derivatives exist
 			l = self.size
 			for v in self.partials:
 				for u in self.partials:
@@ -391,27 +277,31 @@ class CompGraph:
 							self.partials[v][u] = 0
 						else:
 							self.partials[v][u] = 1
-			
 			############################################
-
 
 			if verbose:
 				CompGraph.show_trace_table()
-				print(self.partials)
 
-			l = self.size
-			v_l = f'v{l}'
-			S = {self.size + 1 : set([v_l])}
+
+			## initialize variables
+
+			# stores the live variables
+			S = {self.size + 1 : set([f'v{self.size}'])}
+
+			# stores the Hessian as a double-nested dictionary
+			# h[k][v_i][v_j] gives the 2nd derivative of the output w.r.t. v_i and v_j during iteration k of the algorithm
 			h = {k : { f'v{j+1}' : {f'v{i+1}' : 0.0 for i in range(l)} for j in range(l)} for k in range(1, l + 2)}
+
+			# stores the adjoints: the derivative of the output w.r.t. each trace
 			v_bar = { f'v{i}' : 0.0 for i in range(1,self.size)}
-			v_bar[v_l] = 1.0
+			v_bar[f'v{self.size}'] = 1.0
 
 			# step backward through the trace table
 			m = self.num_vars
 			for k in reversed(range(m+1,l + 1)):
 
 
-				##### make live variable set S
+				##### update live variable set S #####
 				v_k = f'v{k}'
 				if verbose:
 					print('v ~', v_k)
@@ -421,43 +311,37 @@ class CompGraph:
 				S[k] = S[k].union(self.ins[v_k])
 				if verbose:
 					print('S ~~', S[k])
+				######################################
 
 
-				#### accumulate first derivatives v_bar during the reverse sweep
+				#### accumulate current adjoint
 				for v in self.ins[v_k]:
 					v_bar[v] += self.partials[v_k][v] * v_bar[v_k]
 				if verbose:
 					print('v bar ~~~', v_bar)
+				#################################################################
 
 
 				#### build current hessian layer
 				for v_i, v_j in combinations_with_replacement(S[k], 2):
-					a = h[k+1][v_i][v_j]
-					b = self.partials[v_k][v_i]*h[k+1][v_j][v_k]
-					c = self.partials[v_k][v_j]*h[k+1][v_i][v_k]
-					d = self.partials[v_k][v_i]*self.partials[v_k][v_j]*h[k+1][v_k][v_k]
 
 					######### calculate double derivative
 					if v_i in self.ins[v_k] and v_j in self.ins[v_k]:
-						t_k = self.traces[v_k]
-						t_i = self.traces[v_i]
-						t_j = self.traces[v_j]
-						e = math.double_deriv(t_k, t_i, t_j) * v_bar[v_k]
-						# if v_i != v_j:
-						# 	t_j = self.traces[v_j]
-						# 	e = math.double_deriv(t_k, t_i, t_j)[0,1]* v_bar[v_k]
-						# else:
-						# 	e = math.double_deriv(t_k, t_i)* v_bar[v_k]
+						double_deriv = math.double_deriv(self.traces[v_k], self.traces[v_i], self.traces[v_j]) * v_bar[v_k]
 					else:
-						e = 0
+						double_deriv = 0
 					############################################
-					if verbose:
-						print(a, b, c, d, e)
-					f = a+b+c+d+e
-					h[k][v_i][v_j] = f
-					h[k][v_j][v_i] = f
+
+					# add the relevant values from the previous layer to the double_deriv
+					new_value = h[k+1][v_i][v_j] + self.partials[v_k][v_i]*h[k+1][v_j][v_k] + self.partials[v_k][v_j]*h[k+1][v_i][v_k] + self.partials[v_k][v_i]*self.partials[v_k][v_j]*h[k+1][v_k][v_k] + double_deriv
+					
+					# add new value to the current layer of the hessian matrix
+					h[k][v_i][v_j] = new_value
+					h[k][v_j][v_i] = new_value
+
 					if verbose:
 						print(f'After processing v{k}, d^2f/d{v_i}d{v_j} = {f}')
+
 			j = np.array([[v_bar[self.get_trace_name(v)] for v in self.variables]])
 			h = np.array([[h[m+1][f'v{i+1}'][f'v{j+1}'] for j in range(m)] for i in range(m)])
 			return j, h

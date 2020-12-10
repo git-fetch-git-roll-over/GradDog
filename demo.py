@@ -61,7 +61,7 @@ fs = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11]
 def run_demos():
     for i, f in enumerate(fs):
         print('demo', i)
-        f_ = gd.trace(f, seeds[i], verbose = False)
+        f_ = gd.trace(f, seeds[i])
         print(f_)
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
@@ -93,35 +93,19 @@ def test_hessian():
     seed1 = [1, 2, 3, 4]
     def f1(x, y, z, w):
         return 2*x*y + w*z/y
-    
 
-    seed2 = [1,2]
-    def f2(x, y):
-       return x*y + exp(x*y)
-    f_, f__ = gd.trace(f1, seed1, return_second_deriv = True, verbose = True)
+    f_, f__ = gd.trace(f1, seed1, return_second_deriv = True)
     print(f_)
     print(f__)
-
-    
-
-    # new_fs = [f1, f2]
-    # new_seeds = [seed1, seed2]
-    # for i, f in enumerate(new_fs):
-    #     f_, f__ = gd.trace(f, new_seeds[i], return_second_deriv = True, verbose = True)
-    #     print(f_)
-    #     print(f__)
-    #     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 test_hessian()
+
+
+
 #run_demos()
-#f_ = gd.trace(f5, seed5, verbose = True)
+
 
 #plot_derivative(lambda x : sin(log(x)), .207, 2)
 
-def f(x, y):
-    return [x, y*2]
-
-#f_ = gd.trace(f5, seed5, verbose = True) 
-#print(f_)
 
 def cubic(x):
     return 2*x**3
