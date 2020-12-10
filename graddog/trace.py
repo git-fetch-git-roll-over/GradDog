@@ -227,7 +227,7 @@ class Variable(Trace):
 
 		'''
 		if not isinstance(val, numbers.Number):
-			raise TypeError('Value should be numerical')
+			raise TypeError('Value of variable should be numerical')
 		super().__init__(name, val, {name : 1.0}, [])
 		self._name = name
 
@@ -237,10 +237,12 @@ def one_parent(t : Trace, op, param = None, formula = None):
 	Due to error handling in other files, this function is guaranteed to only be called when t
 	'''
 	if param and not isinstance(param, numbers.Number):
-		raise ValueError("Parameter must be numerical scalar")
+		raise TypeError("Parameter must be scalar type")
 
-
-	new_formula =  f'{op}({t._trace_name})'
+	try:
+		new_formula =  f'{op}({t._trace_name})'
+	except AttributeError:
+		raise TypeError('Input t must be of type Trace')
 	if formula:
 		new_formula = formula
 	val = math.val(t, op, param)
@@ -266,7 +268,7 @@ def two_parents(t1 : Trace, op, t2, formula = None):
             # when t2 is actually a constant, not a trace, and this should really be a one parent trace
 			return one_parent(t1, op, t2, formula = f'{t1._trace_name}{op}{t2}')
 		else:
-			raise ValueError("Input must be numerical or Trace instance")
+			raise TypeError("Input must be numerical or Trace instance")
 
 
 

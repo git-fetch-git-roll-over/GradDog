@@ -27,7 +27,7 @@ def sin(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sin(t_) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def arcsin(t):
     '''
@@ -54,7 +54,7 @@ def arcsin(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([arcsin(t_) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def cos(t):
     '''
@@ -72,7 +72,7 @@ def cos(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([cos(t_) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def arccos(t):
     '''
@@ -99,7 +99,7 @@ def arccos(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([arccos(t_) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def tan(t):
     '''
@@ -117,7 +117,7 @@ def tan(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([tan(t_) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def arctan(t):
     '''
@@ -137,7 +137,7 @@ def arctan(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([arctan(t_) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def exp(t, base=np.e):
     '''
@@ -159,7 +159,7 @@ def exp(t, base=np.e):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([exp(t_, base) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def log(t, base=np.e):
     '''
@@ -187,7 +187,7 @@ def log(t, base=np.e):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([log(t_, base) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def sinh(t):
     '''
@@ -206,7 +206,7 @@ def sinh(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sinh(t_) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def cosh(t):
     '''
@@ -224,7 +224,7 @@ def cosh(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([cosh(t_) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def tanh(t):
     '''
@@ -242,7 +242,7 @@ def tanh(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([tanh(t_) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def sqrt(t):
     '''
@@ -266,7 +266,7 @@ def sqrt(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sqrt(t_, base) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 def sigmoid(t):
     '''
@@ -284,7 +284,7 @@ def sigmoid(t):
         elif isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sigmoid(t_) for t_ in t])
         else:
-            raise ValueError('Input(s) must be Trace or scalar')
+            raise TypeError('Input(s) must be Trace or scalar')
 
 
 
