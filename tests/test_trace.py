@@ -79,7 +79,7 @@ def test_two_parent():
     assert a.val == 27
     assert b.val == 27
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         z = two_parents(x, 'cos', 'test')    
 
 def test_RMtoR():
