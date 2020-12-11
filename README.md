@@ -3,7 +3,7 @@
 The GradDog package does automatic differentiation for humans.  
   
 [![codecov](https://codecov.io/gh/git-fetch-git-roll-over/GradDog/branch/master/graph/badge.svg)](https://codecov.io/gh/git-fetch-git-roll-over/GradDog)
-[![Build Status](https://travis-ci.com/git-fetch-git-roll-over/GradDog.svg?branch=master)](https://travis-ci.com/git-fetch-git-roll-over/GradDog)  
+[![](https://github.com/git-fetch-git-roll-over/GradDog/workflows/GradDog%20Automatic%20Differentiator/badge.svg)](https://github.com/git-fetch-git-roll-over/GradDog/actions)
 
 ## CS107: Systems Development for Computational Sciences
 Project members: Ivan Shu, Max Cembalest, Seeam Noor, and Peyton Benac  
