@@ -7,7 +7,7 @@ Directory Structure
 With our main directory ``GradDog``, our package is organized as follows:
 
 * dependencies in ``requirements.txt``
-* continuous integration information in ``.travis.yml`` and coverage information in ``codecov.yml``
+* workflow for continuous integration via ``GitHub Actions`` and code coverage report via ``CodeCov`` in ``.github\workflow\python-package.yml``
 * documentation in ``\docs``
 * test suite in ``\tests``
 * code in ``\graddog``
@@ -38,4 +38,14 @@ Our code consists of 5 total modules:
 How to Test
 ------------
 
-Both ``TravisCI`` and ``CodeCov`` are used and our test suite will live inside our repo in a ``\tests`` directory. Our project currently has over 90% coverage.
+We used ``GitHub Actions`` for continuous integration and ``CodeCov`` for code coverage reports. Our test suite will live inside our repo in a ``\tests`` directory. Our project currently has 98% coverage. In order to run the tests locally after installing the repository, run the following command in your terminal while being in the root directory::
+
+    pytest 
+
+If you want to see code coverage, run the following commands in your terminal::
+    
+    pip install pytest-cov
+    pytest --cov-report term --cov=graddog tests/
+    
+    
+    
