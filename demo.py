@@ -1,12 +1,8 @@
 # :)
 import numpy as np
-import matplotlib.pyplot as plt
-import time
 import graddog as gd
 from graddog.functions import sin, cos, tan, exp, log
-from graddog.tools import plot_with_tangent_line
-from graddog.functions import sin, cos, tan, exp, log, sigmoid
-from graddog.tools import plot_derivative
+from graddog.tools import plot_derivative, plot_with_tangent_line
 
 seed0 = 1.5
 def f0(x):
@@ -65,49 +61,15 @@ def run_demos():
         print(f_)
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
-
-def time_demo(f, seed):
-    fig, ax = plt.subplots()
-    n_boot = 10
-    times = np.zeros(shape= (n_boot,2))
-    for boot in range(n_boot):
-        t0 = time.time()
-        gd.trace(f, seed, mode = 'forward')
-        t_forward = time.time() - t0
-
-        t0 = time.time()
-        gd.trace(f, seed, mode = 'reverse')
-        t_reverse = time.time() - t0
-        times[boot,:] = [t_forward, t_reverse]
-    plt.hist(times[:,0], bins = 10, alpha = 0.3, color = 'blue', label = 'forward', density = True)
-    plt.hist(times[:,1], bins = 10, alpha = 0.3, color = 'red', label = 'reverse', density = True)
-    plt.legend()
-    plt.title('f : R --> R50')
-    plt.xlabel('time')
-    plt.ylabel('frequency')
-    plt.show()
-
-
-
-def test_hessian():
+def hessian_demo():
     seed1 = [1, 2, 3, 4]
     def f1(x, y, z, w):
         return 2*x*y + w*z/y
-
-    f_, f__ = gd.trace(f1, seed1, return_second_deriv = True)
+    f_, f__ = gd.trace(f1, seed1, return_second_deriv = True, verbose = True)
     print(f_)
     print(f__)
-#test_hessian()
 
-
-f_ = gd.trace(f11, seed11, verbose = True)
-#run_demos()
-
-
-#plot_derivative(lambda x : sin(log(x)), .207, 2)
-
-
-def cubic(x):
-    return 2*x**3
-#plot_with_tangent_line(cubic, 3, -10, 10, n_pts=1000, figsize=(6,6), xlabel='x', ylabel='y', plotTitle='Function with tangent line')
+def plotting_demo():
+    plot_derivative(sin, 1, 5)
+    plot_with_tangent_line(sin, 0, -np.pi, np.pi)
 

@@ -14,9 +14,6 @@ class CompGraph:
 		def __init__(self):
 			self.reset()
 
-		def __str__(self):
-			return repr(self)
-
 		def reset(self):
 			'''
 			Sets all the attributes to their initial values
@@ -36,9 +33,6 @@ class CompGraph:
 
 			# store the partial derivatives
 			self.partials = {}
-
-			# store the double derivatives
-			self.doubles = {}
 
 			#set up the table as a pandas DataFrame for now. makes things simpler tbh.
 			self.table = pd.DataFrame(columns = ['trace_name', 'input', 'output', 'formula', 'val', 'partial1', 'partial2'])
@@ -177,10 +171,6 @@ class CompGraph:
 		def num_outputs(self):
 			return len(self.outputs())
 
-		@property
-		def comp_graph(self):
-			return {'in' : self.ins, 'out' : self.outs}
-
 		def __repr__(self):
 			return repr(self.table)
 
@@ -193,6 +183,8 @@ class CompGraph:
 		def forward_mode_der(self, output, verbose = False):
 			'''
 			step FORWARDS through the trace table, calculate derivatives along the way in trace_derivs
+
+			The gradient for each trace is computed as the vector `d_v_d_variables`
 			
 			Returns the Jacobian matrix of derivatives df_i/dx_j for each output function f_i w.r.t. each input variable x_j
 
@@ -201,18 +193,28 @@ class CompGraph:
 			if verbose:
 				CompGraph.show_trace_table()
 			
+			# Initialize derivative for each input
 			self.trace_derivs = {self.get_trace_name(x) : np.eye(self.num_vars)[i,:] for i, x in enumerate(self.variables)}
+			
 			for row in range(self.num_vars, self.size):
+
 				v = self.table.loc[row]['trace_name']
+
 				d_v_d_parents = np.array([[self.partials[v][in_] for in_ in self.ins[v]]])
+
 				d_parents_d_variables = np.vstack([self.trace_derivs[in_] for in_ in self.ins[v]])
+
 				d_v_d_variables = np.dot(d_v_d_parents, d_parents_d_variables)
+
 				self.trace_derivs[v] = d_v_d_variables
+
 			return np.vstack([self.trace_derivs[output] for output in self.outputs()])
 
 		def reverse_mode_der(self, output, verbose = False):
 			'''
 			step BACKWARDS through the trace table, calculate derivatives along the way in trace_derivs
+
+			The gradient for each trace is computed as the vector `d_outputs_d_v`
 			
 			Returns the Jacobian matrix of derivatives df_i/dx_j for each output function f_i w.r.t. each input variable x_j
 			
@@ -221,43 +223,37 @@ class CompGraph:
 			if verbose:
 				CompGraph.show_trace_table()
 			
+			# Initialize derivative for each output
 			self.trace_derivs = {x : np.eye(self.num_outputs())[:,i].reshape(-1,1) for i, x in enumerate(self.outputs())}
+			
 			for row in reversed(range(self.size)):
+
 				v, is_output = self.table.loc[row]['trace_name'], self.table.loc[row]['output']
+
 				if not is_output:
+
 					if self.outs[v] == []:
 						if verbose:
 							print(f'{v} was a variable with no effect on any of the outputs')
+
 						d_outputs_d_v = np.zeros(shape=(self.num_outputs(), 1))
+
 					else:
+
 						d_outputs_d_children = np.hstack([self.trace_derivs[out_] for out_ in self.outs[v]])
+
 						d_children_d_v = np.array([[self.partials[out_][v] for out_ in self.outs[v]]])
+
 						d_outputs_d_v = np.dot(d_outputs_d_children, d_children_d_v.T)
+
 					self.trace_derivs[v] = d_outputs_d_v
+
 			return np.hstack([self.trace_derivs[x] for x in list(map(lambda x : self.get_trace_name(x), self.variables))])
-
-		def tensor_product(self, W, u, v):
-			print('TENSOR')
-			print(W, u, v)
-			assert u.shape[0] == 1 and v.shape[0] == 1
-			J, K = u.shape[1], v.shape[1]
-			assert W.shape[0] == J and W.shape[1] == K
-			return np.array([[W[j,k]*u[0,j]*v[0,k] for k in range(K)] for j in range(J)])
-
-		def double_deriv(self, i):
-			v_i = f'v{i}'
-			t = self.traces[v_i]
-			op, parents, param = t._op, t._parents, t._param
-			if len(parents) == 1:
-				return math.new_double_deriv_one_parent(parents[0], op, param)
-			elif len(parents) == 2:
-				return math.new_double_deriv_two_parents(parents[0], op, parents[1])
-			else:
-				raise ValueError('what')
 
 		def hessian(self, output, verbose = False):
 			'''
-			Implements the edge-pushing algorithm by Gower and Mello: https://par.nsf.gov/servlets/purl/10039361
+			Implements the edge-pushing algorithm by Gower and Mello
+			Specific implementation details from Wang, Pothen, and Hovland: https://par.nsf.gov/servlets/purl/10039361
 
 			Returns BOTH the jacobian (first derivative) and hessian (second derivative)
 
@@ -268,7 +264,7 @@ class CompGraph:
 				raise ValueError('Hessian can only be calculated for scalar function')
 
 			
-			##### ensure all partial derivatives exist
+			### ensure all partial derivatives exist ###
 			l = self.size
 			for v in self.partials:
 				for u in self.partials:
@@ -299,27 +295,20 @@ class CompGraph:
 			# step backward through the trace table
 			m = self.num_vars
 			for k in reversed(range(m+1,l + 1)):
-
+				v_k = f'v{k}'
 
 				##### update live variable set S #####
-				v_k = f'v{k}'
-				if verbose:
-					print('v ~', v_k)
 				S[k] = S[k + 1]
 				if v_k in S[k]:
 					S[k].remove(v_k)
 				S[k] = S[k].union(self.ins[v_k])
-				if verbose:
-					print('S ~~', S[k])
 				######################################
 
 
-				#### accumulate current adjoint
+				#### accumulate adjoints v_bar #######
 				for v in self.ins[v_k]:
 					v_bar[v] += self.partials[v_k][v] * v_bar[v_k]
-				if verbose:
-					print('v bar ~~~', v_bar)
-				#################################################################
+				######################################
 
 
 				#### build current hessian layer
@@ -339,9 +328,6 @@ class CompGraph:
 					h[k][v_i][v_j] = new_value
 					h[k][v_j][v_i] = new_value
 
-					if verbose:
-						print(f'After processing v{k}, d^2f/d{v_i}d{v_j} = {f}')
-
 			j = np.array([[v_bar[self.get_trace_name(v)] for v in self.variables]])
 			h = np.array([[h[m+1][f'v{i+1}'][f'v{j+1}'] for j in range(m)] for i in range(m)])
 			return j, h
@@ -352,24 +338,9 @@ class CompGraph:
 		if not CompGraph.instance:
 			CompGraph.instance = CompGraph.__CompGraph()
 
-	def __getattr__(self, name):
-		return getattr(self.instance, name)
-
-	def __repr__(self):
-		if CompGraph.instance:
-			return repr(CompGraph.instance)
-
 	def show_trace_table():
 		if CompGraph.instance:
 			print(repr(CompGraph.instance))
-
-	def show_comp_graph():
-		if CompGraph.instance:
-			print(CompGraph.instance.comp_graph)
-
-	def show_partials():
-		if CompGraph.instance:
-			print(CompGraph.instance.partials)
 
 	def reset():
 		if CompGraph.instance:
@@ -395,7 +366,5 @@ class CompGraph:
 	def hessian(output, verbose):
 		if CompGraph.instance:
 			return CompGraph.instance.hessian(output, verbose)
-
-
 
 
