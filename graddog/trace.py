@@ -1,11 +1,11 @@
 # :)
 import numpy as np
+from collections.abc import Iterable
 import numbers
 import pandas as pd
 import graddog.math as math
 from graddog.compgraph import CompGraph
 
-# TODO: dunder methods for comparison operators like __lt__ <
 
 class Trace:
 	'''
@@ -225,32 +225,34 @@ class Variable(Trace):
 
 		'''
 		if not isinstance(val, numbers.Number):
-			raise TypeError('Value should be numerical')
+			raise TypeError('Value of variable should be numerical')
 		super().__init__(name, val, {name : 1.0}, [])
 		self._name = name
 
-def one_parent(t, op, param = None, formula = None):
+def one_parent(t : Trace, op, param = None, formula = None):
 	'''
 	Creates a trace from one parent, with an optional parameter and optional formula
+	Due to error handling in other files, this function is guaranteed to only be called when t
 	'''
+	if param and not isinstance(param, numbers.Number):
+		raise TypeError("Parameter must be scalar type")
+
 	try:
 		new_formula =  f'{op}({t._trace_name})'
-		if formula:
-			new_formula = formula
-		val = math.val(t, op, param)
-		der =  math.deriv(t, op, param)
-		parents = [t]
-		return Trace(new_formula, val, der, parents, op, param)	
-	except Exception as e:
-		print('one parent', e)
-# 	except AttributeError:
-# 		#when t is actually a vector input, we are still able to apply the op to the whole vector (e.g. sin([x1,x2]) = [sin(x1),sin(x2)])
-# 		return np.array([one_parent(t_, op, param, formula) for t_ in t])
+	except AttributeError:
+		raise TypeError('Input t must be of type Trace')
+	if formula:
+		new_formula = formula
+	val = math.val(t, op, param)
+	der =  math.deriv(t, op, param)
+	parents = [t]
+	return Trace(new_formula, val, der, parents, op, param)	
 
-def two_parents(t1, op, t2, formula = None):
+def two_parents(t1 : Trace, op, t2, formula = None):
 	'''
 	Creates a trace from two parents, with an optional formula
 	'''
+	# t2 is either a trace or a scalar, never a list
 	try: 
 		# when t2 is a trace
 		new_formula =  t1._trace_name + op + t2._trace_name
@@ -258,9 +260,13 @@ def two_parents(t1, op, t2, formula = None):
 		der =  math.deriv(t1, op, t2)
 		parents = [t1, t2]
 		return Trace(new_formula, val, der, parents, op)
-	except AttributeError: 
-		# when t2 is actually a constant, not a trace, and this should really be a one parent trace
-		return one_parent(t1, op, t2, formula = f'{t1._trace_name}{op}{t2}')
+		
+	except AttributeError:
+		if isinstance(t2, numbers.Number):
+            # when t2 is actually a constant, not a trace, and this should really be a one parent trace
+			return one_parent(t1, op, t2, formula = f'{t1._trace_name}{op}{t2}')
+		else:
+			raise TypeError("Input must be numerical or Trace instance")
 
 
 
