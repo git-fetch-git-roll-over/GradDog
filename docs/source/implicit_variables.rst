@@ -15,7 +15,7 @@ Instead of giving explicitly the variable names, we could also implicitly pass i
 
     gd.trace(f4, seed4)
 
-    >>> Computing reverse mode
+    >>> Computing reverse mode derivatives...
     >>> [[ 1.  0. 18.]]
 
 So here we are creating variable ``seed4 = [1,2,3]`` and the parameter `v` in the function `f4` indicates that it is ``sequence`` object. This implicitly tells our ``GradDog`` that to create a list of variables of :math:`x_{1}`, :math:`x_{2}` and :math:`x_{3}` with specifed values in ``seed4``. Our `f4` specifically defines that the funciton output is :math:`x_{1} + 3\times x_{3}^{2}`. Similarly, we could also create a function mapping from :math:`R^{m}`:raw-html:`&rarr;`:math:`R^{n}`: 
@@ -27,7 +27,7 @@ So here we are creating variable ``seed4 = [1,2,3]`` and the parameter `v` in th
 
     gd.trace(f5, seed5)
 
-    >>> Computing forward mode
+    >>> Computing forward mode derivatives...
     >>> [[ 1.          0.         18.        ]
         [-1.          1.          0.        ]
         [ 0.         -0.41614684  1.        ]]
@@ -41,7 +41,7 @@ We could also apply same function to differnt variables by simply writing out th
 
     gd.trace(f6, seed6)
 
-    >>> Computing forward mode
+    >>> Computing forward mode derivatives...
     >>> [[4. 0. 0.]
         [0. 6. 0.]
         [0. 0. 8.]]

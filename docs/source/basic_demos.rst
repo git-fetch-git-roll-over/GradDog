@@ -3,6 +3,7 @@ Basic Demos
 
 .. role:: raw-html(raw)
    :format: html
+
 First, import the full ``graddog`` module (recommended alias: ``gd``) and the functions from the ``functions`` module::
 
     import graddog as gd
@@ -14,6 +15,7 @@ Then, create the function you would like to evaluate the derivative of (See `thi
 
     def f0(x):
         return x**2 + 3*x + exp(x, base=2)*sin(2*x)
+
 Choose a "seed value", which is the value of the input(s) at which the derivative will be evaluated::
 
     seed0 = 3
@@ -21,7 +23,7 @@ Choose a "seed value", which is the value of the input(s) at which the derivativ
 Last, perform the ``trace`` on the function and the seed. (This function has an optional ``mode`` parameter which can be used to select either the forward or reverse mode of automatic differentiation. The default mode is decided based on the computational costs of each mode for a particular function. For this tutorial page, we will specify forward mode for all demonstrations, although this parameter is optional. To see reverse mode examples, go to the Reverse Mode page of the documentation)::
 
     f_ = gd.trace(f0, seed0, mode = 'forward')
-    >>> Computing forward mode
+    >>> Computing forward mode derivatives...
     f_
     >>>[[22.81331607]]
 
@@ -36,7 +38,7 @@ Next, let's try an function with more variables. The idea is the same but with t
         return x*y + exp(x*y)
 
     f_ = gd.trace(f1, seed1, mode = 'forward')
-    >>>Computing forward mode
+    >>>Computing forward mode derivatives...
     f_
     >>>[[16.7781122  8.3890561]]
 
@@ -71,7 +73,7 @@ Now, you might be thinking can our ``graddog`` calculate derivatives for functio
         return [exp(-(sin(x)-cos(y))**2), sin(-log(x)**2+tan(z))]
 
     f_ = gd.trace(f3, seed3, mode = 'forward')
-    >>>Computing forward mode
+    >>>Computing forward mode derivatives...
     f_
     >>>[[-0.29722477 -0.46290015  0.        ]
         [ 0.          0.          0.04586154]]

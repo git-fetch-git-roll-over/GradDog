@@ -13,15 +13,17 @@ The user defines a function ``f: Rm --> Rn`` and a variable ``seed`` and passes 
         return x**2 + 3*x + exp(x, base=2)*sin(2*x)
 
     f_ = gd.trace(f, seed, mode='forward')
-    print(f_)
+    >>> Computing forward mode derivatives...
 
-    >>>[[22.81331607]]
+    print(f_)
+    >>> [[22.81331607]]
 
 Now switching to ``mode='reverse'``::
 
     f_ = gd.trace(f, seed, mode='reverse')
+    >>> Computing reverse mode derivatives...
+    
     print(f_)
-   
     >>> [[22.81331607]]
 
 See? Our ``GradDog`` is very smart.
