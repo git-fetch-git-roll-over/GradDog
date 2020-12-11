@@ -125,8 +125,8 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
 
 
     ############## First Derivative ####################
-    if verbose:
-        print(f'Computing {mode} mode derivative...')
+    #if verbose:
+    print(f'Computing {mode} mode derivative...')
     if mode == 'forward':
         return CompGraph.forward_mode(output, verbose)
     elif mode == 'reverse':
