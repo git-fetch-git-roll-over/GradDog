@@ -1,5 +1,5 @@
-GradDog Documentation - Release 1.3 
-===================================
+GradDog Documentation - Release 1.3.0 
+=====================================
 
 Authors:  Ivan Shu, Max Cembalest, Peyton Benac and Seeam Shahid Noor
 

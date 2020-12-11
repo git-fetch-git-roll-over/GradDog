@@ -27,7 +27,7 @@ copyright = '2020, Ivan Shu, Max Cembalest, Peyton Benac and Seeam Shahid Noor'
 author = 'Ivan Shu, Max Cembalest, Peyton Benac and Seeam Shahid Noor'
 
 # The full version, including alpha/beta/rc tags
-release = '1.3'
+release = '1.3.0'
 
 
 # -- General configuration ---------------------------------------------------
