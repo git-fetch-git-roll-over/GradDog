@@ -127,13 +127,13 @@ def find_decreasing(function, xmin, xmax, n_pts=100, verbose = False):
     # derivative comes as a matrix since we are passing in a vectorized input to a single-variable function
     # the only entries in the derivative matrix are therefore the diagonals, since it is a single-variable function
     f_ = gd.trace(function, xs, verbose = verbose)
-    y_ders = [f_[i,i] for i in range(n_pts)] 
+    y_ders = np.array([f_[i,i] for i in range(n_pts)])
 
-    idx = np.where(ys < 0)[0].astype(int)
+    idx = np.where(y_ders < 0)[0].astype(int)
     if len(idx) == 0:
         print(f'No decreasing values located in the interval {xmin} to {xmax}')
         return None
-    return xs[idx], ys[idx]
+    return xs[idx], y_ders[idx]
 
 # xs, functionvalues = plot_with_tangent_line(quadratic, 5,  -10, 10)
 
@@ -161,7 +161,7 @@ def plot_with_tangent_line(function, xtangent, xmin, xmax, n_pts=100, figsize=(6
     values = function(xs)
     ytangent = function(xtangent)
     plt.figure(figsize=figsize)
-    derivativevalue = deriv[0][0]
+    derivativevalue = deriv[0,0]
     print(f'At the point x={xtangent}, the function has a slope of {derivativevalue}')
     plt.plot(xs, values)
     plt.plot(xs, derivativevalue*(xs-xtangent) + ytangent)

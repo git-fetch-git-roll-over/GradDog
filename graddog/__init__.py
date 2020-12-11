@@ -10,8 +10,6 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
     f : a function
     seed: a vector/list of scalars. If f is single-dimensional, seed can be a scalar
 
-    *******REQUIREMENT THAT THE SEED FITS THE # OF INPUTS TO f****************
-
     Optional parameter mode
         When mode = None, this function infers the more efficient mode from the number of input and output variables
 
