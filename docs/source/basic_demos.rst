@@ -16,16 +16,16 @@ Then, create the function you would like to evaluate the derivative of (See `thi
     def f0(x):
         return x**2 + 3*x + exp(x, base=2)*sin(2*x)
 
-Choose a "seed value", which is the value of the input(s) at which the derivative will be evaluated::
+Now you can perform the ``trace`` on the function with a "seed value", i.e. the values of the inputs at which you would like to evaluate the derivative. 
 
-    seed0 = 3
-   
-Last, perform the ``trace`` on the function and the seed. (This function has an optional ``mode`` parameter which can be used to select either the forward or reverse mode of automatic differentiation. The default mode is decided based on the computational costs of each mode for a particular function. For this tutorial page, we will specify forward mode for all demonstrations, although this parameter is optional. To see reverse mode examples, go to the Reverse Mode page of the documentation)::
+ f_ = gd.trace(f0, seed0, mode = 'forward')
+ >>> Computing forward mode derivatives...
+ f_
+ >>>[[22.81331607]]
 
-    f_ = gd.trace(f0, seed0, mode = 'forward')
-    >>> Computing forward mode derivatives...
-    f_
-    >>>[[22.81331607]]
+This function has an optional ``mode`` parameter which can be used to select either the forward or reverse mode of automatic differentiation. The default mode is decided based on the computational costs of each mode for a particular function. For this tutorial page, we will specify forward mode for all demonstrations, although this parameter is optional. To see reverse mode examples, go to the Reverse Mode page of the documentation)::
+
+    
 
 
 :math:`R^{m}`:raw-html:`&rarr;`:math:`R`:
