@@ -107,6 +107,7 @@ def test_RMtoRN():
 def test_math_errors():
     x = Trace('x', 3, {'x' : 1.0}, [])    
     y = Trace('y', 3, {'y' : 1.0}, [])
+    z = 3
     with pytest.raises(ValueError):
         a = ops.deriv_one_parent(x, 'relu')
     with pytest.raises(ValueError):

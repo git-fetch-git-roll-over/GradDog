@@ -34,12 +34,24 @@ def test_plot_derivative_trig():
 def test_find_extrema():
     def sq(x):
         return x**2 + 1
+    
     def quadratic(x):
         a=4
         xoffset = 3
         yoffset = 0
+        return a*(x-xoffset)**2 + yoffset
+
+    def quadratic2(x):
+        a=-4
+        xoffset = 3
+        yoffset = 0
         return a*(x-xoffset)**2 + yoffset    
+    
     x = tools.find_extrema_firstorder(quadratic, -10, 10)
+    assert x[0] == pytest.approx(2.92929292929292)
+    assert x[1] == pytest.approx(3.13131313131313)
+    # x == (2.929292929292929, 3.1313131313131315)
+    x = tools.find_extrema_firstorder(quadratic2, -10, 10)
     assert x[0] == pytest.approx(2.92929292929292)
     assert x[1] == pytest.approx(3.13131313131313)
     # x == (2.929292929292929, 3.1313131313131315)
