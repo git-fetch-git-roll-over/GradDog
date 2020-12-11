@@ -16,7 +16,7 @@ Then, create the function you would like to evaluate the derivative of (See `thi
     def f0(x):
         return x**2 + 3*x + exp(x, base=2)*sin(2*x)
 
-Now you can perform the ``trace`` on the function with a "seed value", i.e. the values of the inputs at which you would like to evaluate the derivative. 
+Now you can perform the ``trace`` on the function with a "seed value", i.e. the values of the inputs at which you would like to evaluate the derivative. For convention, we denote the derivative of f as ``f_``::
 
  f_ = gd.trace(f0, seed0, mode = 'forward')
  >>> Computing forward mode derivatives...
