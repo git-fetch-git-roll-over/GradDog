@@ -39,5 +39,9 @@ How to Test
 ------------
 
 We used ``GitHub Actions`` for continuous integration and ``CodeCov`` for code coverage reports. Our test suite will live inside our repo in a ``\tests`` directory. Our project currently has 98% coverage. In order to run the tests locally after installing the repository, run the command ``pytest`` in your terminal while being in the root directory. If you want to see code coverage, run the following commands in your terminal::
+    
     pip install pytest-cov
     pytest --cov-report term --cov=graddog tests/
+    
+    
+    
