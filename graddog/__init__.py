@@ -101,8 +101,7 @@ def trace(f, seed, mode = None, return_second_deriv = False, verbose = False):
             raise ValueError('Second derivative is automatically calculated in reverse mode')
         if N > 1:
             raise ValueError('Can only compute second derivative for scalar output f')
-        if verbose:
-            print('Computing reverse mode first AND second derivative...')
+        print('Computing reverse mode first AND second derivative...')
         return CompGraph.hessian(output, verbose)   
     ######################################################
 
