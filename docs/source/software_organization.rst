@@ -22,18 +22,18 @@ Our code consists of 3 user-facing modules:
 
 * ``graddog``, defining the ``trace`` function used to return derivatives
 * ``graddog.functions``, definining elementary functions that are compatible with the trace function.
-* ``graddog.tools``, defining useful tools to plot derivatives and estimate extrema.
+* ``graddog.tools``, defining user-facing tools to do common calculations of scalar functions
     
 **For developers:**
 
 Our code consists of 5 total modules:
 
-* ``__init__.py``, defining the trace function that allows the user to take derivatives
-* ``trace.py``, defining the Trace class that stores the value and derivative for each element
+* ``__init__.py``, defining the trace function that allows the user to take derivatives of python functions
+* ``trace.py``, defining the Trace class that stores the information for an individual trace element
 * ``compgraph.py``, defining the CompGraph class that creates a computational graph keeping track of the elements in relation to one another
-* ``functions.py``, defining mathematical functions that operate on the Trace class 
-* ``math.py``, defining the mathematical rules that define each functions derivatives
-* ``tools.py``, defining user-facing tools to do perform common calculations
+* ``functions.py``, defining elementary functions that users can use
+* ``math.py``, defining the mathematical rules (for computing values, first-derivatives, and second-derivatives) of all functions implemented in our library
+* ``tools.py``, defining user-facing tools to do common calculations of scalar functions
 
 How to Test
 ------------
