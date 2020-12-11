@@ -38,4 +38,4 @@ Our code consists of 5 total modules:
 How to Test
 ------------
 
-Both ``TravisCI`` and ``CodeCov`` are used and our test suite will live inside our repo in a ``\tests`` directory. Our project currently has 100% coverage.
+Both ``TravisCI`` and ``CodeCov`` are used and our test suite will live inside our repo in a ``\tests`` directory. Our project currently has over 90% coverage.
