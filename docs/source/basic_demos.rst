@@ -23,7 +23,7 @@ Now you can perform the ``trace`` on the function with a "seed value", i.e. the 
  f_
  >>> [[22.81331607]]
 
-This function has an optional ``mode`` parameter which can be used to select either the forward or reverse mode of automatic differentiation. The default mode is decided based on the computational costs of each mode for a particular function. For this tutorial page, we will specify forward mode for all demonstrations, although this parameter is optional. To see reverse mode examples, go to the Reverse Mode page of the documentation)::
+This function has an optional ``mode`` parameter which can be used to select either the forward or reverse mode of automatic differentiation. The default mode is decided based on the computational costs of each mode for a particular function. For this tutorial page, we will specify forward mode for all demonstrations, although this parameter is optional. To see reverse mode examples, go to the Reverse Mode page of the documentation)
 
     
 
