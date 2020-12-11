@@ -52,6 +52,8 @@ def test_basic_reverse():
     assert gd.trace(fm(sin), value, mode='reverse') == np.cos(value)
     assert gd.trace(fm(cos), value, mode='reverse') == -np.sin(value)
     assert gd.trace(fm(tan), value, mode='reverse') == 1/(np.cos(value)*np.cos(value))
+    with pytest.raises(ValueError):
+        gd.trace(fm(sin), value, mode='test')
 
 def test_composite_reverse():
     def f(x):
