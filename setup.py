@@ -9,12 +9,12 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="AutoDiff-graddog",
+    name="Graddog",
     version="1.3",
     description="Perform automatic differentiation (final project CS107)",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/git-fetch-git-roll-over/cs107-FinalProject",
+    url="https://github.com/git-fetch-git-roll-over/GradDog.git",
     author="Peyton Benac, Max Cembalest, Seeam Shahid Noor, Ivan Shu",
     author_email="pbenac@college.harvard.edu",
     license="MIT",
@@ -24,5 +24,5 @@ setup(
     ],
     packages= ["graddog"],
     include_package_data=True,
-    install_requires=["numpy", "pytest", "codecov", "pytest-cov", "pandas", "numbers", "matplotlib"],
+    install_requires=["numpy", "pytest", "pandas", "matplotlib"],
 )
