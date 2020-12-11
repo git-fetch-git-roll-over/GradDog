@@ -9,8 +9,8 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="Graddog",
-    version="1.3",
+    name="GradDog",
+    version="1.3.0",
     description="Perform automatic differentiation (final project CS107)",
     long_description=README,
     long_description_content_type="text/markdown",
