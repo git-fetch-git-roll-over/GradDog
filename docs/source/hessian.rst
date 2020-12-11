@@ -13,7 +13,7 @@ Example::
     def f(x, y):
         return x*y + exp(x*y)
     f_, f__ = gd.trace(f, seed, return_second_deriv = True)
-    >>> Computing reverse mode
+    >>> Computing first AND second derivatives in reverse mode...
     f_
     >>>[[16.7781122  8.3890561]]
     f__
