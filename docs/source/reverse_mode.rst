@@ -1,11 +1,9 @@
 Reverse Mode (Extension)
 ========================
 
-
-
 What's great about our ``GradDog`` package is that it can perform either `forward mode` and `reverse mode` of automatic differentiation with the ``gd.trace`` function.
 
-The user defines a function ``f: Rm --> Rn`` and a variable ``seed`` and passes them into ``gd.trace()``, with an optional parameter ``mode``, which can be set to ``forward`` or ``reverse``. If unspecified, the algorithm uses the dimensions of the inputs and outputs of ``f`` to determine which mode to compute in: if m > n, reverse mode is more efficient, and if m <= n, forward mode is more efficient.
+The user defines a function ``f: Rm --> Rn`` and a variable ``seed`` and passes them into ``gd.trace()``, with an optional parameter ``mode``, which can be set to ``forward`` or ``reverse``. If unspecified, the algorithm uses the dimensions of the inputs and outputs of ``f`` to determine which mode to compute in: if m > n, reverse mode is more efficient, and if m <= n, forward mode is more efficient::
 
     import graddog as gd
     from graddog.functions import sin, cos, tan, exp, log

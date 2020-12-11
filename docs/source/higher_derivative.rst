@@ -3,7 +3,7 @@ Further Extensions
 
 
 Higher-Order Derivatives
-------------------------------
+-------------------------
 The Hessian enables us to calculate second-order derivatives for functions with vector inputs and scalar outputs. However, this project could be extended to include derivatives beyond the second-order. 
 
 

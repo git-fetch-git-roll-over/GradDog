@@ -77,7 +77,7 @@ Now, you might be thinking can our ``graddog`` calculate derivatives for functio
         [ 0.          0.          0.04586154]]
 
 
-Debugging
+Debugging:
 ---------------------------------------------
 For debugging purposes, we also added an optional parameter ``verbose``, which displays for the user the trace table from the computational trace, as well as the relevant assumptions about the input and output types and dimensions::
 

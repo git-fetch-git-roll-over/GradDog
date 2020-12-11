@@ -3,9 +3,9 @@ Implementation Details
 
 Core data structure
 --------------------
-Our core data structures are ``numpy.array``, ``list``, ``dictionary`` and ``panda.DataFrame``. 
+Our core data structures are ``numpy.array``, ``list``, ``dictionary`` and ``pandas.DataFrame``. 
 
-We chose ``panda.DataFrame`` to store all the function traces. While the fact that it is a bit heavy-weight, it is very easy to store all the traces information during package development. At the same time, it is easy for the users to visualize all the traces information in a table format. 
+We chose ``pandas.DataFrame`` to store all the function traces. While the fact that it is a bit heavy-weight, it is very easy to store all the traces information during package development. At the same time, it is easy for the users to visualize all the traces information in a table format. 
 
 Both ``numpy.array`` and ``list`` can be used to contain the ``seed`` variable when there are multiple inputs to the customized functions. ``numpy.array`` here, however, plays a even more important role by storing the derivative matrix and conducting corresponding matrix operations.
 
@@ -49,7 +49,7 @@ To be able to calculate the partial derivatives, ``GradDog`` contains a couple o
     | **ints**: ``dictionary``, stores the current trace name as the key and its predecessing trace names as the values. 
     | **traces**: ``dictionary``, storing the currenct trace name as the key and the actual trace instance as its value. 
     | **partials**: ``dictionary``, containing its current trace name as the key and its partial derivatives as the value. 
-    | **table**: ``pd.DataFrame``, that contains all the traces information in the order when they are created. 
+    | **table**: ``pandas.DataFrame``, that contains all the traces information in the order when they are created. 
 
 External Dependencies
 ---------------------
@@ -63,7 +63,7 @@ Elementary functions
 
 Installation
 -------------
-For installation, we have chosen wheels because they are smaller in size than a source distribution (sdist) file for the same package, and therefore are faster. They are also faster because installing from a wheel allows one to skip the build step required to install source distributions. Wheels are also very consistent, automatically generate the correct .pyc files for the interpreter, and require no compiler (even for compiled extension modules).
+For installation, we have chosen ``wheels`` because they are smaller in size than a source distribution (sdist) file for the same package, and therefore are faster. They are also faster because installing from a wheel allows one to skip the build step required to install source distributions. Wheels are also very consistent, automatically generate the correct .pyc files for the interpreter, and require no compiler (even for compiled extension modules).
 
 
 
