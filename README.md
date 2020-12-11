@@ -1,6 +1,10 @@
 # GradDog Package
 [GradDog Documentation](https://graddog.readthedocs.io/en/latest/)
 
+## CS107 - Systems Development for Computational Sciences
+## Group 22:
+Group members: Ivan Shu, Max Cembalest, Seeam Noor and Peyton Benac
+
 ## Broader Impact and Inclusivity Statement
 The ``GradDog`` package is able to calculate both derivateives through automatic differentiation in both `forward mode` and `reverse mode`. It calculates to machine precision and saves a great amount of computational costs compared to both conventional finite differences and symbolic derivatives methods. However, one downside to note is that ``GradDog`` does not keep track of the mathmatical formula that composes the derivative matrix. If the user were a student, who were trying to use this package for education purpose to understand the process of automatic differentiation, this package might mitigate the overall learning experience. ``GradDog`` is simply designed and developed to provide a convenient avenue to calculate derivatives given any numerical functions. It is meant to act as a small tool to help to solve users' questions.  In writing our documentation and designing our package, we have attempted to reduce the number of assumptions we are making about a user's background.  We do not believe that this package has risks of any major negative impacts, as it does not, for example, replace any existing jobs or access sensitive user information.
 

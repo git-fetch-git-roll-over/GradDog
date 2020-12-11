@@ -4,7 +4,7 @@ Tool Demos
 .. role:: raw-html(raw)
    :format: html
    
-GradDog includes tools to allow users to easily perform common actions on scalar functions related to their first derivatives. These tools also provide a skeleton for users who desire to write their own tools using GradDog for differentiation. 
+``GradDog`` includes tools to allow users to easily perform common actions on scalar functions related to their first derivatives. These tools also provide a skeleton for users who desire to write their own tools using GradDog for differentiation. 
 
 First, import the full ``graddog`` module (recommended alias: ``gd``), the functions from the ``functions`` module::
 
@@ -19,7 +19,7 @@ Then, create the function you would like to use (See `this link <http://introtop
          yoffset = 0
          return a*(x-xoffset)**2 + yoffset
         
-All tools in the tools module also take in the lower and upper limits of the x-interval on which you'd like to evaluate the derivative. More detail on each of their inputs and outputs is provided below.
+All tools in the ``tools.py`` module also take in the lower and upper limits of the x-interval on which you'd like to evaluate the derivative. More detail on each of their inputs and outputs is provided below.
 
 plot_derivative:
 ----------------
