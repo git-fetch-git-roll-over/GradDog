@@ -3,4 +3,6 @@ pytest
 codecov
 pytest-cov
 pandas
+numbers
 matplotlib
+
