@@ -19,6 +19,8 @@ def test_basic():
     non_scalar = [0, np.pi/2,np.pi,3*np.pi/2, 2*np.pi]
     with pytest.raises(ValueError):
         x1_, x1__ = gd.trace(trig, non_scalar, return_second_deriv = True)
+    with pytest.raises(ValueError):
+        x1_, x1__ = gd.trace(trig, non_scalar, return_second_deriv = True, mode='forward')
     x3_, x3__ = gd.trace(poly, 2, return_second_deriv = True, verbose=True)
     assert x3_[0][0] == pytest.approx(64)
     assert x3__[0][0] == pytest.approx(96)
