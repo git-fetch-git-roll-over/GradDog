@@ -16,5 +16,5 @@ Go to the directory from which you want to run this package, and then open a com
 
 Pip Installation
 ----------------
-``GradDog`` is also pip-installable. We used `wheels <https://www.python.org/dev/peps/pep-0427/>`_ to package our project. The wheel name for our package is ``graddog-1.3-py3-none-any.whl``.
-To use pip, simply type ``pip install graddog``.
+``GradDog`` is also pip-installable. We used `wheels <https://www.python.org/dev/peps/pep-0427/>`_ to package our project. The wheel name for our package is ``graddog-1.3.0-py3-none-any.whl``.
+To use pip, simply type ``pip install GradDog==1.3.0``.
