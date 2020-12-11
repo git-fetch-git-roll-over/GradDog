@@ -3,16 +3,16 @@ About
 
 Introduction
 ------------
-In engineering, statistical modelling, and countless other scientific disciplines, derivatives are calculated to measure change in a dynamic system. It is crucial for professionals of all kinds who work with quantitative systems to have access to software that can calculate derivatives quickly, efficiently, and with a simple-to-use interface. That is why ``TensorFlow`` exists. Our software package, ``GradDog``, will try to do the same.
+In engineering, statistical modelling, and countless other scientific disciplines, derivatives are calculated to measure change in a dynamic system. It is crucial for professionals of all kinds who work with quantitative systems to have access to software that can calculate derivatives quickly, efficiently, and with a simple-to-use interface. 
 
-``GradDog`` performs automatic differentiation to machine precision, at a low computational cost. This documentation walks through some of the mathematics of automatic differentiation, as well as some basic information about the usage of our package.
+``GradDog`` performs automatic differentiation to machine precision with a user-friendly design. This documentation walks through some of the mathematics of automatic differentiation, as well as some basic information about the usage of our package.
 
 .. image:: ../../images/dog.jpg
   :width: 600
 
 Background
 ----------
-Computing gradients the old-fashioned way (by hand) is certainly feasible for many mathematical functions that appear in many applications. A key step in almost every derivative is known as the chain rule, which applies whenever our function's inner structure is a composition of functions, e.g.,
+Computing derivatives the old-fashioned way (by hand) is certainly feasible for many mathematical functions that appear in many applications. A key step in almost every derivative is known as the chain rule, which applies whenever our function's inner structure is a composition of functions, e.g.,
 
 :math:`\\f(x, y) = g(h(x, y))`
 
@@ -42,7 +42,7 @@ The fact that this process is **automatic** comes very much in handy when comput
 
 Yeah, we would prefer not to do that by hand. 
 
-The ``GradDog`` package is able to do automatic differeniation to any numerical functions in `forward mode` and another new feature we have have included is the `reverse mode`. Please go to `Reverse Mode <https://graddog.readthedocs.io/en/latest/reverse_mode.html>`_ section for more details. 
+The ``GradDog`` package is able to do automatic differeniation in both `forward mode` and `reverse mode`. Please go to `Reverse Mode <https://graddog.readthedocs.io/en/latest/reverse_mode.html>`_ section for more details. 
 
 
 Broader Impact and Inclusivity Statement
